@@ -48,7 +48,7 @@ export const dekiruExamsList: DekiruExamMeta[] = [
   },
   {
     id: 'dekiru-review-13-15',
-    title: 'Ujian 4 (Bab 13〜15)',
+    title: 'Ujian 5 (Bab 13〜15)',
     subtitle: '13〜15課 復習テスト',
     lessonRange: [13, 15],
     badgeText: 'Bab 13-15 • 34 Soal',

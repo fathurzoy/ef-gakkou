@@ -1913,7 +1913,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       ? "Ujian 2 (Bab 4-6)"
                       : currentExamData.exam.id === 'dekiru-review-7-9'
                       ? "Ujian 3 (Bab 7-9)"
-                      : "Ujian 4 (Bab 13-15)"}
+                      : "Ujian 5 (Bab 13-15)"}
                   </div>
                 </div>
               </div>
