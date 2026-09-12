@@ -14,7 +14,7 @@ import {
   Lightbulb,
 } from 'lucide-react';
 
-interface ModeSelectionProps {
+export interface ModeSelectionProps {
   onSelectMode: (mode: AppMode) => void;
   answeredCount: number;
   correctCount: number;
