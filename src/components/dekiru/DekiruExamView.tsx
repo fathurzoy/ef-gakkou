@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Layers,
   BookMarked,
-  Eye,
   RotateCcw,
   Sparkles,
   Copy,
@@ -1056,16 +1055,6 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     </span>
                   )}
                 </div>
-
-                {!revealedQuestions[currentQ.item.id] && (
-                  <button
-                    onClick={() => setRevealedQuestions((prev) => ({ ...prev, [currentQ.item.id]: true }))}
-                    className="btn btn-ghost"
-                    style={{ fontSize: "0.75rem", padding: "0.2rem 0.5rem", color: "#64748b" }}
-                  >
-                    <Eye size={13} /> Intip Kunci
-                  </button>
-                )}
               </div>
 
               {/* Context if present */}
@@ -1152,15 +1141,6 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 >
                   <ChevronLeft size={16} />
                   <span>Sebelumnya</span>
-                </button>
-
-                <button
-                  onClick={() => setIsDrawerOpen(true)}
-                  className="btn btn-ghost"
-                  style={{ fontSize: "0.82rem" }}
-                >
-                  <HelpCircle size={15} />
-                  <span>Daftar Soal ({answeredCount}/{totalQuestions})</span>
                 </button>
 
                 {currentQuestionIndex < totalQuestions - 1 ? (
