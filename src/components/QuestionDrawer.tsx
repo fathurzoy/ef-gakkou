@@ -47,7 +47,7 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
       onClick={onClose}
     >
       <div
-        className="animate-fade-in"
+        className="animate-fade-in drawer-panel"
         style={{
           width: '100%',
           maxWidth: '460px',
@@ -63,7 +63,7 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
         {/* Drawer Header */}
         <div
           style={{
-            padding: '1.25rem',
+            padding: '1rem 1.25rem',
             borderBottom: '1px solid #e2e8f0',
             display: 'flex',
             alignItems: 'center',
@@ -72,10 +72,10 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
           }}
         >
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
+            <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
               Daftar Nomor Soal (1 - 60)
             </h3>
-            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
               Pilih nomor untuk langsung berpindah soal
             </span>
           </div>
@@ -83,55 +83,56 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
           <button
             onClick={onClose}
             className="btn btn-ghost btn-icon"
-            style={{ borderRadius: '9999px' }}
+            style={{ borderRadius: '9999px', width: '36px', height: '36px' }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Quick Stats Summary */}
         <div
           style={{
-            padding: '0.85rem 1.25rem',
+            padding: '0.75rem 1rem',
             background: '#ffffff',
             borderBottom: '1px solid #f1f5f9',
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '0.5rem',
+            gap: '0.4rem',
             textAlign: 'center',
           }}
         >
-          <div style={{ background: '#f8fafc', padding: '0.5rem', borderRadius: '8px' }}>
-            <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block' }}>DIJAWAB</span>
-            <strong style={{ fontSize: '1.1rem', color: '#1e293b' }}>
+          <div style={{ background: '#f8fafc', padding: '0.4rem', borderRadius: '8px' }}>
+            <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>DIJAWAB</span>
+            <strong style={{ fontSize: '1.05rem', color: '#1e293b' }}>
               {totalAnswered} <span style={{ fontSize: '0.75rem', fontWeight: 500 }}>/ 60</span>
             </strong>
           </div>
-          <div style={{ background: '#ecfdf5', padding: '0.5rem', borderRadius: '8px' }}>
-            <span style={{ fontSize: '0.72rem', color: '#047857', display: 'block' }}>BENAR</span>
-            <strong style={{ fontSize: '1.1rem', color: '#059669' }}>{totalCorrect}</strong>
+          <div style={{ background: '#ecfdf5', padding: '0.4rem', borderRadius: '8px' }}>
+            <span style={{ fontSize: '0.7rem', color: '#047857', display: 'block' }}>BENAR</span>
+            <strong style={{ fontSize: '1.05rem', color: '#059669' }}>{totalCorrect}</strong>
           </div>
-          <div style={{ background: '#fef2f2', padding: '0.5rem', borderRadius: '8px' }}>
-            <span style={{ fontSize: '0.72rem', color: '#b91c1c', display: 'block' }}>SALAH</span>
-            <strong style={{ fontSize: '1.1rem', color: '#dc2626' }}>{totalIncorrect}</strong>
+          <div style={{ background: '#fef2f2', padding: '0.4rem', borderRadius: '8px' }}>
+            <span style={{ fontSize: '0.7rem', color: '#b91c1c', display: 'block' }}>SALAH</span>
+            <strong style={{ fontSize: '1.05rem', color: '#dc2626' }}>{totalIncorrect}</strong>
           </div>
         </div>
 
-        {/* Section Tabs */}
+        {/* Section Tabs (Scrollable on mobile) */}
         <div
+          className="scroll-pills-row"
           style={{
             display: 'flex',
             overflowX: 'auto',
-            padding: '0.65rem 1rem',
-            gap: '0.4rem',
+            padding: '0.6rem 1rem',
+            gap: '0.35rem',
             borderBottom: '1px solid #e2e8f0',
             background: '#f8fafc',
           }}
         >
           <button
             onClick={() => setSelectedSection('ALL')}
-            className={`btn ${selectedSection === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', whiteSpace: 'nowrap' }}
+            className={`btn scroll-pill-btn ${selectedSection === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
           >
             Semua (60)
           </button>
@@ -139,8 +140,8 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
             <button
               key={sec.id}
               onClick={() => setSelectedSection(sec.id)}
-              className={`btn ${selectedSection === sec.id ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', whiteSpace: 'nowrap' }}
+              className={`btn scroll-pill-btn ${selectedSection === sec.id ? 'btn-primary' : 'btn-secondary'}`}
+              style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
             >
               Bagian {sec.id} ({sec.count})
             </button>
@@ -152,10 +153,10 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
           style={{
             flex: 1,
             overflowY: 'auto',
-            padding: '1.25rem',
+            padding: '1rem',
             display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: '0.75rem',
+            gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+            gap: '0.5rem',
             alignContent: 'start',
           }}
         >
@@ -173,12 +174,12 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
                 bgColor = '#ecfdf5';
                 borderColor = '#10b981';
                 textColor = '#065f46';
-                statusIcon = <CheckCircle2 size={12} color="#10b981" />;
+                statusIcon = <CheckCircle2 size={11} color="#10b981" />;
               } else {
                 bgColor = '#fef2f2';
                 borderColor = '#ef4444';
                 textColor = '#991b1b';
-                statusIcon = <XCircle size={12} color="#ef4444" />;
+                statusIcon = <XCircle size={11} color="#ef4444" />;
               }
             }
 
@@ -196,26 +197,26 @@ export const QuestionDrawer: React.FC<QuestionDrawerProps> = ({
                   onClose();
                 }}
                 style={{
-                  height: '52px',
+                  height: '46px',
                   borderRadius: '10px',
                   border: `2px solid ${borderColor}`,
                   background: bgColor,
                   color: textColor,
-                  fontSize: '0.95rem',
+                  fontSize: '0.9rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.15rem',
+                  gap: '0.1rem',
                   position: 'relative',
                   transition: 'all 0.15s ease',
                   boxShadow: isCurrent ? '0 0 0 3px rgba(99, 102, 241, 0.25)' : 'none',
                 }}
               >
                 <span>{q.id}</span>
-                <div style={{ height: '12px', display: 'flex', alignItems: 'center' }}>
+                <div style={{ height: '11px', display: 'flex', alignItems: 'center' }}>
                   {statusIcon || <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#cbd5e1' }} />}
                 </div>
               </button>

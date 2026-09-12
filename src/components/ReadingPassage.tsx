@@ -11,17 +11,17 @@ export const ReadingPassage: React.FC<ReadingPassageProps> = ({ passage }) => {
   const [showTranslation, setShowTranslation] = useState(false);
 
   return (
-    <div className="card mb-6 border-indigo-100 bg-gradient-to-b from-indigo-50/40 to-white" style={{ borderColor: '#e0e7ff', background: '#fafbff', padding: '1.25rem', marginBottom: '1.25rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+    <div className="card mb-6 border-indigo-100 bg-gradient-to-b from-indigo-50/40 to-white card-responsive-padding" style={{ borderColor: '#e0e7ff', background: '#fafbff', padding: '1.25rem', marginBottom: '1.25rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#e0e7ff', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#e0e7ff', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <BookOpen size={18} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#1e1b4b', margin: 0 }}>
+            <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: '#1e1b4b', margin: 0 }}>
               {passage.title || 'Bacaan Wacana'}
             </h3>
-            <span style={{ fontSize: '0.75rem', color: '#6366f1', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.72rem', color: '#6366f1', fontWeight: 600 }}>
               読解テキスト (Wacana Ujian)
             </span>
           </div>
@@ -30,12 +30,13 @@ export const ReadingPassage: React.FC<ReadingPassageProps> = ({ passage }) => {
         <button
           onClick={() => setShowTranslation(!showTranslation)}
           className="btn btn-secondary"
-          style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem', borderRadius: '9999px', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+          style={{ fontSize: '0.78rem', padding: '0.35rem 0.65rem', borderRadius: '9999px', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
           title="Tampilkan Terjemahan Bahasa Indonesia"
         >
-          <Globe size={14} color="#4f46e5" />
-          <span>{showTranslation ? 'Sembunyikan Terjemahan' : 'Terjemahan Wacana'}</span>
-          {showTranslation ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          <Globe size={13} color="#4f46e5" />
+          <span className="desktop-only">{showTranslation ? 'Sembunyikan Terjemahan' : 'Terjemahan Wacana'}</span>
+          <span className="mobile-only">{showTranslation ? 'Tutup Arti' : 'Arti Wacana'}</span>
+          {showTranslation ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
         </button>
       </div>
 

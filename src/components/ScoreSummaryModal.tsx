@@ -87,7 +87,7 @@ export const ScoreSummaryModal: React.FC<ScoreSummaryModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="animate-fade-in"
+        className="animate-fade-in modal-dialog"
         style={{
           width: '100%',
           maxWidth: '520px',
@@ -106,7 +106,7 @@ export const ScoreSummaryModal: React.FC<ScoreSummaryModalProps> = ({
           style={{
             background: 'linear-gradient(135deg, #4338ca 0%, #312e81 100%)',
             color: '#ffffff',
-            padding: '1.75rem 1.5rem',
+            padding: '1.25rem 1.25rem',
             textAlign: 'center',
             position: 'relative',
           }}
@@ -279,12 +279,13 @@ export const ScoreSummaryModal: React.FC<ScoreSummaryModalProps> = ({
         {/* Modal Footer Actions */}
         <div
           style={{
-            padding: '1rem 1.5rem',
+            padding: '0.85rem 1.25rem',
             borderTop: '1px solid #e2e8f0',
             background: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
+            gap: '0.65rem',
+            flexWrap: 'wrap',
           }}
         >
           <button
@@ -293,7 +294,7 @@ export const ScoreSummaryModal: React.FC<ScoreSummaryModalProps> = ({
               onGoToReview();
             }}
             className="btn btn-primary"
-            style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', fontSize: '0.92rem' }}
+            style={{ flex: '1 1 180px', padding: '0.75rem', borderRadius: '12px', fontSize: '0.9rem' }}
           >
             <BookOpen size={16} />
             <span>Lihat Pembahasan Lengkap</span>
@@ -302,7 +303,7 @@ export const ScoreSummaryModal: React.FC<ScoreSummaryModalProps> = ({
           <button
             onClick={onResetExam}
             className="btn btn-secondary"
-            style={{ padding: '0.75rem', borderRadius: '12px', fontSize: '0.92rem' }}
+            style={{ flex: '1 1 120px', padding: '0.75rem', borderRadius: '12px', fontSize: '0.9rem' }}
             title="Reset dan Ulangi Ujian dari Awal"
           >
             <RotateCcw size={16} />

@@ -38,9 +38,10 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
     <div className="mode-selection animate-fade-in" style={{ maxWidth: '840px', margin: '0 auto' }}>
       {/* Hero Header */}
       <div
+        className="hero-card"
         style={{
           textAlign: 'center',
-          padding: '2rem 1rem 2.5rem 1rem',
+          padding: '2rem 1.25rem 2.5rem 1.25rem',
           background: 'radial-gradient(ellipse at top, #eef2ff 0%, #f8fafc 70%)',
           borderRadius: '24px',
           border: '1px solid #e2e8f0',
@@ -51,35 +52,38 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '0.4rem',
             background: '#ffffff',
-            padding: '0.4rem 1rem',
+            padding: '0.35rem 0.85rem',
             borderRadius: '9999px',
             border: '1px solid #e0e7ff',
             boxShadow: '0 2px 6px rgba(79, 70, 229, 0.08)',
-            marginBottom: '1rem',
+            marginBottom: '0.85rem',
+            maxWidth: '100%',
           }}
         >
-          <span style={{ fontSize: '1rem' }}>⛩️</span>
-          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4338ca' }}>
-            長野国際文化学院 ・ E-F 期末試験 読解・文法
+          <span style={{ fontSize: '0.95rem' }}>⛩️</span>
+          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4338ca', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            長野国際文化学院 ・ E-F 期末試験
           </span>
         </div>
 
         <h1
+          className="hero-title"
           style={{
-            fontSize: '2.2rem',
+            fontSize: '2.1rem',
             fontWeight: 800,
             color: '#0f172a',
             lineHeight: 1.25,
-            marginBottom: '0.85rem',
+            marginBottom: '0.75rem',
           }}
         >
           Latihan & Review Ujian Bahasa Jepang E-F
         </h1>
         <p
+          className="hero-subtitle"
           style={{
-            fontSize: '1.05rem',
+            fontSize: '1rem',
             color: '#64748b',
             maxWidth: '620px',
             margin: '0 auto',
@@ -113,12 +117,12 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
         {answeredCount > 0 && (
           <div
             style={{
-              marginTop: '1.5rem',
+              marginTop: '1.25rem',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '1.25rem',
+              gap: '0.85rem',
               background: '#ffffff',
-              padding: '0.75rem 1.25rem',
+              padding: '0.65rem 1rem',
               borderRadius: '16px',
               border: '1px solid #cbd5e1',
               boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
@@ -127,13 +131,13 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <BookmarkCheck size={18} color="#4f46e5" />
-              <span style={{ fontSize: '0.88rem', color: '#334155' }}>
-                Progres tersimpan: <strong>{answeredCount}</strong> / {totalQuestions} soal
+              <BookmarkCheck size={16} color="#4f46e5" />
+              <span style={{ fontSize: '0.82rem', color: '#334155' }}>
+                Progres: <strong>{answeredCount}</strong> / {totalQuestions} soal
               </span>
             </div>
-            <div style={{ fontSize: '0.88rem', color: '#059669', fontWeight: 700 }}>
-              Akurasi: {accuracy}% ({correctCount} Benar)
+            <div style={{ fontSize: '0.82rem', color: '#059669', fontWeight: 700 }}>
+              {accuracy}% ({correctCount} Benar)
             </div>
             <button
               onClick={onResetProgress}
@@ -141,12 +145,12 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
                 background: 'transparent',
                 border: 'none',
                 color: '#ef4444',
-                fontSize: '0.8rem',
+                fontSize: '0.78rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.25rem',
+                gap: '0.2rem',
               }}
             >
               <RotateCcw size={12} /> Reset Ujian
@@ -156,14 +160,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       </div>
 
       {/* Mode Cards (The 2 Main Choices) */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '2.5rem',
-        }}
-      >
+      <div className="mode-cards-grid">
         {/* Card 1: Mode Ujian (Exam Mode / Migii Style) */}
         <div
           className="card card-hover"
@@ -321,7 +318,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           </h3>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+        <div className="sections-grid">
           {examSections.map((sec) => (
             <div
               key={sec.id}

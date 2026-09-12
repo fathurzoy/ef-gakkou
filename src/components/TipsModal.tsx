@@ -31,7 +31,7 @@ export const TipsModal: React.FC<TipsModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="animate-fade-in"
+        className="animate-fade-in modal-dialog"
         style={{
           width: '100%',
           maxWidth: '680px',
@@ -50,7 +50,7 @@ export const TipsModal: React.FC<TipsModalProps> = ({ isOpen, onClose }) => {
           style={{
             background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
             color: '#ffffff',
-            padding: '1.25rem 1.5rem',
+            padding: '1.1rem 1.25rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -66,16 +66,17 @@ export const TipsModal: React.FC<TipsModalProps> = ({ isOpen, onClose }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                flexShrink: 0,
               }}
             >
               <Lightbulb size={20} color="#ffffff" />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>
-                Tips & Trik Lulus Ujian E-F
+              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>
+                Tips & Trik Ujian E-F
               </h3>
-              <span style={{ fontSize: '0.78rem', color: '#fef3c7' }}>
-                Panduan praktis mengerjakan 4 bagian soal dengan cepat dan akurat
+              <span style={{ fontSize: '0.75rem', color: '#fef3c7' }}>
+                Panduan praktis pengerjaan 4 bagian soal
               </span>
             </div>
           </div>
@@ -99,49 +100,50 @@ export const TipsModal: React.FC<TipsModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tab Navigation (Scrollable on mobile) */}
         <div
+          className="scroll-pills-row"
           style={{
             display: 'flex',
             overflowX: 'auto',
-            padding: '0.65rem 1rem',
-            gap: '0.4rem',
+            padding: '0.6rem 1rem',
+            gap: '0.35rem',
             borderBottom: '1px solid #e2e8f0',
             background: '#fffbeb',
           }}
         >
           <button
             onClick={() => setActiveTab('all')}
-            className={`btn ${activeTab === 'all' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', whiteSpace: 'nowrap' }}
+            className={`btn scroll-pill-btn ${activeTab === 'all' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
           >
             Semua Tips
           </button>
           <button
             onClick={() => setActiveTab('I')}
-            className={`btn ${activeTab === 'I' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', whiteSpace: 'nowrap' }}
+            className={`btn scroll-pill-btn ${activeTab === 'I' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
           >
             Bagian I: 文法語彙
           </button>
           <button
             onClick={() => setActiveTab('II')}
-            className={`btn ${activeTab === 'II' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', whiteSpace: 'nowrap' }}
+            className={`btn scroll-pill-btn ${activeTab === 'II' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
           >
             Bagian II: 読解
           </button>
           <button
             onClick={() => setActiveTab('III')}
-            className={`btn ${activeTab === 'III' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', whiteSpace: 'nowrap' }}
+            className={`btn scroll-pill-btn ${activeTab === 'III' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
           >
             Bagian III: 漢字
           </button>
           <button
             onClick={() => setActiveTab('IV')}
-            className={`btn ${activeTab === 'IV' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', whiteSpace: 'nowrap' }}
+            className={`btn scroll-pill-btn ${activeTab === 'IV' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
           >
             Bagian IV: 記述
           </button>

@@ -55,45 +55,44 @@ export const ReviewListView: React.FC<ReviewListViewProps> = ({
     <div className="review-list-view">
       {/* Banner */}
       <div
-        className="card mb-6"
+        className="card mb-6 card-responsive-padding"
         style={{
           padding: '1.5rem',
           background: 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)',
           color: '#ffffff',
-          marginBottom: '1.5rem',
+          marginBottom: '1.25rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.5rem' }}>
-          <BookOpen size={24} color="#a5b4fc" />
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.4rem' }}>
+          <BookOpen size={22} color="#a5b4fc" />
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
             Mode Belajar & Review Lengkap
           </h2>
         </div>
-        <p style={{ margin: 0, fontSize: '0.95rem', color: '#c7d2fe', lineHeight: 1.6 }}>
-          Pelajari 60 soal ujian E-F secara langsung lengkap dengan kunci jawaban resmi, furigana presisi, terjemahan Bahasa Indonesia, dan analisis detail kenapa jawaban tersebut benar serta kenapa opsi lain salah.
+        <p style={{ margin: 0, fontSize: '0.9rem', color: '#c7d2fe', lineHeight: 1.5 }}>
+          Pelajari 60 soal ujian E-F secara langsung lengkap dengan kunci jawaban resmi, furigana presisi, terjemahan Bahasa Indonesia, dan analisis detail.
         </p>
       </div>
 
       {/* Filter and Search Bar */}
       <div
-        className="card mb-6"
+        className="card mb-6 card-responsive-padding"
         style={{
           padding: '1rem 1.25rem',
-          marginBottom: '1.5rem',
+          marginBottom: '1.25rem',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.85rem',
+          gap: '0.75rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
           {/* Search Input */}
           <div
             style={{
-              flex: 1,
-              minWidth: '220px',
               position: 'relative',
               display: 'flex',
               alignItems: 'center',
+              width: '100%',
             }}
           >
             <Search
@@ -111,51 +110,54 @@ export const ReviewListView: React.FC<ReviewListViewProps> = ({
                 padding: '0.6rem 0.75rem 0.6rem 2.5rem',
                 borderRadius: '10px',
                 border: '1px solid #cbd5e1',
-                fontSize: '0.9rem',
+                fontSize: '0.88rem',
                 fontFamily: 'inherit',
                 outline: 'none',
               }}
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-              <Filter size={14} /> Filter:
+          {/* Filter Pills with Horizontal Scroll on Mobile */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.25rem', flexShrink: 0 }}>
+              <Filter size={13} /> Filter:
             </span>
-            <button
-              onClick={() => setSelectedSection('ALL')}
-              className={`btn ${selectedSection === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ fontSize: '0.78rem', padding: '0.4rem 0.75rem', borderRadius: '9999px' }}
-            >
-              Semua ({questions.length})
-            </button>
-            {examSections.map((sec) => (
+            <div className="scroll-pills-row" style={{ flex: 1 }}>
               <button
-                key={sec.id}
-                onClick={() => setSelectedSection(sec.id)}
-                className={`btn ${selectedSection === sec.id ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ fontSize: '0.78rem', padding: '0.4rem 0.75rem', borderRadius: '9999px' }}
+                onClick={() => setSelectedSection('ALL')}
+                className={`btn scroll-pill-btn ${selectedSection === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
               >
-                Bagian {sec.id}
+                Semua ({questions.length})
               </button>
-            ))}
+              {examSections.map((sec) => (
+                <button
+                  key={sec.id}
+                  onClick={() => setSelectedSection(sec.id)}
+                  className={`btn scroll-pill-btn ${selectedSection === sec.id ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
+                >
+                  Bagian {sec.id}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
           Menampilkan <strong>{filteredQuestions.length}</strong> soal
         </div>
       </div>
 
       {/* List of Questions */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {filteredQuestions.map((question) => {
           const isExpanded = expandedExplanations[question.id] !== false; // expanded by default in study mode
 
           return (
             <div
               key={question.id}
-              className="card shadow-sm"
+              className="card shadow-sm card-responsive-padding"
               style={{ padding: '1.5rem', borderLeft: '4px solid #4f46e5' }}
             >
               {/* Header */}
@@ -167,6 +169,8 @@ export const ReviewListView: React.FC<ReviewListViewProps> = ({
                   marginBottom: '1rem',
                   borderBottom: '1px solid #f1f5f9',
                   paddingBottom: '0.65rem',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -207,24 +211,17 @@ export const ReviewListView: React.FC<ReviewListViewProps> = ({
 
               {/* Question Text */}
               <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 600, lineHeight: 2, color: '#0f172a' }}>
+                <div className="question-text-mobile" style={{ fontSize: '1.2rem', fontWeight: 600, lineHeight: 2, color: '#0f172a' }}>
                   <FuriganaText text={question.questionText} />
                 </div>
-                <div style={{ fontSize: '0.92rem', color: '#475569', marginTop: '0.35rem', fontStyle: 'italic' }}>
+                <div style={{ fontSize: '0.88rem', color: '#475569', marginTop: '0.35rem', fontStyle: 'italic' }}>
                   Arti: {question.questionTranslation}
                 </div>
               </div>
 
               {/* Options Grid with highlighted answer */}
               {question.options && (
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: '0.65rem',
-                    marginBottom: '1rem',
-                  }}
-                >
+                <div className="review-options-grid">
                   {question.options.map((opt) => (
                     <div
                       key={opt.id}

@@ -43,7 +43,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   const isAnswered = !!userAnswer;
 
   return (
-    <div className="card shadow-lg border-slate-200" style={{ padding: '1.5rem' }}>
+    <div className="card shadow-lg border-slate-200 card-responsive-padding" style={{ padding: '1.5rem' }}>
       {/* Top Section / Progress Meta */}
       <div
         style={{
@@ -57,17 +57,17 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           gap: '0.5rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
           <span
             className="badge badge-indigo"
-            style={{ fontSize: '0.82rem', padding: '0.35rem 0.75rem' }}
+            style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
           >
             {question.sectionId === 'I' && 'Bagian I: 文法語彙'}
             {question.sectionId === 'II' && 'Bagian II: 読解'}
             {question.sectionId === 'III' && 'Bagian III: 漢字'}
             {question.sectionId === 'IV' && 'Bagian IV: 記述'}
           </span>
-          <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>
             {question.subSectionTitle}
           </span>
         </div>
@@ -76,7 +76,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <button
             onClick={onOpenDrawer}
             className="btn btn-secondary"
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
+            style={{ fontSize: '0.78rem', padding: '0.3rem 0.65rem', borderRadius: '9999px' }}
             title="Buka Daftar Nomor Soal"
           >
             Soal <strong>{question.id}</strong> / {totalQuestions}
@@ -110,11 +110,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         style={{
           background: '#ffffff',
           borderRadius: '12px',
-          padding: '1.1rem 0.5rem',
-          marginBottom: '1rem',
+          padding: '0.85rem 0.4rem',
+          marginBottom: '0.85rem',
         }}
       >
         <div
+          className="question-text-mobile"
           style={{
             fontSize: '1.35rem',
             fontWeight: 600,
@@ -127,15 +128,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '32px',
-              height: '32px',
+              width: '30px',
+              height: '30px',
               borderRadius: '8px',
               background: '#4f46e5',
               color: '#ffffff',
-              fontSize: '0.95rem',
+              fontSize: '0.9rem',
               fontWeight: 800,
-              marginRight: '0.65rem',
+              marginRight: '0.55rem',
               verticalAlign: 'middle',
+              flexShrink: 0,
             }}
           >
             {question.id}
@@ -253,7 +255,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         <div
           className="animate-fade-in"
           style={{
-            padding: '0.85rem 1rem',
+            padding: '0.75rem 0.85rem',
             borderRadius: '10px',
             background: userAnswer.isCorrect ? '#ecfdf5' : '#fef2f2',
             border: `1px solid ${userAnswer.isCorrect ? '#a7f3d0' : '#fecaca'}`,
@@ -261,26 +263,28 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             marginBottom: '1rem',
+            flexWrap: 'wrap',
+            gap: '0.65rem',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             {userAnswer.isCorrect ? (
               <>
-                <CheckCircle2 size={24} color="#10b981" />
+                <CheckCircle2 size={24} color="#10b981" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong style={{ color: '#065f46', fontSize: '1rem' }}>正解！ Jawaban Anda Benar!</strong>
-                  <span style={{ display: 'block', fontSize: '0.8rem', color: '#047857' }}>
+                  <strong style={{ color: '#065f46', fontSize: '0.95rem' }}>正解！ Jawaban Anda Benar!</strong>
+                  <span style={{ display: 'block', fontSize: '0.78rem', color: '#047857' }}>
                     Hebat! Pertahankan pemahaman konsep ini.
                   </span>
                 </div>
               </>
             ) : (
               <>
-                <XCircle size={24} color="#ef4444" />
+                <XCircle size={24} color="#ef4444" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong style={{ color: '#991b1b', fontSize: '1rem' }}>不正解！ Jawaban Anda Salah.</strong>
-                  <span style={{ display: 'block', fontSize: '0.8rem', color: '#b91c1c' }}>
-                    Jawaban yang tepat adalah: <strong>{question.correctAnswerDisplay}</strong>
+                  <strong style={{ color: '#991b1b', fontSize: '0.95rem' }}>不正解！ Jawaban Anda Salah.</strong>
+                  <span style={{ display: 'block', fontSize: '0.78rem', color: '#b91c1c' }}>
+                    Jawaban yang tepat: <strong>{question.correctAnswerDisplay}</strong>
                   </span>
                 </div>
               </>
@@ -291,10 +295,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <button
               onClick={onResetSingleQuestion}
               className="btn btn-secondary"
-              style={{ fontSize: '0.78rem', padding: '0.35rem 0.65rem' }}
+              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem' }}
               title="Coba jawab ulang soal ini"
             >
-              <RotateCcw size={14} /> Coba Lagi
+              <RotateCcw size={13} /> Coba Lagi
             </button>
           )}
         </div>
@@ -312,14 +316,15 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
       {/* Navigation Footer */}
       <div
+        className="nav-footer-mobile"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginTop: '1.75rem',
+          marginTop: '1.5rem',
           borderTop: '1px solid #f1f5f9',
-          paddingTop: '1.25rem',
-          gap: '0.75rem',
+          paddingTop: '1rem',
+          gap: '0.5rem',
         }}
       >
         <button
@@ -328,17 +333,19 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           className="btn btn-secondary"
           style={{ opacity: hasPrev ? 1 : 0.4, cursor: hasPrev ? 'pointer' : 'not-allowed' }}
         >
-          <ChevronLeft size={18} />
-          <span>Sebelumnya</span>
+          <ChevronLeft size={16} />
+          <span className="desktop-only">Sebelumnya</span>
+          <span className="mobile-only">Prev</span>
         </button>
 
         <button
           onClick={onOpenDrawer}
           className="btn btn-ghost"
-          style={{ fontSize: '0.85rem' }}
+          style={{ fontSize: '0.82rem' }}
         >
-          <HelpCircle size={16} />
-          <span>Daftar Soal</span>
+          <HelpCircle size={15} />
+          <span className="desktop-only">Daftar Soal</span>
+          <span className="mobile-only">Grid</span>
         </button>
 
         <button
@@ -347,8 +354,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           className="btn btn-primary"
           style={{ opacity: hasNext ? 1 : 0.5, cursor: hasNext ? 'pointer' : 'not-allowed' }}
         >
-          <span>Selanjutnya</span>
-          <ChevronRight size={18} />
+          <span className="desktop-only">Selanjutnya</span>
+          <span className="mobile-only">Next</span>
+          <ChevronRight size={16} />
         </button>
       </div>
     </div>
