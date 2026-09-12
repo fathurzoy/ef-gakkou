@@ -155,7 +155,7 @@ export interface CounterFillQuestionItem {
 export interface ConjugationQuestionItem {
   id: string;
   question: SegmentContent;
-  answer: SegmentContent;
+  answer: SegmentContent | SegmentContent[];
   acceptedVariants?: SegmentContent[];
   completed?: SegmentContent;
   explanationId: string;
@@ -216,6 +216,34 @@ export interface DialogueCompletionQuestionItem {
   answer: any;
   acceptedVariants?: any;
   acceptedResponses?: SegmentContent[];
+  explanationId: string;
+  solvingSteps: string[];
+  grammarPoint: string;
+}
+
+// Exam 4 Specific Items
+export interface ChoiceBankItem {
+  id: string;
+  text: string;
+}
+
+export interface GrammarChoiceQuestionItem {
+  id: string;
+  base: SegmentContent;
+  answer: SegmentContent;
+  choice: string;
+  explanationId: string;
+  solvingSteps: string[];
+  grammarPoint: string;
+}
+
+export interface PictureDialogueQuestionItem {
+  id: string;
+  visual: {
+    description: string;
+  };
+  dialogue: DialogueTurn[];
+  answer: SegmentContent;
   explanationId: string;
   solvingSteps: string[];
   grammarPoint: string;
@@ -362,6 +390,26 @@ export type DekiruSection =
       type: 'dialogue-completion';
       score?: { earned: number; max: number };
       items: DialogueCompletionQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'grammar-choice';
+      score?: { earned: number; max: number };
+      choiceBank: ChoiceBankItem[];
+      passage: SegmentContent;
+      items: GrammarChoiceQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'picture-dialogue';
+      score?: { earned: number; max: number };
+      items: PictureDialogueQuestionItem[];
     };
 
 export interface DekiruExamData {

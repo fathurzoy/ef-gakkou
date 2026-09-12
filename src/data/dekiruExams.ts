@@ -1,6 +1,7 @@
 import { dekiruExam1Data } from './dekiruExam1Data';
 import { dekiruExam2Data } from './dekiruExam2Data';
 import { dekiruExam3Data } from './dekiruExam3Data';
+import { dekiruExam4Data } from './dekiruExam4Data';
 import { DekiruExamData } from '../types/dekiru';
 
 export interface DekiruExamMeta {
@@ -45,10 +46,21 @@ export const dekiruExamsList: DekiruExamMeta[] = [
     totalSections: dekiruExam3Data.sections.length,
     data: dekiruExam3Data,
   },
+  {
+    id: 'dekiru-review-13-15',
+    title: 'Ujian 4 (Bab 13〜15)',
+    subtitle: '13〜15課 復習テスト',
+    lessonRange: [13, 15],
+    badgeText: 'Bab 13-15 • 34 Soal',
+    totalQuestions: 34,
+    totalSections: dekiruExam4Data.sections.length,
+    data: dekiruExam4Data,
+  },
 ];
 
 export const dekiruExamsMap: Record<string, DekiruExamData> = {
   'dekiru-review-1-3': dekiruExam1Data,
   'dekiru-review-4-6': dekiruExam2Data,
   'dekiru-review-7-9': dekiruExam3Data,
+  'dekiru-review-13-15': dekiruExam4Data,
 };

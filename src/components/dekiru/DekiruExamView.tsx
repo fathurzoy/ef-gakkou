@@ -135,6 +135,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         s.type === "dialogue-writing" ||
         s.type === "picture-writing" ||
         s.type === "dialogue-completion" ||
+        s.type === "picture-dialogue" ||
         s.type === "open-answer"
     );
   }, [currentExamData]);
@@ -637,33 +638,79 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           </div>
         )}
 
-        {/* 8. Conjugation / Perubahan Bentuk (Exam 2 Sec 7) */}
-        {sec.type === "conjugation" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-              ✍️ Tulis perubahan bentuk kata:
-            </label>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input
-                type="text"
-                placeholder="Contoh: 読み"
-                value={userAnswers[item.id] || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
-                }}
-                style={{
-                  maxWidth: "320px",
-                  padding: "0.55rem 0.85rem",
-                  borderRadius: "10px",
-                  border: "1.5px solid #cbd5e1",
-                  fontSize: "0.95rem",
-                  fontWeight: 600,
-                }}
-              />
+        {/* 8. Conjugation / Perubahan Bentuk (Exam 2 Sec 7, Exam 4 Sec 3) */}
+        {sec.type === "conjugation" && (() => {
+          const isMulti = Array.isArray(item.answer);
+          if (isMulti) {
+            const arrAnswers = item.answer as any[];
+            return (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis perubahan bentuk kata untuk masing-masing bagian (1, 2):
+                </label>
+                <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                  {arrAnswers.map((_, bIdx) => {
+                    const currentVal = (Array.isArray(userAnswers[item.id]) && userAnswers[item.id][bIdx]) || "";
+                    return (
+                      <div key={bIdx} style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#4f46e5" }}>
+                          ({bIdx + 1}):
+                        </span>
+                        <input
+                          type="text"
+                          placeholder="Contoh: 読み"
+                          value={currentVal}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const arr = Array.isArray(userAnswers[item.id])
+                              ? [...userAnswers[item.id]]
+                              : new Array(arrAnswers.length).fill("");
+                            arr[bIdx] = val;
+                            setUserAnswers((prev) => ({ ...prev, [item.id]: arr }));
+                          }}
+                          style={{
+                            maxWidth: "200px",
+                            padding: "0.55rem 0.85rem",
+                            borderRadius: "10px",
+                            border: "1.5px solid #cbd5e1",
+                            fontSize: "0.95rem",
+                            fontWeight: 600,
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                ✍️ Tulis perubahan bentuk kata:
+              </label>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Contoh: 読み"
+                  value={userAnswers[item.id] || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  style={{
+                    maxWidth: "320px",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: "1.5px solid #cbd5e1",
+                    fontSize: "0.95rem",
+                    fontWeight: 600,
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* 9. Picture Writing (Exam 2 Sec 8) */}
         {sec.type === "picture-writing" && (() => {
@@ -1195,6 +1242,92 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           </div>
         )}
 
+        {/* 11b. Grammar Choice (Exam 4 Sec 4) */}
+        {sec.type === "grammar-choice" && "choiceBank" in sec && (() => {
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                👉 Pilih bentuk tata bahasa yang tepat (a〜d):
+              </label>
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                {sec.choiceBank.map((ch: any) => {
+                  const isSelected = userAnswer === ch.id;
+                  const isCorrect = item.choice === ch.id;
+                  let bg = "#ffffff";
+                  let border = "#cbd5e1";
+                  let color = "#334155";
+                  if (isRevealed) {
+                    if (isCorrect) {
+                      bg = "#ecfdf5";
+                      border = "#10b981";
+                      color = "#065f46";
+                    } else if (isSelected) {
+                      bg = "#fef2f2";
+                      border = "#ef4444";
+                      color = "#991b1b";
+                    }
+                  } else if (isSelected) {
+                    bg = "#e0e7ff";
+                    border = "#6366f1";
+                    color = "#3730a3";
+                  }
+
+                  return (
+                    <button
+                      key={ch.id}
+                      type="button"
+                      onClick={() => handleSelectAnswer(item.id, ch.id)}
+                      className="btn btn-secondary"
+                      style={{
+                        padding: "0.5rem 0.95rem",
+                        borderRadius: "10px",
+                        background: bg,
+                        borderColor: border,
+                        color: color,
+                        fontWeight: 700,
+                        fontSize: "0.92rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                      }}
+                    >
+                      <span style={{ color: isSelected || (isRevealed && isCorrect) ? "inherit" : "#4f46e5" }}>
+                        {ch.id}.
+                      </span>
+                      <span>{ch.text}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 11c. Picture Dialogue (Exam 4 Sec 6) */}
+        {sec.type === "picture-dialogue" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+              ✍️ Tulis kalimat respon untuk melengkapi percakapan:
+            </label>
+            <input
+              type="text"
+              placeholder="Ketik kalimat bahasa Jepang di sini..."
+              value={userAnswers[item.id] || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+              }}
+              style={{
+                width: "100%",
+                padding: "0.55rem 0.85rem",
+                borderRadius: "10px",
+                border: "1.5px solid #cbd5e1",
+                fontSize: "0.95rem",
+              }}
+            />
+          </div>
+        )}
+
         {/* 12. True / False buttons (Exam 1 Sec 8, Exam 2 Sec 10) */}
         {sec.type === "reading-true-false" && (
           <div style={{ display: "flex", gap: "0.65rem" }}>
@@ -1300,6 +1433,19 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 Poin: {item.vocabularyPoint}
               </div>
             )}
+            {"choice" in item && item.choice && (
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  padding: "0.2rem 0.65rem",
+                  borderRadius: "9999px",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                }}
+              >
+                Pilihan: ({item.choice})
+              </div>
+            )}
             {"answer" in item && typeof item.answer === "string" && (
               <div
                 style={{
@@ -1332,6 +1478,13 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+              {/* Choice if grammar-choice */}
+              {"choice" in item && item.choice && (
+                <span className="badge badge-indigo" style={{ fontSize: "0.88rem", fontWeight: 700 }}>
+                  Pilihan: ({item.choice})
+                </span>
+              )}
+
               {/* Word Bank answer */}
               {"answer" in item && typeof item.answer === "object" && "value" in item.answer && "content" in item.answer && (
                 <span className="badge badge-emerald" style={{ fontSize: "0.88rem" }}>
@@ -1340,12 +1493,19 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 </span>
               )}
 
-              {/* Particle array answer */}
+              {/* Particle array answer or multi-blank SegmentContent[] */}
               {"answer" in item && Array.isArray(item.answer) && (
                 <div style={{ display: "inline-flex", gap: "0.35rem", flexWrap: "wrap" }}>
-                  {item.answer.map((ans: string, aIdx: number) => (
+                  {item.answer.map((ans: any, aIdx: number) => (
                     <span key={aIdx} className="badge badge-emerald" style={{ fontSize: "0.85rem" }}>
-                      Blank {aIdx + 1}: <strong>{ans}</strong>
+                      Blank {aIdx + 1}:{" "}
+                      {typeof ans === "string" ? (
+                        <strong>{ans}</strong>
+                      ) : ans && typeof ans === "object" && "segments" in ans ? (
+                        <SegmentFurigana segments={ans.segments} />
+                      ) : (
+                        <strong>{String(ans)}</strong>
+                      )}
                     </span>
                   ))}
                 </div>
@@ -1603,6 +1763,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 { accent: "#4f46e5", light: "#f5f3ff", border: "#818cf8", shadow: "rgba(79, 70, 229, 0.3)" },
                 { accent: "#0284c7", light: "#f0f9ff", border: "#38bdf8", shadow: "rgba(2, 132, 199, 0.3)" },
                 { accent: "#059669", light: "#ecfdf5", border: "#34d399", shadow: "rgba(5, 150, 105, 0.3)" },
+                { accent: "#d97706", light: "#fffbeb", border: "#fbbf24", shadow: "rgba(217, 119, 6, 0.3)" },
               ];
               const theme = cardThemes[idx % cardThemes.length];
               const accentColor = theme.accent;
@@ -1750,7 +1911,9 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       ? "Ujian 1 (Bab 1-3)"
                       : currentExamData.exam.id === 'dekiru-review-4-6'
                       ? "Ujian 2 (Bab 4-6)"
-                      : "Ujian 3 (Bab 7-9)"}
+                      : currentExamData.exam.id === 'dekiru-review-7-9'
+                      ? "Ujian 3 (Bab 7-9)"
+                      : "Ujian 4 (Bab 13-15)"}
                   </div>
                 </div>
               </div>
@@ -1802,8 +1965,9 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               {/* Switch Exam Button */}
               <button
                 onClick={() => {
-                  const otherId = selectedExamId === "dekiru-review-1-3" ? "dekiru-review-4-6" : "dekiru-review-1-3";
-                  handleSelectExam(otherId, activeTab);
+                  const currentIdx = dekiruExamsList.findIndex((e) => e.id === selectedExamId);
+                  const nextExam = dekiruExamsList[(currentIdx + 1) % dekiruExamsList.length];
+                  handleSelectExam(nextExam.id, activeTab);
                 }}
                 className="btn btn-secondary"
                 style={{
@@ -1812,11 +1976,11 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   borderRadius: "8px",
                   gap: "0.35rem",
                 }}
-                title="Pindah langsung ke Ujian lainnya"
+                title="Pindah ke paket ujian berikutnya"
               >
                 <Shuffle size={13} />
                 <span className="desktop-only">
-                  {selectedExamId === "dekiru-review-1-3" ? "Ke Ujian 2" : "Ke Ujian 1"}
+                  Ganti Ujian
                 </span>
               </button>
 
@@ -2120,8 +2284,8 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               <SegmentFurigana segments={currentQ.section.instruction.segments} />
             </div>
 
-            {/* Section Specific Reading Passage (e.g. Exam 1 Sec 8, Exam 2 Sec 10) */}
-            {currentQ.section.type === "reading-true-false" && "passage" in currentQ.section && (
+            {/* Section Specific Reading Passage (e.g. Exam 1 Sec 8, Exam 2 Sec 10, Exam 4 Sec 8, Exam 4 Sec 4) */}
+            {"passage" in currentQ.section && currentQ.section.passage && (
               <div style={{ padding: "1rem", background: "#fafaf9", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.5rem" }}>
                   <BookOpen size={16} color="#d97706" />
@@ -2141,6 +2305,35 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   }}
                 >
                   <SegmentFurigana segments={currentQ.section.passage.segments} />
+                </div>
+              </div>
+            )}
+
+            {/* Section Specific Grammar Choice Bank (Exam 4 Sec 4) */}
+            {currentQ.section.type === "grammar-choice" && "choiceBank" in currentQ.section && (
+              <div style={{ padding: "0.85rem 1rem", background: "#f8faff", borderRadius: "12px", border: "1px solid #c7d2fe" }}>
+                <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#4338ca", marginBottom: "0.4rem" }}>
+                  Daftar Pilihan Pola Kalimat (a〜d):
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.4rem" }}>
+                  {currentQ.section.choiceBank.map((ch: any) => (
+                    <div
+                      key={ch.id}
+                      style={{
+                        background: "#ffffff",
+                        padding: "0.4rem 0.65rem",
+                        borderRadius: "8px",
+                        border: "1px solid #c7d2fe",
+                        fontSize: "0.88rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                      }}
+                    >
+                      <span style={{ fontWeight: 800, color: "#4f46e5" }}>{ch.id}.</span>
+                      <span>{ch.text}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -2226,6 +2419,18 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
               {/* Visual Hint if present */}
               {"visual" in currentQ.item && renderVisualBox(currentQ.item.visual)}
+
+              {/* Base verb if present (Exam 4 Sec 4) */}
+              {"base" in currentQ.item && currentQ.item.base && (
+                <div style={{ marginBottom: "1rem" }}>
+                  <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#64748b", marginBottom: "0.3rem" }}>
+                    Bentuk Dasar Kata Kerja:
+                  </div>
+                  <div style={{ fontSize: "1.35rem", fontWeight: 700, color: "#4f46e5" }}>
+                    <SegmentFurigana segments={currentQ.item.base.segments} />
+                  </div>
+                </div>
+              )}
 
               {/* Question Text if present */}
               {"question" in currentQ.item && currentQ.item.question && (
@@ -2405,8 +2610,8 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     </div>
                   </div>
 
-                  {/* Reading Passage if present */}
-                  {sec.type === "reading-true-false" && "passage" in sec && (
+                  {/* Reading / Grammar Passage if present */}
+                  {"passage" in sec && sec.passage && (
                     <div style={{ padding: "1.25rem", background: "#fafaf9", borderBottom: "1px solid #e2e8f0" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.65rem" }}>
                         <BookOpen size={16} color="#d97706" />
@@ -2427,6 +2632,35 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         }}
                       >
                         <SegmentFurigana segments={sec.passage.segments} />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section Specific Grammar Choice Bank (Exam 4 Sec 4) */}
+                  {sec.type === "grammar-choice" && "choiceBank" in sec && (
+                    <div style={{ padding: "1rem 1.25rem", background: "#f8faff", borderBottom: "1px solid #e2e8f0" }}>
+                      <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#4338ca", marginBottom: "0.5rem" }}>
+                        Daftar Pilihan Pola Kalimat (a〜d):
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.5rem" }}>
+                        {sec.choiceBank.map((ch: any) => (
+                          <div
+                            key={ch.id}
+                            style={{
+                              background: "#ffffff",
+                              padding: "0.45rem 0.75rem",
+                              borderRadius: "8px",
+                              border: "1px solid #c7d2fe",
+                              fontSize: "0.88rem",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.5rem",
+                            }}
+                          >
+                            <span style={{ fontWeight: 800, color: "#4f46e5" }}>{ch.id}.</span>
+                            <span>{ch.text}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -2516,6 +2750,18 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
                           {/* Visual */}
                           {"visual" in item && renderVisualBox(item.visual)}
+
+                          {/* Base verb if present (Exam 4 Sec 4) */}
+                          {"base" in item && item.base && (
+                            <div style={{ marginBottom: "0.85rem" }}>
+                              <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", marginBottom: "0.25rem" }}>
+                                Bentuk Dasar Kata Kerja:
+                              </div>
+                              <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "#4f46e5" }}>
+                                <SegmentFurigana segments={item.base.segments} />
+                              </div>
+                            </div>
+                          )}
 
                           {/* Question Sentence */}
                           {"question" in item && item.question && (
