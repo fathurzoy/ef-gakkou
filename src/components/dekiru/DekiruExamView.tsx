@@ -950,36 +950,6 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               <SegmentFurigana segments={currentQ.section.instruction.segments} />
             </div>
 
-            {/* Section Specific Context Reference (WordBank, Passage, or Expressions) */}
-            {currentQ.section.type === "word-bank" && "wordBank" in currentQ.section && (
-              <div style={{ padding: "0.85rem 1rem", background: "#f8faff", borderRadius: "12px", border: "1px solid #c7d2fe" }}>
-                <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#4338ca", marginBottom: "0.4rem", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                  <BookMarked size={14} />
-                  <span>Pilihan Kata Kerja (Word Bank a〜g):</span>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "0.4rem" }}>
-                  {currentQ.section.wordBank.map((wb) => (
-                    <div
-                      key={wb.id}
-                      style={{
-                        background: "#ffffff",
-                        padding: "0.35rem 0.65rem",
-                        borderRadius: "6px",
-                        border: "1px solid #e2e8f0",
-                        fontSize: "0.85rem",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.4rem",
-                      }}
-                    >
-                      <span style={{ fontWeight: 800, color: "#4f46e5" }}>{wb.id}.</span>
-                      <SegmentFurigana segments={wb.content.segments} />
-                      <span style={{ fontSize: "0.72rem", color: "#64748b" }}>({wb.meaningId})</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {currentQ.section.type === "reading-true-false" && "passage" in currentQ.section && (
               <div style={{ padding: "1rem", background: "#fafaf9", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
