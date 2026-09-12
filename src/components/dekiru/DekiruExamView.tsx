@@ -447,7 +447,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   const isCorrect = currentVal.trim() === correctAns;
                   let borderColor = "#cbd5e1";
                   let bg = "#ffffff";
-                  if (isRevealed && currentVal) {
+                  if (isRevealed) {
                     borderColor = isCorrect ? "#10b981" : "#ef4444";
                     bg = isCorrect ? "#ecfdf5" : "#fef2f2";
                   }
@@ -469,6 +469,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                           arr[blankIdx] = val;
                           setUserAnswers((prev) => ({ ...prev, [item.id]: arr }));
                         }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                            setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                          }
+                        }}
                         style={{
                           width: "72px",
                           padding: "0.4rem 0.6rem",
@@ -485,7 +491,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 })}
               </div>
               <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
-                💡 Ketik partikel hiragana (e.g. に, で, を, へ, と, から, まで, が) atau × jika tanpa partikel.
+                💡 Ketik partikel hiragana (e.g. に, で, を, へ, と, から, まで, が) atau × jika tanpa partikel. Tekan Enter atau klik tombol Lihat Jawaban di bawah untuk mengecek.
               </div>
             </div>
           );
@@ -576,6 +582,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   const val = e.target.value;
                   setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                    setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                  }
+                }}
                 style={{
                   maxWidth: "320px",
                   padding: "0.55rem 0.85rem",
@@ -604,6 +616,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   const val = e.target.value;
                   setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                    setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                  }
+                }}
                 style={{
                   flex: 1,
                   maxWidth: "400px",
@@ -631,6 +649,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 onChange={(e) => {
                   const val = e.target.value;
                   setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                    setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                  }
                 }}
                 style={{
                   maxWidth: "320px",
@@ -675,6 +699,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                             arr[bIdx] = val;
                             setUserAnswers((prev) => ({ ...prev, [item.id]: arr }));
                           }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                              setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                            }
+                          }}
                           style={{
                             maxWidth: "200px",
                             padding: "0.55rem 0.85rem",
@@ -704,6 +734,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   onChange={(e) => {
                     const val = e.target.value;
                     setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                      setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                    }
                   }}
                   style={{
                     maxWidth: "320px",
@@ -2565,8 +2601,36 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   <span>Sebelumnya</span>
                 </button>
 
-                {currentQuestionIndex < totalQuestions - 1 ? (
+                {/* Right side: Lihat Jawaban first if not yet revealed, otherwise Selanjutnya / Selesai */}
+                {!revealedQuestions[currentQ.item.id] ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentQuestionIndex((prev) => Math.min(totalQuestions - 1, prev + 1))}
+                      className="btn btn-ghost"
+                      style={{ color: "#64748b", fontSize: "0.85rem", gap: "0.25rem", padding: "0.5rem 0.75rem" }}
+                      title="Lewati soal ini tanpa melihat kunci jawaban"
+                    >
+                      <span>Lewati</span>
+                      <ChevronRight size={14} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRevealedQuestions((prev) => ({ ...prev, [currentQ.item.id]: true }));
+                        setExpandedExplanations((prev) => ({ ...prev, [currentQ.item.id]: true }));
+                      }}
+                      className="btn btn-primary"
+                      style={{ background: "#4f46e5", borderColor: "#4f46e5", gap: "0.4rem" }}
+                    >
+                      <CheckCircle2 size={16} />
+                      <span>Lihat Jawaban</span>
+                    </button>
+                  </div>
+                ) : currentQuestionIndex < totalQuestions - 1 ? (
                   <button
+                    type="button"
                     onClick={() => setCurrentQuestionIndex((prev) => Math.min(totalQuestions - 1, prev + 1))}
                     className="btn btn-primary"
                   >
@@ -2575,6 +2639,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   </button>
                 ) : (
                   <button
+                    type="button"
                     onClick={() => setIsAiModalOpen(true)}
                     className="btn btn-primary"
                     style={{ background: "#7c3aed", borderColor: "#7c3aed", gap: "0.35rem" }}
@@ -2938,7 +3003,15 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "0.5rem" }}>
                 {allExamQuestions.map((q) => {
                   const isCurrent = q.questionNumber - 1 === currentQuestionIndex;
-                  const isAnswered = userAnswers[q.item.id] !== undefined && userAnswers[q.item.id] !== "";
+                  const uAns = userAnswers[q.item.id];
+                  const isAnswered =
+                    uAns !== undefined &&
+                    uAns !== "" &&
+                    (Array.isArray(uAns)
+                      ? uAns.some((v: any) => v && String(v).trim() !== "")
+                      : typeof uAns === "object" && uAns !== null
+                      ? Object.values(uAns).some((v: any) => v && String(v).trim() !== "")
+                      : true);
 
                   let bg = "#ffffff";
                   let border = "#cbd5e1";
