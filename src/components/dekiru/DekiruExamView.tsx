@@ -134,6 +134,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
       (s) =>
         s.type === "dialogue-writing" ||
         s.type === "picture-writing" ||
+        s.type === "dialogue-completion" ||
         s.type === "open-answer"
     );
   }, [currentExamData]);
@@ -311,6 +312,73 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     </div>
                   )}
                 </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* 1b. Multi-blank Multiple Choice (Exam 3 Sec 5 q2, q3) */}
+        {"choices" in item && !Array.isArray(item.choices) && typeof item.choices === "object" && item.choices !== null && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "0.5rem" }}>
+            {Object.entries(item.choices as Record<string, string[]>).map(([bKey, opts], bIdx) => {
+              const currentSelected = (userAnswers[item.id] && userAnswers[item.id][bIdx]) || "";
+              const correctAns = Array.isArray(item.answer) ? item.answer[bIdx] : "";
+              return (
+                <div key={bKey} style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                  <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                    👉 Pilihan Bagian ({bIdx + 1}):
+                  </span>
+                  <div style={{ display: "inline-flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                    {opts.map((ch: string) => {
+                      const isSelected = currentSelected === ch;
+                      const isCorrect = correctAns === ch;
+                      let bg = "#ffffff";
+                      let border = "#cbd5e1";
+                      let color = "#334155";
+                      if (isRevealed) {
+                        if (isCorrect) {
+                          bg = "#ecfdf5";
+                          border = "#10b981";
+                          color = "#065f46";
+                        } else if (isSelected) {
+                          bg = "#fef2f2";
+                          border = "#ef4444";
+                          color = "#991b1b";
+                        }
+                      } else if (isSelected) {
+                        bg = "#e0e7ff";
+                        border = "#6366f1";
+                        color = "#3730a3";
+                      }
+
+                      return (
+                        <button
+                          key={ch}
+                          type="button"
+                          onClick={() => {
+                            const arr = Array.isArray(userAnswers[item.id])
+                              ? [...userAnswers[item.id]]
+                              : new Array(Object.keys(item.choices).length).fill("");
+                            arr[bIdx] = ch;
+                            handleSelectAnswer(item.id, arr);
+                          }}
+                          className="btn btn-secondary"
+                          style={{
+                            padding: "0.45rem 1rem",
+                            borderRadius: "10px",
+                            background: bg,
+                            borderColor: border,
+                            color: color,
+                            fontWeight: 700,
+                            fontSize: "0.95rem",
+                          }}
+                        >
+                          {ch}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -662,6 +730,417 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           );
         })()}
 
+        {/* 9b. Picture Vocabulary (Exam 3 Sec 2) */}
+        {sec.type === "picture-vocabulary" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+              ✍️ Tulis kata sesuai gambar:
+            </label>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <input
+                type="text"
+                placeholder="Contoh: カメラ"
+                value={userAnswers[item.id] || ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                }}
+                style={{
+                  maxWidth: "320px",
+                  padding: "0.55rem 0.85rem",
+                  borderRadius: "10px",
+                  border: "1.5px solid #cbd5e1",
+                  fontSize: "0.95rem",
+                  fontWeight: 600,
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 9c. Location & Existence (Exam 3 Sec 4) */}
+        {sec.type === "location-existence" && (() => {
+          const currentObj = typeof userAnswers[item.id] === "object" && userAnswers[item.id] !== null
+            ? userAnswers[item.id]
+            : { location: "", existence: "" };
+          const correctLoc = item.answer?.location?.text || "";
+          const correctExist = item.answer?.existence || "";
+          const isLocCorrect = currentObj.location?.trim() === correctLoc;
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              {/* 1. Posisi / Lokasi */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ (1) Tulis posisi/lokasi dalam kanji/hiragana:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Contoh: 上"
+                  value={currentObj.location || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({
+                      ...prev,
+                      [item.id]: { ...currentObj, location: val },
+                    }));
+                  }}
+                  style={{
+                    maxWidth: "240px",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: "1.5px solid " + (isRevealed && currentObj.location
+                      ? isLocCorrect ? "#10b981" : "#ef4444"
+                      : "#cbd5e1"),
+                    background: isRevealed && currentObj.location
+                      ? isLocCorrect ? "#ecfdf5" : "#fef2f2"
+                      : "#ffffff",
+                    fontSize: "0.95rem",
+                    fontWeight: 600,
+                  }}
+                />
+              </div>
+
+              {/* 2. Pilihan います / あります */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  👉 (2) Pilih keberadaan (［います・あります］):
+                </label>
+                <div style={{ display: "inline-flex", gap: "0.5rem" }}>
+                  {["います", "あります"].map((opt) => {
+                    const isSelected = currentObj.existence === opt;
+                    const isCorrect = opt === correctExist;
+                    let bg = "#ffffff";
+                    let border = "#cbd5e1";
+                    let color = "#334155";
+                    if (isRevealed) {
+                      if (isCorrect) {
+                        bg = "#ecfdf5";
+                        border = "#10b981";
+                        color = "#065f46";
+                      } else if (isSelected) {
+                        bg = "#fef2f2";
+                        border = "#ef4444";
+                        color = "#991b1b";
+                      }
+                    } else if (isSelected) {
+                      bg = "#e0e7ff";
+                      border = "#6366f1";
+                      color = "#3730a3";
+                    }
+
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => {
+                          setUserAnswers((prev) => ({
+                            ...prev,
+                            [item.id]: { ...currentObj, existence: opt },
+                          }));
+                          setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                        }}
+                        className="btn btn-secondary"
+                        style={{
+                          padding: "0.45rem 1.1rem",
+                          borderRadius: "10px",
+                          background: bg,
+                          borderColor: border,
+                          color: color,
+                          fontWeight: 700,
+                          fontSize: "0.92rem",
+                        }}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 9d. Dialogue Completion (Exam 3 Sec 7) */}
+        {sec.type === "dialogue-completion" && (() => {
+          const currentAns = userAnswers[item.id] || {};
+          const isDualText = item.answer && typeof item.answer === "object" && "1" in item.answer && "2" in item.answer;
+          const hasParticleResponse = item.answer && typeof item.answer === "object" && "particle" in item.answer && "response" in item.answer;
+          const isMultiChoiceOnly = item.choices && typeof item.choices === "object" && !Array.isArray(item.choices);
+          const hasChoices = item.choices && Array.isArray(item.choices);
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {/* If dual text blanks: (1) and (2) */}
+              {isDualText && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                  <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                    ✍️ Tulis kalimat untuk melengkapi percakapan:
+                  </label>
+                  {["1", "2"].map((numKey) => {
+                    const val = typeof currentAns === "object" ? currentAns[numKey] || "" : "";
+                    return (
+                      <div key={numKey} style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+                        <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#4f46e5" }}>
+                          Bagian ({numKey}):
+                        </span>
+                        <input
+                          type="text"
+                          placeholder={numKey === "1" ? "Contoh: 食べに行きませんか" : "Contoh: 行きましょう"}
+                          value={val}
+                          onChange={(e) => {
+                            const updated = typeof currentAns === "object" ? { ...currentAns } : {};
+                            updated[numKey] = e.target.value;
+                            setUserAnswers((prev) => ({ ...prev, [item.id]: updated }));
+                          }}
+                          style={{
+                            width: "100%",
+                            padding: "0.55rem 0.85rem",
+                            borderRadius: "10px",
+                            border: "1.5px solid #cbd5e1",
+                            fontSize: "0.95rem",
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* If particle + response (e.g. q3) */}
+              {hasParticleResponse && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                  {hasChoices && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                      <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                        👉 Pilih partikel akhir (［{item.choices.join("・")}］):
+                      </span>
+                      <div style={{ display: "inline-flex", gap: "0.5rem" }}>
+                        {item.choices.map((ch: string) => {
+                          const isSelected = typeof currentAns === "object" && currentAns.particle === ch;
+                          const isCorrect = item.answer.particle === ch;
+                          let bg = "#ffffff";
+                          let border = "#cbd5e1";
+                          let color = "#334155";
+                          if (isRevealed) {
+                            if (isCorrect) {
+                              bg = "#ecfdf5";
+                              border = "#10b981";
+                              color = "#065f46";
+                            } else if (isSelected) {
+                              bg = "#fef2f2";
+                              border = "#ef4444";
+                              color = "#991b1b";
+                            }
+                          } else if (isSelected) {
+                            bg = "#e0e7ff";
+                            border = "#6366f1";
+                            color = "#3730a3";
+                          }
+
+                          return (
+                            <button
+                              key={ch}
+                              type="button"
+                              onClick={() => {
+                                const updated = typeof currentAns === "object" ? { ...currentAns } : {};
+                                updated.particle = ch;
+                                setUserAnswers((prev) => ({ ...prev, [item.id]: updated }));
+                                setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                              }}
+                              className="btn btn-secondary"
+                              style={{
+                                padding: "0.45rem 1.1rem",
+                                borderRadius: "10px",
+                                background: bg,
+                                borderColor: border,
+                                color: color,
+                                fontWeight: 700,
+                              }}
+                            >
+                              {ch}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                    <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                      ✍️ Tulis kalimat respon untuk B:
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Contoh: ぜひ行きたいです"
+                      value={typeof currentAns === "object" ? currentAns.response || "" : ""}
+                      onChange={(e) => {
+                        const updated = typeof currentAns === "object" ? { ...currentAns } : {};
+                        updated.response = e.target.value;
+                        setUserAnswers((prev) => ({ ...prev, [item.id]: updated }));
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "0.55rem 0.85rem",
+                        borderRadius: "10px",
+                        border: "1.5px solid #cbd5e1",
+                        fontSize: "0.95rem",
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* If multi-choice only (e.g. q4 with blank1 and blank2) */}
+              {isMultiChoiceOnly && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                  {Object.entries(item.choices as Record<string, string[]>).map(([bKey, opts], bIdx) => {
+                    const selectedVal = Array.isArray(currentAns) ? currentAns[bIdx] : (typeof currentAns === "object" ? currentAns[bKey] : "");
+                    const correctVal = Array.isArray(item.answer) ? item.answer[bIdx] : "";
+                    return (
+                      <div key={bKey} style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                          👉 Pilihan Bagian ({bIdx + 1}):
+                        </span>
+                        <div style={{ display: "inline-flex", gap: "0.5rem" }}>
+                          {opts.map((ch: string) => {
+                            const isSelected = selectedVal === ch;
+                            const isCorrect = correctVal === ch;
+                            let bg = "#ffffff";
+                            let border = "#cbd5e1";
+                            let color = "#334155";
+                            if (isRevealed) {
+                              if (isCorrect) {
+                                bg = "#ecfdf5";
+                                border = "#10b981";
+                                color = "#065f46";
+                              } else if (isSelected) {
+                                bg = "#fef2f2";
+                                border = "#ef4444";
+                                color = "#991b1b";
+                              }
+                            } else if (isSelected) {
+                              bg = "#e0e7ff";
+                              border = "#6366f1";
+                              color = "#3730a3";
+                            }
+
+                            return (
+                              <button
+                                key={ch}
+                                type="button"
+                                onClick={() => {
+                                  const arr = Array.isArray(currentAns)
+                                    ? [...currentAns]
+                                    : new Array(Object.keys(item.choices).length).fill("");
+                                  arr[bIdx] = ch;
+                                  handleSelectAnswer(item.id, arr);
+                                }}
+                                className="btn btn-secondary"
+                                style={{
+                                  padding: "0.45rem 1.1rem",
+                                  borderRadius: "10px",
+                                  background: bg,
+                                  borderColor: border,
+                                  color: color,
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {ch}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* If single text without dual or particle (e.g. q2) */}
+              {!isDualText && !hasParticleResponse && !isMultiChoiceOnly && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                  <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                    ✍️ Tulis kalimat untuk melengkapi percakapan:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: まだです"
+                    value={typeof currentAns === "string" ? currentAns : currentAns.text || ""}
+                    onChange={(e) => {
+                      setUserAnswers((prev) => ({ ...prev, [item.id]: e.target.value }));
+                    }}
+                    style={{
+                      maxWidth: "360px",
+                      padding: "0.55rem 0.85rem",
+                      borderRadius: "10px",
+                      border: "1.5px solid #cbd5e1",
+                      fontSize: "0.95rem",
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* If item also has choices with dual text (e.g. q5 with ［それから・じゃ］) */}
+              {isDualText && hasChoices && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", marginTop: "0.25rem" }}>
+                  <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                    👉 Pilih kata sambung (［{item.choices.join("・")}］):
+                  </span>
+                  <div style={{ display: "inline-flex", gap: "0.5rem" }}>
+                    {item.choices.map((ch: string) => {
+                      const isSelected = typeof currentAns === "object" && currentAns.choice === ch;
+                      const isCorrect = item.answer?.choice === ch;
+                      let bg = "#ffffff";
+                      let border = "#cbd5e1";
+                      let color = "#334155";
+                      if (isRevealed) {
+                        if (isCorrect) {
+                          bg = "#ecfdf5";
+                          border = "#10b981";
+                          color = "#065f46";
+                        } else if (isSelected) {
+                          bg = "#fef2f2";
+                          border = "#ef4444";
+                          color = "#991b1b";
+                        }
+                      } else if (isSelected) {
+                        bg = "#e0e7ff";
+                        border = "#6366f1";
+                        color = "#3730a3";
+                      }
+
+                      return (
+                        <button
+                          key={ch}
+                          type="button"
+                          onClick={() => {
+                            const updated = typeof currentAns === "object" ? { ...currentAns } : {};
+                            updated.choice = ch;
+                            setUserAnswers((prev) => ({ ...prev, [item.id]: updated }));
+                            setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                          }}
+                          className="btn btn-secondary"
+                          style={{
+                            padding: "0.45rem 1.1rem",
+                            borderRadius: "10px",
+                            background: bg,
+                            borderColor: border,
+                            color: color,
+                            fontWeight: 700,
+                          }}
+                        >
+                          {ch}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
         {/* 10. Dialogue Writing Text Input (Exam 1 Sec 5) */}
         {sec.type === "dialogue-writing" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
@@ -893,14 +1372,22 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 </span>
               )}
 
-              {/* Multi-part answer object (e.g. Exam 2 Sec 8 Q3) */}
-              {"answer" in item && typeof item.answer === "object" && !("segments" in item.answer) && !("value" in item.answer) && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-                  {Object.entries(item.answer).map(([k, ansObj]: any) => (
-                    <div key={k} style={{ fontSize: "0.85rem" }}>
-                      <strong>({k})</strong> <SegmentFurigana segments={ansObj.segments} />
-                    </div>
-                  ))}
+              {/* Multi-part or object answer (Exam 2 Sec 8, Exam 3 Sec 4, Sec 7) */}
+              {"answer" in item && typeof item.answer === "object" && item.answer !== null && !("segments" in item.answer) && !("value" in item.answer) && !Array.isArray(item.answer) && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                  {Object.entries(item.answer).map(([k, ansObj]: any) => {
+                    const label = k === "location" ? "Posisi / Lokasi" : k === "existence" ? "Keberadaan" : k === "particle" ? "Partikel" : k === "response" ? "Respon" : k === "choice" ? "Pilihan Kata" : `(${k})`;
+                    return (
+                      <div key={k} style={{ fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                        <strong style={{ color: "#4f46e5" }}>{label}:</strong>
+                        {typeof ansObj === "object" && ansObj !== null && "segments" in ansObj ? (
+                          <SegmentFurigana segments={ansObj.segments} />
+                        ) : (
+                          <span className="badge badge-emerald" style={{ fontSize: "0.85rem" }}>{String(ansObj)}</span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
@@ -1109,12 +1596,17 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             </div>
           </div>
 
-          {/* 2 Exam Cards Grid */}
+          {/* Exam Cards Grid */}
           <div className="mode-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.75rem" }}>
             {dekiruExamsList.map((examMeta, idx) => {
-              const isFirst = idx === 0;
-              const accentColor = isFirst ? "#4f46e5" : "#0284c7";
-              const lightBg = isFirst ? "#f5f3ff" : "#f0f9ff";
+              const cardThemes = [
+                { accent: "#4f46e5", light: "#f5f3ff", border: "#818cf8", shadow: "rgba(79, 70, 229, 0.3)" },
+                { accent: "#0284c7", light: "#f0f9ff", border: "#38bdf8", shadow: "rgba(2, 132, 199, 0.3)" },
+                { accent: "#059669", light: "#ecfdf5", border: "#34d399", shadow: "rgba(5, 150, 105, 0.3)" },
+              ];
+              const theme = cardThemes[idx % cardThemes.length];
+              const accentColor = theme.accent;
+              const lightBg = theme.light;
 
               return (
                 <div
@@ -1122,7 +1614,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   className="card card-hover"
                   style={{
                     padding: "2.25rem 1.75rem",
-                    border: isFirst ? "2px solid #818cf8" : "2px solid #38bdf8",
+                    border: `2px solid ${theme.border}`,
                     borderRadius: "22px",
                     background: "linear-gradient(180deg, #ffffff 0%, " + lightBg + " 100%)",
                     display: "flex",
@@ -1175,7 +1667,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         gap: "0.5rem",
                         background: accentColor,
                         borderColor: accentColor,
-                        boxShadow: isFirst ? "0 4px 14px rgba(79, 70, 229, 0.3)" : "0 4px 14px rgba(2, 132, 199, 0.3)",
+                        boxShadow: `0 4px 14px ${theme.shadow}`,
                       }}
                     >
                       <GraduationCap size={18} />
@@ -1254,7 +1746,11 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     {currentExamData.exam.title.replace(/『できる日本語初級』/g, "").trim()}
                   </div>
                   <div style={{ fontSize: "0.72rem", color: "#4f46e5", fontWeight: 700 }}>
-                    {currentExamData.exam.title.includes("1〜3") ? "Ujian 1 (Bab 1-3)" : "Ujian 2 (Bab 4-6)"}
+                    {currentExamData.exam.id === 'dekiru-review-1-3'
+                      ? "Ujian 1 (Bab 1-3)"
+                      : currentExamData.exam.id === 'dekiru-review-4-6'
+                      ? "Ujian 2 (Bab 4-6)"
+                      : "Ujian 3 (Bab 7-9)"}
                   </div>
                 </div>
               </div>

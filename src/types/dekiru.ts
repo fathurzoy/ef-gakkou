@@ -47,8 +47,8 @@ export interface ParticleFillQuestionItem {
 export interface MultipleChoiceQuestionItem {
   id: string;
   question: SegmentContent;
-  choices: string[];
-  answer: string;
+  choices: string[] | Record<string, string[]>;
+  answer: string | string[];
   answerRuby?: SegmentContent;
   explanationId: string;
   solvingSteps: string[];
@@ -93,7 +93,7 @@ export interface DialogueMatchingQuestionItem {
 export interface OpenAnswerQuestionItem {
   id: string;
   question: SegmentContent;
-  paperAnswer: SegmentContent;
+  paperAnswer?: SegmentContent;
   sampleAnswers: SegmentContent[];
   explanationId: string;
   solvingSteps: string[];
@@ -156,6 +156,7 @@ export interface ConjugationQuestionItem {
   id: string;
   question: SegmentContent;
   answer: SegmentContent;
+  acceptedVariants?: SegmentContent[];
   completed?: SegmentContent;
   explanationId: string;
   solvingSteps: string[];
@@ -170,6 +171,51 @@ export interface PictureWritingQuestionItem {
   dialogue: DialogueTurn[];
   answer: SegmentContent | Record<string, SegmentContent>;
   acceptedVariants?: SegmentContent[] | Record<string, SegmentContent[]>;
+  explanationId: string;
+  solvingSteps: string[];
+  grammarPoint: string;
+}
+
+// Exam 3 Specific Items
+export interface PictureVocabularyQuestionItem {
+  id: string;
+  visual: {
+    description: string;
+  };
+  question: SegmentContent;
+  answer: SegmentContent;
+  meaningId: string;
+  explanationId: string;
+  solvingSteps: string[];
+  vocabularyPoint: string;
+}
+
+export interface LocationExistenceQuestionItem {
+  id: string;
+  visual: {
+    description: string;
+  };
+  question: SegmentContent;
+  answer: {
+    location: SegmentContent;
+    existence: string;
+  };
+  completed: SegmentContent;
+  explanationId: string;
+  solvingSteps: string[];
+  grammarPoint: string;
+}
+
+export interface DialogueCompletionQuestionItem {
+  id: string;
+  visual?: {
+    description: string;
+  };
+  dialogue: DialogueTurn[];
+  choices?: string[] | Record<string, string[]>;
+  answer: any;
+  acceptedVariants?: any;
+  acceptedResponses?: SegmentContent[];
   explanationId: string;
   solvingSteps: string[];
   grammarPoint: string;
@@ -289,6 +335,33 @@ export type DekiruSection =
       type: 'picture-writing';
       score?: { earned: number; max: number };
       items: PictureWritingQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'picture-vocabulary';
+      score?: { earned: number; max: number };
+      items: PictureVocabularyQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'location-existence';
+      score?: { earned: number; max: number };
+      items: LocationExistenceQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'dialogue-completion';
+      score?: { earned: number; max: number };
+      items: DialogueCompletionQuestionItem[];
     };
 
 export interface DekiruExamData {
