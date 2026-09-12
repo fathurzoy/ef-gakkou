@@ -19,7 +19,7 @@ export interface SectionInstruction {
   segments: TextSegment[];
 }
 
-// Section 2: Word Bank Item
+// Section 2 (Exam 1): Word Bank Item
 export interface WordBankQuestionItem {
   id: string;
   question: SegmentContent;
@@ -32,17 +32,18 @@ export interface WordBankQuestionItem {
   grammarPoint: string;
 }
 
-// Section 3: Particle Fill Item
+// Particle Fill Item
 export interface ParticleFillQuestionItem {
   id: string;
   question: SegmentContent;
   answer: string[];
+  completed?: SegmentContent;
   explanationId: string;
   solvingSteps: string[];
   grammarPoint: string;
 }
 
-// Section 4: Multiple Choice Item
+// Multiple Choice Item
 export interface MultipleChoiceQuestionItem {
   id: string;
   question: SegmentContent;
@@ -54,7 +55,7 @@ export interface MultipleChoiceQuestionItem {
   grammarPoint: string;
 }
 
-// Section 5: Dialogue Writing Item
+// Dialogue Writing Item
 export interface DialogueTurn {
   speaker: string;
   content: SegmentContent;
@@ -72,7 +73,7 @@ export interface DialogueWritingQuestionItem {
   grammarPoint: string;
 }
 
-// Section 6: Dialogue Matching Choice
+// Dialogue Matching Choice
 export interface MatchingChoice {
   id: string;
   content: SegmentContent;
@@ -88,7 +89,7 @@ export interface DialogueMatchingQuestionItem {
   grammarPoint: string;
 }
 
-// Section 7: Open Answer Item
+// Open Answer Item
 export interface OpenAnswerQuestionItem {
   id: string;
   question: SegmentContent;
@@ -99,7 +100,7 @@ export interface OpenAnswerQuestionItem {
   grammarPoint: string;
 }
 
-// Section 8: Reading Comprehension True/False Item
+// Reading Comprehension True/False Item
 export interface ReadingTrueFalseItem {
   id: string;
   isExample?: boolean;
@@ -107,77 +108,187 @@ export interface ReadingTrueFalseItem {
   answer: '○' | '×';
   explanationId: string;
   solvingSteps?: string[];
+  grammarPoint?: string;
+}
+
+// Exam 2 Specific Items
+export interface TimeVocabularyQuestionItem {
+  id: string;
+  context: {
+    date?: string;
+    referenceDate?: string;
+    range?: string;
+    referenceRange?: string;
+    year?: string;
+    referenceYear?: string;
+  };
+  answer: SegmentContent;
+  meaningId: string;
+  explanationId: string;
+  solvingSteps: string[];
+  vocabularyPoint: string;
+}
+
+export interface AntonymQuestionItem {
+  id: string;
+  question: SegmentContent;
+  answer: SegmentContent;
+  targetAnswer: SegmentContent;
+  explanationId: string;
+  solvingSteps: string[];
+  vocabularyPoint: string;
+}
+
+export interface CounterFillQuestionItem {
+  id: string;
+  question: SegmentContent;
+  visual: {
+    description: string;
+  };
+  answer: SegmentContent;
+  canonical: SegmentContent;
+  explanationId: string;
+  solvingSteps: string[];
+  vocabularyPoint: string;
+}
+
+export interface ConjugationQuestionItem {
+  id: string;
+  question: SegmentContent;
+  answer: SegmentContent;
+  completed?: SegmentContent;
+  explanationId: string;
+  solvingSteps: string[];
+  grammarPoint: string;
+}
+
+export interface PictureWritingQuestionItem {
+  id: string;
+  visual: {
+    description: string;
+  };
+  dialogue: DialogueTurn[];
+  answer: SegmentContent | Record<string, SegmentContent>;
+  acceptedVariants?: SegmentContent[] | Record<string, SegmentContent[]>;
+  explanationId: string;
+  solvingSteps: string[];
+  grammarPoint: string;
 }
 
 // Section Discriminated Union
 export type DekiruSection =
   | {
-      section: 2;
+      section: number;
       title: string;
       titleReading: string;
       instruction: SectionInstruction;
       type: 'word-bank';
-      score: { earned: number; max: number };
+      score?: { earned: number; max: number };
       wordBank: WordBankItem[];
       items: WordBankQuestionItem[];
     }
   | {
-      section: 3;
+      section: number;
       title: string;
       titleReading: string;
       instruction: SectionInstruction;
       type: 'particle-fill';
-      score: { earned: number; max: number };
+      score?: { earned: number; max: number };
       items: ParticleFillQuestionItem[];
     }
   | {
-      section: 4;
+      section: number;
       title: string;
       titleReading: string;
       instruction: SectionInstruction;
       type: 'multiple-choice';
-      score: { earned: number; max: number };
+      score?: { earned: number; max: number };
       items: MultipleChoiceQuestionItem[];
     }
   | {
-      section: 5;
+      section: number;
       title: string;
       titleReading: string;
       instruction: SectionInstruction;
       type: 'dialogue-writing';
-      score: { earned: number; max: number };
+      score?: { earned: number; max: number };
       items: DialogueWritingQuestionItem[];
     }
   | {
-      section: 6;
+      section: number;
       title: string;
       titleReading: string;
       instruction: SectionInstruction;
       type: 'dialogue-matching';
-      score: { earned: number; max: number };
+      score?: { earned: number; max: number };
       choices: MatchingChoice[];
       items: DialogueMatchingQuestionItem[];
     }
   | {
-      section: 7;
+      section: number;
       title: string;
       titleReading: string;
       instruction: SectionInstruction;
       type: 'open-answer';
-      score: { earned: number; max: number };
-      grading: string;
+      score?: { earned: number; max: number };
+      grading?: string;
       items: OpenAnswerQuestionItem[];
     }
   | {
-      section: 8;
+      section: number;
       title: string;
       titleReading: string;
       instruction: SectionInstruction;
       type: 'reading-true-false';
-      score: { earned: number; max: number };
+      score?: { earned: number; max: number };
       passage: SegmentContent;
-      readingStrategy: string[];
+      readingStrategy?: string[];
       items: ReadingTrueFalseItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'time-vocabulary';
+      score?: { earned: number; max: number };
+      items: TimeVocabularyQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'antonym';
+      score?: { earned: number; max: number };
+      items: AntonymQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'counter-fill';
+      score?: { earned: number; max: number };
+      items: CounterFillQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'conjugation';
+      score?: { earned: number; max: number };
+      items: ConjugationQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading: string;
+      instruction: SectionInstruction;
+      type: 'picture-writing';
+      score?: { earned: number; max: number };
+      items: PictureWritingQuestionItem[];
     };
 
 export interface DekiruExamData {
@@ -188,8 +299,8 @@ export interface DekiruExamData {
     title: string;
     lessonRange: [number, number];
     source: string;
-    originalScore: { earned: number; max: number };
-    datasetScore: { earned: number; max: number };
+    originalScore?: { earned: number; max: number };
+    datasetScore?: { earned: number; max: number };
     audioSkipped: boolean;
     skippedSections: Array<{ section: number; reason: string }>;
   };

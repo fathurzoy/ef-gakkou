@@ -240,7 +240,7 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
                   display: 'inline-block',
                 }}
               />
-              Tersedia (Bab 1-3)
+              Tersedia: Ujian 1 & 2 (65 Soal)
             </div>
 
             <div>
