@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Question, UserAnswerRecord } from '../types/quiz';
 import { FuriganaText } from './FuriganaText';
 import { ReadingPassage } from './ReadingPassage';
@@ -12,6 +12,9 @@ import {
   Globe,
   Check,
   RotateCcw,
+  Send,
+  Edit3,
+  Sparkles,
 } from 'lucide-react';
 
 interface QuestionCardProps {
@@ -19,6 +22,8 @@ interface QuestionCardProps {
   userAnswer?: UserAnswerRecord;
   totalQuestions: number;
   onSelectOption: (optionId: number) => void;
+  onSubmitTextAnswer?: (answer: string) => void;
+  onSubmitFillAnswer?: (answer: { A: string; B: string }) => void;
   onNextQuestion: () => void;
   onPrevQuestion: () => void;
   hasPrev: boolean;
@@ -32,6 +37,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   userAnswer,
   totalQuestions,
   onSelectOption,
+  onSubmitTextAnswer,
+  onSubmitFillAnswer,
   onNextQuestion,
   onPrevQuestion,
   hasPrev,
@@ -40,7 +47,45 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   onResetSingleQuestion,
 }) => {
   const [showQuestionTranslation, setShowQuestionTranslation] = useState(false);
+  const [textInput, setTextInput] = useState('');
+  const [fillAInput, setFillAInput] = useState('');
+  const [fillBInput, setFillBInput] = useState('');
+
   const isAnswered = !!userAnswer;
+  const isWrittenQuestion = question.type && question.type !== 'choice';
+
+  // Sync inputs when question changes or when user answers
+  useEffect(() => {
+    if (userAnswer?.textAnswer !== undefined) {
+      setTextInput(userAnswer.textAnswer);
+    } else {
+      setTextInput('');
+    }
+
+    if (userAnswer?.fillAnswer) {
+      setFillAInput(userAnswer.fillAnswer.A || '');
+      setFillBInput(userAnswer.fillAnswer.B || '');
+    } else {
+      setFillAInput('');
+      setFillBInput('');
+    }
+  }, [question.id, userAnswer]);
+
+  const handleSingleTextSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (isAnswered || !textInput.trim()) return;
+    if (onSubmitTextAnswer) {
+      onSubmitTextAnswer(textInput.trim());
+    }
+  };
+
+  const handleFillSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (isAnswered || (!fillAInput.trim() && !fillBInput.trim())) return;
+    if (onSubmitFillAnswer) {
+      onSubmitFillAnswer({ A: fillAInput.trim(), B: fillBInput.trim() });
+    }
+  };
 
   return (
     <div className="card shadow-lg border-slate-200 card-responsive-padding" style={{ padding: '1.5rem' }}>
@@ -101,7 +146,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             borderLeft: '3px solid #6366f1',
           }}
         >
-          {question.prompt}
+          <FuriganaText text={question.prompt} />
         </div>
       )}
 
@@ -121,6 +166,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             fontWeight: 600,
             lineHeight: 2.2,
             color: '#0f172a',
+            whiteSpace: 'pre-line',
           }}
         >
           <span
@@ -177,6 +223,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 padding: '0.5rem 0.85rem',
                 borderRadius: '8px',
                 lineHeight: 1.5,
+                whiteSpace: 'pre-line',
               }}
             >
               {question.questionTranslation}
@@ -185,105 +232,312 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
       </div>
 
-      {/* Options List (Migii Style instant feedback) */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        {question.options?.map((option) => {
-          const isSelected = userAnswer?.selectedOption === option.id;
-          const isCorrect = option.isCorrect;
+      {/* QUESTION INTERACTION AREA */}
 
-          let btnClass = 'option-btn';
-          let icon = null;
+      {/* Type 1: Multiple Choice Questions (No. 1 to 42) */}
+      {(!question.type || question.type === 'choice') && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+          {question.options?.map((option) => {
+            const isSelected = userAnswer?.selectedOption === option.id;
+            const isCorrect = option.isCorrect;
 
-          if (isAnswered) {
-            if (isSelected) {
-              if (isCorrect) {
-                btnClass += ' selected-correct';
-                icon = <CheckCircle2 size={22} color="#10b981" />;
-              } else {
-                btnClass += ' selected-incorrect';
-                icon = <XCircle size={22} color="#ef4444" />;
+            let btnClass = 'option-btn';
+            let icon = null;
+
+            if (isAnswered) {
+              if (isSelected) {
+                if (isCorrect) {
+                  btnClass += ' selected-correct';
+                  icon = <CheckCircle2 size={22} color="#10b981" />;
+                } else {
+                  btnClass += ' selected-incorrect';
+                  icon = <XCircle size={22} color="#ef4444" />;
+                }
+              } else if (isCorrect) {
+                btnClass += ' revealed-correct';
+                icon = <Check size={20} color="#10b981" />;
               }
-            } else if (isCorrect) {
-              // Highlight the true answer if user made a wrong choice
-              btnClass += ' revealed-correct';
-              icon = <Check size={20} color="#10b981" />;
             }
-          }
 
-          return (
-            <button
-              key={option.id}
-              className={btnClass}
-              onClick={() => onSelectOption(option.id)}
-              disabled={isAnswered}
-              style={{
-                cursor: isAnswered ? 'default' : 'pointer',
-              }}
-            >
-              <span className="option-num">{option.id}</span>
-              <div style={{ flex: 1, textAlign: 'left' }}>
-                <span
-                  style={{
-                    fontSize: '1.15rem',
-                    fontWeight: isSelected || (isAnswered && isCorrect) ? 700 : 500,
-                    color: isSelected && !isCorrect ? '#991b1b' : isCorrect && isAnswered ? '#065f46' : '#1e293b',
-                  }}
-                >
-                  <FuriganaText text={option.text} />
-                </span>
-                {isAnswered && (
+            return (
+              <button
+                key={option.id}
+                className={btnClass}
+                onClick={() => onSelectOption(option.id)}
+                disabled={isAnswered}
+                style={{
+                  cursor: isAnswered ? 'default' : 'pointer',
+                }}
+              >
+                <span className="option-num">{option.id}</span>
+                <div style={{ flex: 1, textAlign: 'left' }}>
                   <span
                     style={{
-                      display: 'block',
-                      fontSize: '0.82rem',
-                      color: isSelected && !isCorrect ? '#b91c1c' : isCorrect ? '#047857' : '#64748b',
-                      marginTop: '0.2rem',
+                      fontSize: '1.15rem',
+                      fontWeight: isSelected || (isAnswered && isCorrect) ? 700 : 500,
+                      color: isSelected && !isCorrect ? '#991b1b' : isCorrect && isAnswered ? '#065f46' : '#1e293b',
                     }}
                   >
-                    {option.translation}
+                    <FuriganaText text={option.text} />
                   </span>
-                )}
-              </div>
-              {icon && <div style={{ marginLeft: 'auto', alignSelf: 'center' }}>{icon}</div>}
-            </button>
-          );
-        })}
-      </div>
+                  {isAnswered && (
+                    <span
+                      style={{
+                        display: 'block',
+                        fontSize: '0.82rem',
+                        color: isSelected && !isCorrect ? '#b91c1c' : isCorrect ? '#047857' : '#64748b',
+                        marginTop: '0.2rem',
+                      }}
+                    >
+                      {option.translation}
+                    </span>
+                  )}
+                </div>
+                {icon && <div style={{ marginLeft: 'auto', alignSelf: 'center' }}>{icon}</div>}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-      {/* Answer status alert (Migii Style) */}
+      {/* Type 2: Single Written Text Input (No. 43 to 52 - Cara Baca Kanji) */}
+      {question.type === 'input' && (
+        <form onSubmit={handleSingleTextSubmit} className="written-input-container">
+          <label className="written-input-label">
+            <Edit3 size={17} color="#4f46e5" />
+            <span>Ketik Cara Baca Kanji (Hiragana / Kanji / Romaji):</span>
+          </label>
+
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              disabled={isAnswered}
+              placeholder="Contoh: でんしゃ atau densha atau 電車"
+              className="written-input-field"
+              autoComplete="off"
+              autoCapitalize="none"
+              style={{
+                flex: '1 1 220px',
+                borderColor: isAnswered
+                  ? userAnswer?.isCorrect
+                    ? '#10b981'
+                    : '#ef4444'
+                  : undefined,
+              }}
+            />
+
+            {!isAnswered && (
+              <button
+                type="submit"
+                disabled={!textInput.trim()}
+                className="btn btn-primary"
+                style={{
+                  padding: '0.75rem 1.25rem',
+                  fontSize: '0.95rem',
+                  opacity: textInput.trim() ? 1 : 0.5,
+                  cursor: textInput.trim() ? 'pointer' : 'not-allowed',
+                }}
+              >
+                <Send size={16} /> Periksa
+              </button>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.65rem', fontSize: '0.8rem', color: '#64748b' }}>
+            <Sparkles size={14} color="#6366f1" />
+            <span>Bebas dijawab dengan Hiragana, Kanji, atau Romaji (huruf alfabet biasa). Tekan Enter untuk mengirim.</span>
+          </div>
+        </form>
+      )}
+
+      {/* Type 3: Fill-in-the-Blank Dual Input (No. 53 to 55 - Bagian A & B) */}
+      {question.type === 'fill-blank' && (
+        <form onSubmit={handleFillSubmit} className="written-input-container">
+          <div className="fill-dual-grid">
+            <div>
+              <label className="written-input-label">
+                <span style={{ background: '#4f46e5', color: '#ffffff', width: '20px', height: '20px', borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800 }}>A</span>
+                <span>Isian Bagian (A):</span>
+              </label>
+              <input
+                type="text"
+                value={fillAInput}
+                onChange={(e) => setFillAInput(e.target.value)}
+                disabled={isAnswered}
+                placeholder="Contoh: 中 / naka / 映画"
+                className="written-input-field"
+                autoComplete="off"
+                autoCapitalize="none"
+              />
+            </div>
+
+            <div>
+              <label className="written-input-label">
+                <span style={{ background: '#4f46e5', color: '#ffffff', width: '20px', height: '20px', borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800 }}>B</span>
+                <span>Isian Bagian (B):</span>
+              </label>
+              <input
+                type="text"
+                value={fillBInput}
+                onChange={(e) => setFillBInput(e.target.value)}
+                disabled={isAnswered}
+                placeholder="Contoh: さいふ / saifu / 見に"
+                className="written-input-field"
+                autoComplete="off"
+                autoCapitalize="none"
+              />
+            </div>
+          </div>
+
+          {!isAnswered && (
+            <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="submit"
+                disabled={!fillAInput.trim() && !fillBInput.trim()}
+                className="btn btn-primary"
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '0.95rem',
+                  opacity: fillAInput.trim() || fillBInput.trim() ? 1 : 0.5,
+                }}
+              >
+                <Send size={16} /> Periksa Jawaban (A) & (B)
+              </button>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.65rem', fontSize: '0.8rem', color: '#64748b' }}>
+            <Sparkles size={14} color="#6366f1" />
+            <span>Tuliskan kata yang pas untuk melengkapi (A) dan (B). Boleh menggunakan Hiragana, Kanji, atau Romaji.</span>
+          </div>
+        </form>
+      )}
+
+      {/* Type 4: Sentence Arrange Written Input (No. 56 to 60 - Susun 3 Kata Kunci) */}
+      {question.type === 'sentence-arrange' && (
+        <form onSubmit={handleSingleTextSubmit} className="written-input-container">
+          {question.sentenceContext?.items && (
+            <div style={{ marginBottom: '0.85rem' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155', marginBottom: '0.45rem' }}>
+                Urutan kata kunci yang harus digunakan:
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                {question.sentenceContext.items.map((item, idx) => (
+                  <React.Fragment key={idx}>
+                    <span className="keyword-badge">{item}</span>
+                    {idx < (question.sentenceContext?.items?.length ?? 0) - 1 && (
+                      <span style={{ color: '#94a3b8', fontWeight: 700 }}>→</span>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <label className="written-input-label">
+            <Edit3 size={17} color="#4f46e5" />
+            <span>Tuliskan Kalimat Lengkap Respon:</span>
+          </label>
+
+          <textarea
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            disabled={isAnswered}
+            placeholder="Tuliskan respon kalimat lengkap di sini... Boleh menggunakan Hiragana, Kanji, atau Romaji (huruf biasa)"
+            className="written-textarea"
+            autoComplete="off"
+            autoCapitalize="none"
+            style={{
+              borderColor: isAnswered
+                ? userAnswer?.isCorrect
+                  ? '#10b981'
+                  : '#ef4444'
+                : undefined,
+            }}
+          />
+
+          {!isAnswered && (
+            <div style={{ marginTop: '0.85rem', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="submit"
+                disabled={!textInput.trim()}
+                className="btn btn-primary"
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '0.95rem',
+                  opacity: textInput.trim() ? 1 : 0.5,
+                }}
+              >
+                <Send size={16} /> Periksa Kalimat
+              </button>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.65rem', fontSize: '0.8rem', color: '#64748b' }}>
+            <Sparkles size={14} color="#6366f1" />
+            <span>Bebas menulis dengan Hiragana, Kanji, atau Romaji (contoh: kono fuku yori ano fuku no hou ga ii to omoimasu). Tanda baca dan spasi bersifat fleksibel!</span>
+          </div>
+        </form>
+      )}
+
+      {/* Answer status alert (Migii Style instant feedback) */}
       {isAnswered && (
         <div
           className="animate-fade-in"
           style={{
-            padding: '0.75rem 0.85rem',
-            borderRadius: '10px',
+            padding: '0.85rem 1rem',
+            borderRadius: '12px',
             background: userAnswer.isCorrect ? '#ecfdf5' : '#fef2f2',
-            border: `1px solid ${userAnswer.isCorrect ? '#a7f3d0' : '#fecaca'}`,
+            border: `1.5px solid ${userAnswer.isCorrect ? '#a7f3d0' : '#fecaca'}`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: '1rem',
+            marginBottom: '1.25rem',
             flexWrap: 'wrap',
-            gap: '0.65rem',
+            gap: '0.75rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
             {userAnswer.isCorrect ? (
               <>
-                <CheckCircle2 size={24} color="#10b981" style={{ flexShrink: 0 }} />
+                <CheckCircle2 size={24} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <div>
-                  <strong style={{ color: '#065f46', fontSize: '0.95rem' }}>正解！ Jawaban Anda Benar!</strong>
-                  <span style={{ display: 'block', fontSize: '0.78rem', color: '#047857' }}>
-                    Hebat! Pertahankan pemahaman konsep ini.
+                  <strong style={{ color: '#065f46', fontSize: '1rem', display: 'block' }}>
+                    正解！ Jawaban Anda Benar!
+                  </strong>
+                  {isWrittenQuestion && (
+                    <span style={{ display: 'block', fontSize: '0.85rem', color: '#047857', marginTop: '0.2rem' }}>
+                      {userAnswer.fillAnswer ? (
+                        <>Jawaban Anda: (A) <strong>{userAnswer.fillAnswer.A}</strong>, (B) <strong>{userAnswer.fillAnswer.B}</strong></>
+                      ) : (
+                        <>Jawaban Anda: <strong>{userAnswer.textAnswer}</strong></>
+                      )}
+                    </span>
+                  )}
+                  <span style={{ display: 'block', fontSize: '0.8rem', color: '#059669', marginTop: '0.2rem' }}>
+                    Kunci Resmi: <strong>{question.correctAnswerDisplay}</strong>
                   </span>
                 </div>
               </>
             ) : (
               <>
-                <XCircle size={24} color="#ef4444" style={{ flexShrink: 0 }} />
+                <XCircle size={24} color="#ef4444" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <div>
-                  <strong style={{ color: '#991b1b', fontSize: '0.95rem' }}>不正解！ Jawaban Anda Salah.</strong>
-                  <span style={{ display: 'block', fontSize: '0.78rem', color: '#b91c1c' }}>
+                  <strong style={{ color: '#991b1b', fontSize: '1rem', display: 'block' }}>
+                    不正解！ Jawaban Anda Salah.
+                  </strong>
+                  {isWrittenQuestion && (
+                    <span style={{ display: 'block', fontSize: '0.85rem', color: '#991b1b', marginTop: '0.2rem' }}>
+                      {userAnswer.fillAnswer ? (
+                        <>Jawaban Anda: (A) "{userAnswer.fillAnswer.A}", (B) "{userAnswer.fillAnswer.B}"</>
+                      ) : (
+                        <>Jawaban Anda: "{userAnswer.textAnswer}"</>
+                      )}
+                    </span>
+                  )}
+                  <span style={{ display: 'block', fontSize: '0.82rem', color: '#b91c1c', marginTop: '0.2rem' }}>
                     Jawaban yang tepat: <strong>{question.correctAnswerDisplay}</strong>
                   </span>
                 </div>
@@ -295,10 +549,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <button
               onClick={onResetSingleQuestion}
               className="btn btn-secondary"
-              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem' }}
+              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '8px' }}
               title="Coba jawab ulang soal ini"
             >
-              <RotateCcw size={13} /> Coba Lagi
+              <RotateCcw size={14} /> Coba Lagi
             </button>
           )}
         </div>

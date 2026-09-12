@@ -12,6 +12,7 @@ import {
   getStoredQuestionSource,
   saveQuestionSource,
 } from './utils/storage';
+import { checkSingleAnswer, checkFillBlankAnswer } from './utils/answerChecker';
 import { Header } from './components/Header';
 import { ModeSelection } from './components/ModeSelection';
 import { QuestionCard } from './components/QuestionCard';
@@ -84,6 +85,51 @@ export const App: React.FC = () => {
     const record: UserAnswerRecord = {
       questionId: currentQuestionId,
       selectedOption: optionId,
+      isCorrect,
+      answeredAt: new Date().toISOString(),
+    };
+
+    saveUserAnswer(record);
+    setUserAnswers((prev) => ({
+      ...prev,
+      [currentQuestionId]: record,
+    }));
+  };
+
+  // Written single text answer submission (Q43-52 and Q56-60)
+  const handleSubmitTextAnswer = (answer: string) => {
+    const currentQ = getQuestionById(currentQuestionId);
+    if (!currentQ) return;
+
+    const accepted = currentQ.acceptedAnswers || [String(currentQ.correctAnswer)];
+    const isCorrect = checkSingleAnswer(answer, accepted);
+
+    const record: UserAnswerRecord = {
+      questionId: currentQuestionId,
+      textAnswer: answer,
+      isCorrect,
+      answeredAt: new Date().toISOString(),
+    };
+
+    saveUserAnswer(record);
+    setUserAnswers((prev) => ({
+      ...prev,
+      [currentQuestionId]: record,
+    }));
+  };
+
+  // Fill in the blanks dual submission (Q53-55)
+  const handleSubmitFillAnswer = (answer: { A: string; B: string }) => {
+    const currentQ = getQuestionById(currentQuestionId);
+    if (!currentQ) return;
+
+    const acceptedA = currentQ.acceptedAnswersA || [];
+    const acceptedB = currentQ.acceptedAnswersB || [];
+    const isCorrect = checkFillBlankAnswer(answer, acceptedA, acceptedB);
+
+    const record: UserAnswerRecord = {
+      questionId: currentQuestionId,
+      fillAnswer: answer,
       isCorrect,
       answeredAt: new Date().toISOString(),
     };
@@ -193,6 +239,8 @@ export const App: React.FC = () => {
               userAnswer={userAnswers[currentQuestion.id]}
               totalQuestions={allQuestions.length}
               onSelectOption={handleSelectOption}
+              onSubmitTextAnswer={handleSubmitTextAnswer}
+              onSubmitFillAnswer={handleSubmitFillAnswer}
               onNextQuestion={handleNextQuestion}
               onPrevQuestion={handlePrevQuestion}
               hasPrev={currentQuestionId > 1}

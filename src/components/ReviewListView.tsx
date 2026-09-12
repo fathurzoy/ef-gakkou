@@ -10,6 +10,7 @@ import {
   Filter,
   CheckCircle2,
   PlayCircle,
+  Sparkles,
 } from 'lucide-react';
 
 interface ReviewListViewProps {
@@ -219,56 +220,101 @@ export const ReviewListView: React.FC<ReviewListViewProps> = ({
                 </div>
               </div>
 
-              {/* Options Grid with highlighted answer */}
-              {question.options && (
-                <div className="review-options-grid">
-                  {question.options.map((opt) => (
-                    <div
-                      key={opt.id}
-                      style={{
-                        padding: '0.75rem 0.95rem',
-                        borderRadius: '10px',
-                        border: `2px solid ${opt.isCorrect ? '#10b981' : '#e2e8f0'}`,
-                        background: opt.isCorrect ? '#ecfdf5' : '#ffffff',
-                        color: opt.isCorrect ? '#065f46' : '#1e293b',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '0.5rem',
-                      }}
-                    >
-                      <span
+              {/* Written Answer Display or Options Grid */}
+              {question.type && question.type !== 'choice' ? (
+                <div
+                  style={{
+                    padding: '0.85rem 1.1rem',
+                    borderRadius: '12px',
+                    border: '1.5px solid #a7f3d0',
+                    background: '#ecfdf5',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                    <CheckCircle2 size={18} color="#10b981" />
+                    <strong style={{ color: '#065f46', fontSize: '0.92rem' }}>
+                      Kunci Jawaban Resmi:
+                    </strong>
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      color: '#065f46',
+                      lineHeight: 1.6,
+                      marginBottom: '0.4rem',
+                      fontFamily: 'var(--font-jp)',
+                    }}
+                  >
+                    <FuriganaText text={question.correctAnswerDisplay} />
+                  </div>
+                  {question.sentenceContext?.items && (
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', margin: '0.5rem 0' }}>
+                      <span style={{ fontSize: '0.78rem', color: '#047857', fontWeight: 600 }}>Kata kunci wajib:</span>
+                      {question.sentenceContext.items.map((it, i) => (
+                        <span key={i} className="keyword-badge" style={{ fontSize: '0.82rem', padding: '0.2rem 0.55rem' }}>
+                          {it}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div style={{ fontSize: '0.8rem', color: '#047857', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Sparkles size={13} color="#059669" />
+                    <span>Di mode ujian, jawaban diterima dalam Hiragana, Kanji, maupun Romaji.</span>
+                  </div>
+                </div>
+              ) : (
+                question.options && (
+                  <div className="review-options-grid">
+                    {question.options.map((opt) => (
+                      <div
+                        key={opt.id}
                         style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '50%',
-                          background: opt.isCorrect ? '#10b981' : '#f1f5f9',
-                          color: opt.isCorrect ? '#ffffff' : '#64748b',
+                          padding: '0.75rem 0.95rem',
+                          borderRadius: '10px',
+                          border: `2px solid ${opt.isCorrect ? '#10b981' : '#e2e8f0'}`,
+                          background: opt.isCorrect ? '#ecfdf5' : '#ffffff',
+                          color: opt.isCorrect ? '#065f46' : '#1e293b',
                           display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '0.8rem',
-                          fontWeight: 700,
-                          flexShrink: 0,
+                          alignItems: 'flex-start',
+                          gap: '0.5rem',
                         }}
                       >
-                        {opt.id}
-                      </span>
-                      <div>
-                        <div style={{ fontSize: '1.05rem', fontWeight: opt.isCorrect ? 700 : 500 }}>
-                          <FuriganaText text={opt.text} />
+                        <span
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            background: opt.isCorrect ? '#10b981' : '#f1f5f9',
+                            color: opt.isCorrect ? '#ffffff' : '#64748b',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.8rem',
+                            fontWeight: 700,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {opt.id}
+                        </span>
+                        <div>
+                          <div style={{ fontSize: '1.05rem', fontWeight: opt.isCorrect ? 700 : 500 }}>
+                            <FuriganaText text={opt.text} />
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: opt.isCorrect ? '#047857' : '#64748b' }}>
+                            {opt.translation}
+                          </div>
                         </div>
-                        <div style={{ fontSize: '0.8rem', color: opt.isCorrect ? '#047857' : '#64748b' }}>
-                          {opt.translation}
-                        </div>
+                        {opt.isCorrect && (
+                          <div style={{ marginLeft: 'auto' }}>
+                            <CheckCircle2 size={18} color="#10b981" />
+                          </div>
+                        )}
                       </div>
-                      {opt.isCorrect && (
-                        <div style={{ marginLeft: 'auto' }}>
-                          <CheckCircle2 size={18} color="#10b981" />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )
               )}
 
               {/* Toggle Explanation Button */}

@@ -41,6 +41,9 @@ export interface Question {
   options?: QuestionOption[];
   correctAnswer: number | string | { A: string; B: string };
   correctAnswerDisplay: string;
+  acceptedAnswers?: string[];
+  acceptedAnswersA?: string[];
+  acceptedAnswersB?: string[];
   explanation: Explanation;
   // For Part IV (B) sentence arrangement:
   sentenceContext?: {

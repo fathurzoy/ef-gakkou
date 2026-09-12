@@ -11,7 +11,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 
-interface HeaderProps {
+export interface HeaderProps {
   mode: AppMode;
   onSwitchMode: (mode: AppMode) => void;
   totalAnswered: number;
