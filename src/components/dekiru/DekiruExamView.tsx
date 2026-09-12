@@ -1014,69 +1014,88 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         {/* Navbar Header */}
         <header className="app-header">
           <div className="header-inner" style={{ alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <button
-                onClick={onBackToSourceSelect}
-                className="btn btn-ghost"
-                style={{ padding: "0.4rem 0.65rem", borderRadius: "10px", gap: "0.35rem" }}
-                title="Kembali ke Pilihan Sumber Soal"
+            <button
+              onClick={onBackToSourceSelect}
+              className="btn btn-ghost"
+              style={{ padding: "0.4rem 0.75rem", borderRadius: "10px", gap: "0.4rem" }}
+              title="Kembali ke Pilihan Sumber Soal"
+            >
+              <ArrowLeft size={16} />
+              <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Sumber Soal</span>
+            </button>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+              <div
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "1.15rem",
+                  boxShadow: "0 2px 8px rgba(79, 70, 229, 0.3)",
+                  flexShrink: 0,
+                }}
               >
-                <ArrowLeft size={16} />
-                <span style={{ fontSize: "0.85rem" }}>Sumber Soal</span>
-              </button>
-              <div style={{ height: "20px", width: "1px", background: "#cbd5e1" }} />
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <span style={{ fontSize: "1.2rem" }}>📚</span>
-                <span style={{ fontWeight: 800, color: "#1e1b4b", fontSize: "1.05rem" }}>
-                  Dekiru Nihongo 初級
-                </span>
+                ⛩️
+              </div>
+              <div>
+                <div style={{ fontSize: "0.98rem", fontWeight: 800, color: "#0f172a", lineHeight: 1.2 }}>
+                  Gakkou 日本語
+                </div>
+                <div style={{ fontSize: "0.72rem", color: "#64748b", fontWeight: 600 }}>
+                  Portal Latihan & Ujian Bahasa Jepang
+                </div>
               </div>
             </div>
 
-            <div style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600 }}>
-              Simulasi Ujian Bahasa Jepang
-            </div>
+            <div style={{ width: "90px" }} />
           </div>
         </header>
 
         {/* Selection Main Content */}
-        <main className="main-content" style={{ maxWidth: "960px", margin: "0 auto", padding: "2.5rem 1rem 3.5rem 1rem", width: "100%" }}>
-          {/* Hero Banner */}
+        <main className="main-content" style={{ maxWidth: "960px", margin: "0 auto", padding: "2rem 1rem 3rem 1rem", width: "100%" }}>
+          {/* Hero Section */}
           <div
-            className="card"
+            className="hero-card"
             style={{
               textAlign: "center",
-              padding: "2.25rem 1.5rem",
+              padding: "2.5rem 1.5rem",
               background: "radial-gradient(ellipse at top, #eef2ff 0%, #f8fafc 70%)",
               borderRadius: "24px",
               border: "1px solid #e2e8f0",
-              marginBottom: "2rem",
+              marginBottom: "2.5rem",
             }}
           >
             <div
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "0.45rem",
+                gap: "0.5rem",
                 background: "#ffffff",
-                padding: "0.4rem 1rem",
+                padding: "0.5rem 1.25rem",
                 borderRadius: "9999px",
                 border: "1px solid #e0e7ff",
                 boxShadow: "0 2px 8px rgba(79, 70, 229, 0.08)",
-                marginBottom: "1rem",
               }}
             >
-              <Sparkles size={16} color="#4f46e5" />
-              <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#4f46e5" }}>
-                Pilihan Paket Ujian
-              </span>
+              <Sparkles size={18} color="#4f46e5" />
+              <h1
+                className="hero-title"
+                style={{
+                  fontSize: "1.35rem",
+                  fontWeight: 800,
+                  color: "#3730a3",
+                  margin: 0,
+                  lineHeight: 1.25,
+                }}
+              >
+                Pilih Paket Ujian Dekiru Nihongo
+              </h1>
             </div>
-            <h1 style={{ fontSize: "1.65rem", fontWeight: 800, color: "#1e1b4b", margin: "0 0 0.65rem 0" }}>
-              Pilih Paket Ujian Dekiru Nihongo
-            </h1>
-            <p style={{ margin: 0, fontSize: "0.95rem", color: "#64748b", maxWidth: "600px", marginInline: "auto", lineHeight: 1.6 }}>
-              Pilih paket ujian yang ingin Anda kerjakan. Disediakan simulasi interaktif <strong>1 soal per layar</strong> dengan verifikasi evaluasi AI serta mode belajar lengkap.
-            </p>
           </div>
 
           {/* 2 Exam Cards Grid */}
@@ -1091,8 +1110,8 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   key={examMeta.id}
                   className="card card-hover"
                   style={{
-                    padding: "2rem 1.75rem",
-                    border: `2px solid ${isFirst ? "#818cf8" : "#38bdf8"}`,
+                    padding: "2.25rem 1.75rem",
+                    border: isFirst ? "2px solid #818cf8" : "2px solid #38bdf8",
                     borderRadius: "22px",
                     background: "linear-gradient(180deg, #ffffff 0%, " + lightBg + " 100%)",
                     display: "flex",
@@ -1109,7 +1128,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         style={{
                           background: accentColor,
                           color: "#ffffff",
-                          fontSize: "0.78rem",
+                          fontSize: "0.8rem",
                           fontWeight: 800,
                           padding: "0.35rem 0.75rem",
                           borderRadius: "9999px",
@@ -1117,51 +1136,19 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       >
                         {examMeta.title}
                       </span>
-                      <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>
-                        {examMeta.badgeText}
+                      <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 700 }}>
+                        {examMeta.totalQuestions} Soal
                       </span>
                     </div>
 
                     {/* Japanese Title */}
-                    <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.5rem", lineHeight: 1.3 }}>
+                    <h2 style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", marginBottom: "2rem", lineHeight: 1.35 }}>
                       {examMeta.subtitle}
                     </h2>
-                    <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "1.25rem", lineHeight: 1.5 }}>
-                      Cakupan materi Bab {examMeta.lessonRange[0]} sampai Bab {examMeta.lessonRange[1]} buku Dekiru Nihongo Shokyu.
-                    </p>
-
-                    {/* Section Summary list */}
-                    <div
-                      style={{
-                        background: "#ffffff",
-                        padding: "1rem",
-                        borderRadius: "14px",
-                        border: "1px solid #e2e8f0",
-                        marginBottom: "1.5rem",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "0.4rem",
-                      }}
-                    >
-                      <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.25rem" }}>
-                        Cakupan Seksi ({examMeta.totalSections} Seksi):
-                      </div>
-                      {examMeta.data.sections.slice(0, 4).map((s) => (
-                        <div key={s.section} style={{ fontSize: "0.82rem", color: "#334155", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                          <span style={{ color: accentColor, fontWeight: 700 }}>•</span>
-                          <span>Bagian {s.section}: {s.title}</span>
-                        </div>
-                      ))}
-                      {examMeta.data.sections.length > 4 && (
-                        <div style={{ fontSize: "0.78rem", color: "#64748b", fontStyle: "italic", marginTop: "0.2rem" }}>
-                          + {examMeta.data.sections.length - 4} seksi lainnya (termasuk Jawaban Bebas & Membaca ○×)
-                        </div>
-                      )}
-                    </div>
                   </div>
 
                   {/* Actions */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     <button
                       onClick={() => handleSelectExam(examMeta.id, "exam")}
                       className="btn btn-primary"
@@ -1170,17 +1157,18 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         padding: "0.85rem 1.25rem",
                         borderRadius: "12px",
                         fontSize: "0.95rem",
+                        fontWeight: 700,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         gap: "0.5rem",
                         background: accentColor,
                         borderColor: accentColor,
-                        boxShadow: `0 4px 14px ${isFirst ? "rgba(79, 70, 229, 0.3)" : "rgba(2, 132, 199, 0.3)"}`,
+                        boxShadow: isFirst ? "0 4px 14px rgba(79, 70, 229, 0.3)" : "0 4px 14px rgba(2, 132, 199, 0.3)",
                       }}
                     >
                       <GraduationCap size={18} />
-                      <span>Mulai Mode Ujian (1 Soal)</span>
+                      <span>Mulai Mode Ujian</span>
                       <ArrowRight size={16} />
                     </button>
 
@@ -1189,9 +1177,10 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       className="btn btn-secondary"
                       style={{
                         width: "100%",
-                        padding: "0.65rem 1.25rem",
+                        padding: "0.75rem 1.25rem",
                         borderRadius: "12px",
-                        fontSize: "0.85rem",
+                        fontSize: "0.88rem",
+                        fontWeight: 600,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -1199,7 +1188,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       }}
                     >
                       <BookOpen size={16} />
-                      <span>Mode Belajar (Review & Kunci)</span>
+                      <span>Mode Belajar</span>
                     </button>
                   </div>
                 </div>
