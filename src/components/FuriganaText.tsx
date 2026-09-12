@@ -32,9 +32,9 @@ export const FuriganaText: React.FC<FuriganaTextProps> = ({ text, className = ''
           const inner = part.slice(1, -1);
           const [kanji, furigana] = inner.split('|');
           return (
-            <ruby key={index} className="inline-block px-[1px] text-inherit">
+            <ruby key={index} style={{ margin: '0 1px' }} className="text-inherit">
               {kanji}
-              <rt className="text-[0.62em] text-indigo-600 dark:text-indigo-400 select-none font-normal">
+              <rt className="text-[0.58em] text-indigo-600 dark:text-indigo-400 select-none font-normal">
                 {furigana}
               </rt>
             </ruby>

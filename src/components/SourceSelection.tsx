@@ -3,9 +3,7 @@ import { QuestionSource } from '../types/quiz';
 import {
   GraduationCap,
   ArrowRight,
-  Lock,
   Sparkles,
-  Clock,
   BookMarked,
 } from 'lucide-react';
 
@@ -199,23 +197,23 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
             </button>
           </div>
 
-          {/* Card 2: Ujian Dekiru Nihongo Per 3 Bab (Coming Soon / Disabled) */}
+          {/* Card 2: Ujian Dekiru Nihongo Per 3 Bab (Now Available!) */}
           <div
-            className="card"
+            className="card card-hover"
             style={{
               padding: '2.25rem 1.75rem',
-              border: '2px dashed #cbd5e1',
+              border: '2px solid #0ea5e9',
               borderRadius: '22px',
-              background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
+              background: 'linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              boxShadow: '0 10px 25px -5px rgba(14, 165, 233, 0.12)',
               position: 'relative',
               overflow: 'hidden',
-              opacity: 0.9,
             }}
           >
-            {/* Coming Soon Badge */}
+            {/* Available Badge */}
             <div
               style={{
                 position: 'absolute',
@@ -224,17 +222,25 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                background: '#fffbeb',
-                color: '#b45309',
-                border: '1px solid #fde68a',
+                background: '#ecfdf5',
+                color: '#065f46',
+                border: '1px solid #a7f3d0',
                 fontSize: '0.75rem',
                 fontWeight: 800,
                 padding: '0.3rem 0.75rem',
                 borderRadius: '9999px',
               }}
             >
-              <Clock size={13} color="#d97706" />
-              Segera Hadir
+              <span
+                style={{
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '50%',
+                  background: '#10b981',
+                  display: 'inline-block',
+                }}
+              />
+              Tersedia (Bab 1-3)
             </div>
 
             <div>
@@ -244,13 +250,13 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
                   width: '56px',
                   height: '56px',
                   borderRadius: '16px',
-                  background: '#94a3b8',
+                  background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
                   color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginBottom: '1.35rem',
-                  boxShadow: '0 6px 14px rgba(148, 163, 184, 0.25)',
+                  boxShadow: '0 8px 18px rgba(14, 165, 233, 0.28)',
                 }}
               >
                 <BookMarked size={30} />
@@ -261,43 +267,44 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
                 style={{
                   fontSize: '0.78rem',
                   fontWeight: 700,
-                  color: '#64748b',
+                  color: '#0284c7',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   marginBottom: '0.35rem',
                 }}
               >
-                できる日本語 ・ Evaluasi Berkala
+                できる日本語 ・ 復習テスト
               </div>
 
               {/* Title */}
-              <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#334155', marginBottom: '1.75rem', lineHeight: 1.3 }}>
+              <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.75rem', lineHeight: 1.3 }}>
                 Ujian Dekiru Nihongo (Per 3 Bab)
               </h2>
             </div>
 
-            {/* Disabled Action Button */}
+            {/* Action Button */}
             <button
-              disabled
+              onClick={() => onSelectSource('dekiru')}
+              className="btn"
               style={{
                 width: '100%',
                 padding: '0.9rem 1.25rem',
-                fontSize: '0.95rem',
+                fontSize: '1rem',
                 fontWeight: 700,
                 borderRadius: '14px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                background: '#e2e8f0',
-                color: '#64748b',
-                border: '1px solid #cbd5e1',
-                cursor: 'not-allowed',
-                userSelect: 'none',
+                background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                color: '#ffffff',
+                boxShadow: '0 4px 14px rgba(14, 165, 233, 0.3)',
+                border: 'none',
+                cursor: 'pointer',
               }}
             >
-              <Lock size={16} />
-              <span>Segera Hadir (Coming Soon)</span>
+              <span>Mulai Belajar / Ujian Dekiru</span>
+              <ArrowRight size={18} />
             </button>
           </div>
         </div>

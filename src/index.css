@@ -70,22 +70,17 @@ body {
 ruby {
   ruby-align: center;
   ruby-position: over;
-  display: inline-flex;
-  flex-direction: column-reverse;
-  vertical-align: bottom;
-  line-height: 1.25;
   margin: 0 1px;
 }
 
 rt {
   font-family: var(--font-jp);
-  font-size: 0.6em;
+  font-size: 0.58em;
   line-height: 1;
   text-align: center;
   color: #4f46e5;
   font-weight: 500;
   user-select: none;
-  transform: translateY(-1px);
 }
 
 /* App Layout */

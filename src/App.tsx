@@ -20,6 +20,7 @@ import { ReviewListView } from './components/ReviewListView';
 import { ScoreSummaryModal } from './components/ScoreSummaryModal';
 import { TipsModal } from './components/TipsModal';
 import { SourceSelection } from './components/SourceSelection';
+import { DekiruExamView } from './components/dekiru/DekiruExamView';
 
 export const App: React.FC = () => {
   // Source State: null means on main source selection screen
@@ -146,6 +147,11 @@ export const App: React.FC = () => {
   // If no source is selected yet, show the 2 choices landing page
   if (!questionSource) {
     return <SourceSelection onSelectSource={handleSelectSource} />;
+  }
+
+  // If Dekiru Nihongo is selected, show Dekiru Exam View
+  if (questionSource === 'dekiru') {
+    return <DekiruExamView onBackToSourceSelect={handleBackToSourceSelect} />;
   }
 
   return (
