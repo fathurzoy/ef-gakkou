@@ -794,20 +794,47 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             <span>Pembahasan & Kunci Jawaban</span>
           </div>
 
-          {/* Single string answer badge if exists */}
-          {"answer" in item && typeof item.answer === "string" && (
-            <div
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                padding: "0.2rem 0.65rem",
-                borderRadius: "9999px",
-                fontSize: "0.82rem",
-                fontWeight: 600,
-              }}
-            >
-              Kunci: {item.answer}
-            </div>
-          )}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
+            {"grammarPoint" in item && item.grammarPoint && (
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  padding: "0.2rem 0.65rem",
+                  borderRadius: "9999px",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                }}
+              >
+                Pola: {item.grammarPoint}
+              </div>
+            )}
+            {"vocabularyPoint" in item && item.vocabularyPoint && (
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  padding: "0.2rem 0.65rem",
+                  borderRadius: "9999px",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                }}
+              >
+                Poin: {item.vocabularyPoint}
+              </div>
+            )}
+            {"answer" in item && typeof item.answer === "string" && (
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  padding: "0.2rem 0.65rem",
+                  borderRadius: "9999px",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                }}
+              >
+                Kunci: {item.answer}
+              </div>
+            )}
+          </div>
         </div>
 
         <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
@@ -1695,19 +1722,6 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   >
                     {currentQ.questionNumber}
                   </span>
-                  <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#475569" }}>
-                    Nomor Soal {currentQ.questionNumber}
-                  </span>
-                  {"grammarPoint" in currentQ.item && currentQ.item.grammarPoint && (
-                    <span className="badge badge-indigo" style={{ fontSize: "0.75rem" }}>
-                      {currentQ.item.grammarPoint}
-                    </span>
-                  )}
-                  {"vocabularyPoint" in currentQ.item && currentQ.item.vocabularyPoint && (
-                    <span className="badge badge-indigo" style={{ fontSize: "0.75rem" }}>
-                      {currentQ.item.vocabularyPoint}
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -1998,16 +2012,6 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                               >
                                 {itemIdx + 1}
                               </span>
-                              {"grammarPoint" in item && item.grammarPoint && (
-                                <span className="badge badge-indigo" style={{ fontSize: "0.75rem" }}>
-                                  {item.grammarPoint}
-                                </span>
-                              )}
-                              {"vocabularyPoint" in item && item.vocabularyPoint && (
-                                <span className="badge badge-indigo" style={{ fontSize: "0.75rem" }}>
-                                  {item.vocabularyPoint}
-                                </span>
-                              )}
                             </div>
                           </div>
 
