@@ -921,9 +921,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 gap: "0.5rem",
                 border: "1px solid #e2e8f0",
                 background: "#ffffff",
+                overflow: "visible",
+                position: "relative",
+                zIndex: 35,
               }}
             >
-              <div style={{ position: "relative" }}>
+              <div style={{ position: "relative", zIndex: 36 }}>
                 <button
                   type="button"
                   onClick={() => setIsSectionMenuOpen(!isSectionMenuOpen)}
@@ -963,7 +966,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        zIndex: 40,
+                        zIndex: 998,
                       }}
                     />
                     <div
@@ -971,7 +974,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         position: "absolute",
                         top: "calc(100% + 6px)",
                         left: 0,
-                        zIndex: 50,
+                        zIndex: 999,
                         background: "#ffffff",
                         border: "1px solid #e2e8f0",
                         borderRadius: "12px",
