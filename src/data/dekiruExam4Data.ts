@@ -4,380 +4,434 @@ export const dekiruExam4Data: DekiruExamData = {
   "schemaVersion": "2.0.0",
   "book": "できる日本語 初級",
   "exam": {
-    "id": "dekiru-review-13-15",
-    "title": "13〜15課 復習テスト",
+    "id": "dekiru-review-10-12",
+    "title": "10〜12課 模擬復習テスト",
     "lessonRange": [
-      13,
-      15
+      10,
+      12
     ],
-    "source": "actual-test-photo",
-    "audioSkipped": true,
-    "skippedSections": [
-      {
-        "section": 1,
-        "reason": "CD/audio asli tidak tersedia, jadi bagian listening tidak dimasukkan."
-      }
-    ]
+    "source": "generated-practice-from-user-materials",
+    "audioSkipped": true
   },
   "furigana": {
     "format": "segment-based",
-    "description": "Frontend menampilkan furigana hanya pada segment yang memiliki field reading.",
-    "htmlExample": "<ruby>約束<rt>やくそく</rt></ruby>の<ruby>時間<rt>じかん</rt></ruby>"
+    "description": "Frontend menampilkan furigana hanya pada segment yang memiliki field reading."
   },
   "sections": [
     {
-      "section": 2,
-      "title": "ひらがなを1つ書く",
-      "titleReading": "ひらがなをひとつかく",
-      "instruction": {
-        "text": "（　）にひらがなを1つ書いてください。",
-        "segments": [
-          {
-            "text": "（　）にひらがなを1つ"
-          },
-          {
-            "text": "書",
-            "reading": "か"
-          },
-          {
-            "text": "いてください。"
-          }
-        ]
-      },
-      "type": "particle-fill",
+      "section": 1,
+      "title": "ことば",
+      "type": "multiple-choice",
       "items": [
         {
-          "id": "13-15-s2-q1",
+          "id": "10-12-s1-q1",
           "question": {
-            "text": "約束の時間（　）間に合いません。",
+            "text": "橋を（　）。",
             "segments": [
               {
-                "text": "約束",
-                "reading": "やくそく"
+                "text": "橋",
+                "reading": "はし"
+              },
+              {
+                "text": "を（　）。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "渡ります",
+              "segments": [
+                {
+                  "text": "渡",
+                  "reading": "わた"
+                },
+                {
+                  "text": "ります"
+                }
+              ]
+            },
+            {
+              "text": "曲がります",
+              "segments": [
+                {
+                  "text": "曲",
+                  "reading": "ま"
+                },
+                {
+                  "text": "がります"
+                }
+              ]
+            },
+            {
+              "text": "座ります",
+              "segments": [
+                {
+                  "text": "座",
+                  "reading": "すわ"
+                },
+                {
+                  "text": "ります"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "渡ります",
+            "segments": [
+              {
+                "text": "渡",
+                "reading": "わた"
+              },
+              {
+                "text": "ります"
+              }
+            ]
+          },
+          "explanationId": "橋を渡ります = menyeberangi jembatan.",
+          "solvingSteps": [
+            "Lihat benda sebelum を: 橋.",
+            "Cari verba yang cocok untuk jembatan.",
+            "Pilih 渡ります."
+          ],
+          "grammarPoint": "Nを渡ります"
+        },
+        {
+          "id": "10-12-s1-q2",
+          "question": {
+            "text": "風邪を（　）。",
+            "segments": [
+              {
+                "text": "風邪",
+                "reading": "かぜ"
+              },
+              {
+                "text": "を（　）。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "ひきます",
+              "segments": [
+                {
+                  "text": "ひきます"
+                }
+              ]
+            },
+            {
+              "text": "吸います",
+              "segments": [
+                {
+                  "text": "吸",
+                  "reading": "す"
+                },
+                {
+                  "text": "います"
+                }
+              ]
+            },
+            {
+              "text": "押します",
+              "segments": [
+                {
+                  "text": "押",
+                  "reading": "お"
+                },
+                {
+                  "text": "します"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "ひきます",
+            "segments": [
+              {
+                "text": "ひきます"
+              }
+            ]
+          },
+          "explanationId": "風邪をひきます = terkena flu.",
+          "solvingSteps": [
+            "Ini kolokasi tetap.",
+            "風邪 berpasangan dengan ひきます."
+          ],
+          "grammarPoint": "風邪をひきます"
+        },
+        {
+          "id": "10-12-s1-q3",
+          "question": {
+            "text": "薬を（　）。",
+            "segments": [
+              {
+                "text": "薬",
+                "reading": "くすり"
+              },
+              {
+                "text": "を（　）。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "飲みます",
+              "segments": [
+                {
+                  "text": "飲",
+                  "reading": "の"
+                },
+                {
+                  "text": "みます"
+                }
+              ]
+            },
+            {
+              "text": "食べます",
+              "segments": [
+                {
+                  "text": "食",
+                  "reading": "た"
+                },
+                {
+                  "text": "べます"
+                }
+              ]
+            },
+            {
+              "text": "見ます",
+              "segments": [
+                {
+                  "text": "見",
+                  "reading": "み"
+                },
+                {
+                  "text": "ます"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "飲みます",
+            "segments": [
+              {
+                "text": "飲",
+                "reading": "の"
+              },
+              {
+                "text": "みます"
+              }
+            ]
+          },
+          "explanationId": "Dalam bahasa Jepang, minum obat = 薬を飲みます."
+        },
+        {
+          "id": "10-12-s1-q4",
+          "question": {
+            "text": "毎朝（　）をします。",
+            "segments": [
+              {
+                "text": "毎朝",
+                "reading": "まいあさ"
+              },
+              {
+                "text": "（　）をします。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "散歩",
+              "segments": [
+                {
+                  "text": "散歩",
+                  "reading": "さんぽ"
+                }
+              ]
+            },
+            {
+              "text": "熱",
+              "segments": [
+                {
+                  "text": "熱",
+                  "reading": "ねつ"
+                }
+              ]
+            },
+            {
+              "text": "食欲",
+              "segments": [
+                {
+                  "text": "食欲",
+                  "reading": "しょくよく"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "散歩",
+            "segments": [
+              {
+                "text": "散歩",
+                "reading": "さんぽ"
+              }
+            ]
+          },
+          "explanationId": "散歩をします = berjalan-jalan."
+        },
+        {
+          "id": "10-12-s1-q5",
+          "question": {
+            "text": "駅の前で友達を（　）。",
+            "segments": [
+              {
+                "text": "駅",
+                "reading": "えき"
               },
               {
                 "text": "の"
               },
               {
-                "text": "時間",
-                "reading": "じかん"
+                "text": "前",
+                "reading": "まえ"
+              },
+              {
+                "text": "で"
+              },
+              {
+                "text": "友達",
+                "reading": "ともだち"
+              },
+              {
+                "text": "を（　）。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "待ちます",
+              "segments": [
+                {
+                  "text": "待",
+                  "reading": "ま"
+                },
+                {
+                  "text": "ちます"
+                }
+              ]
+            },
+            {
+              "text": "降ります",
+              "segments": [
+                {
+                  "text": "降",
+                  "reading": "お"
+                },
+                {
+                  "text": "ります"
+                }
+              ]
+            },
+            {
+              "text": "借ります",
+              "segments": [
+                {
+                  "text": "借",
+                  "reading": "か"
+                },
+                {
+                  "text": "ります"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "待ちます",
+            "segments": [
+              {
+                "text": "待",
+                "reading": "ま"
+              },
+              {
+                "text": "ちます"
+              }
+            ]
+          },
+          "explanationId": "友達を待ちます = menunggu teman."
+        }
+      ]
+    },
+    {
+      "section": 2,
+      "title": "助詞",
+      "type": "particle-fill",
+      "items": [
+        {
+          "id": "10-12-s2-q1",
+          "question": {
+            "text": "駅（　）電車（　）乗ります。",
+            "segments": [
+              {
+                "text": "駅",
+                "reading": "えき"
               },
               {
                 "text": "（　）"
               },
               {
-                "text": "間",
-                "reading": "ま"
+                "text": "電車",
+                "reading": "でんしゃ"
               },
               {
-                "text": "に"
+                "text": "（　）"
               },
               {
-                "text": "合",
-                "reading": "あ"
+                "text": "乗",
+                "reading": "の"
               },
               {
-                "text": "いません。"
+                "text": "ります。"
               }
             ]
           },
           "answer": [
+            "で",
             "に"
           ],
           "completed": {
-            "text": "約束の時間に間に合いません。",
-            "segments": [
-              {
-                "text": "約束",
-                "reading": "やくそく"
-              },
-              {
-                "text": "の"
-              },
-              {
-                "text": "時間",
-                "reading": "じかん"
-              },
-              {
-                "text": "に"
-              },
-              {
-                "text": "間",
-                "reading": "ま"
-              },
-              {
-                "text": "に"
-              },
-              {
-                "text": "合",
-                "reading": "あ"
-              },
-              {
-                "text": "いません。"
-              }
-            ]
-          },
-          "explanationId": "間に合います memakai に untuk batas waktu/target: 約束の時間に間に合います = sempat/tepat pada waktu janji.",
-          "solvingSteps": [
-            "Cari verba 間に合います.",
-            "Ingat pola Nに間に合います.",
-            "Jawab に."
-          ],
-          "grammarPoint": "Nに間に合います"
-        },
-        {
-          "id": "13-15-s2-q2",
-          "question": {
-            "text": "A：北海道へ行ったことがありますか。\nB：いいえ、1回（　）ありません。",
-            "segments": [
-              {
-                "text": "A："
-              },
-              {
-                "text": "北海道",
-                "reading": "ほっかいどう"
-              },
-              {
-                "text": "へ"
-              },
-              {
-                "text": "行",
-                "reading": "い"
-              },
-              {
-                "text": "ったことがありますか。\n"
-              },
-              {
-                "text": "B：いいえ、"
-              },
-              {
-                "text": "1回",
-                "reading": "いっかい"
-              },
-              {
-                "text": "（　）ありません。"
-              }
-            ]
-          },
-          "answer": [
-            "も"
-          ],
-          "completed": {
-            "text": "いいえ、1回もありません。",
-            "segments": [
-              {
-                "text": "いいえ、"
-              },
-              {
-                "text": "1回",
-                "reading": "いっかい"
-              },
-              {
-                "text": "もありません。"
-              }
-            ]
-          },
-          "explanationId": "数量 + も + negatif dapat berarti 'bahkan satu kali pun tidak'. 1回もありません = belum pernah satu kali pun.",
-          "solvingSteps": [
-            "Jawaban negatif ありません.",
-            "Ada jumlah minimum 1回.",
-            "Pola penekanan negatif → 1回もありません."
-          ],
-          "grammarPoint": "数量 + も + 否定"
-        },
-        {
-          "id": "13-15-s2-q3",
-          "question": {
-            "text": "駅の前に新しいスーパー（　）できたそうです。",
+            "text": "駅で電車に乗ります。",
             "segments": [
               {
                 "text": "駅",
                 "reading": "えき"
               },
               {
-                "text": "の"
+                "text": "で"
               },
               {
-                "text": "前",
-                "reading": "まえ"
-              },
-              {
-                "text": "に"
-              },
-              {
-                "text": "新",
-                "reading": "あたら"
-              },
-              {
-                "text": "しいスーパー（　）できたそうです。"
-              }
-            ]
-          },
-          "answer": [
-            "が"
-          ],
-          "completed": {
-            "text": "駅の前に新しいスーパーができたそうです。",
-            "segments": [
-              {
-                "text": "駅",
-                "reading": "えき"
-              },
-              {
-                "text": "の"
-              },
-              {
-                "text": "前",
-                "reading": "まえ"
+                "text": "電車",
+                "reading": "でんしゃ"
               },
               {
                 "text": "に"
               },
               {
-                "text": "新",
-                "reading": "あたら"
+                "text": "乗",
+                "reading": "の"
               },
               {
-                "text": "しいスーパーができたそうです。"
+                "text": "ります。"
               }
             ]
           },
-          "explanationId": "できる dalam arti 'terbentuk/dibuka' memakai subjek が: スーパーができました.",
+          "explanationId": "駅で = di stasiun, 電車に乗ります = naik kereta.",
           "solvingSteps": [
-            "Cari verba できる.",
-            "Benda/tempat yang baru muncul menjadi subjek.",
-            "Gunakan が."
+            "Tempat aktivitas → で.",
+            "Kendaraan dengan 乗ります → に."
           ],
-          "grammarPoint": "Nができます"
+          "grammarPoint": "場所で / 乗り物に乗ります"
         },
         {
-          "id": "13-15-s2-q4",
-          "question": {
-            "text": "A：これは「さくら」（　）（　）（　）歌です。\nB：いい歌ですね。初めて聞きました。",
-            "segments": [
-              {
-                "text": "A：これは「さくら」（　）（　）（　）"
-              },
-              {
-                "text": "歌",
-                "reading": "うた"
-              },
-              {
-                "text": "です。\n"
-              },
-              {
-                "text": "B：いい"
-              },
-              {
-                "text": "歌",
-                "reading": "うた"
-              },
-              {
-                "text": "ですね。"
-              },
-              {
-                "text": "初",
-                "reading": "はじ"
-              },
-              {
-                "text": "めて"
-              },
-              {
-                "text": "聞",
-                "reading": "き"
-              },
-              {
-                "text": "きました。"
-              }
-            ]
-          },
-          "answer": [
-            "と",
-            "い",
-            "う"
-          ],
-          "completed": {
-            "text": "これは「さくら」という歌です。",
-            "segments": [
-              {
-                "text": "これは「さくら」という"
-              },
-              {
-                "text": "歌",
-                "reading": "うた"
-              },
-              {
-                "text": "です。"
-              }
-            ]
-          },
-          "explanationId": "Nama/judul sebuah benda diperkenalkan dengan pola 「〜」というN: 「さくら」という歌.",
-          "solvingSteps": [
-            "Ada judul 「さくら」 dan nomina 歌.",
-            "Pola penamaan = 〜というN.",
-            "Isi tiga blank dengan と・い・う."
-          ],
-          "grammarPoint": "「〜」というN"
-        },
-        {
-          "id": "13-15-s2-q5",
-          "question": {
-            "text": "これはアンナさん（　）作った料理です。",
-            "segments": [
-              {
-                "text": "これはアンナさん（　）"
-              },
-              {
-                "text": "作",
-                "reading": "つく"
-              },
-              {
-                "text": "った"
-              },
-              {
-                "text": "料理",
-                "reading": "りょうり"
-              },
-              {
-                "text": "です。"
-              }
-            ]
-          },
-          "answer": [
-            "が"
-          ],
-          "completed": {
-            "text": "これはアンナさんが作った料理です。",
-            "segments": [
-              {
-                "text": "これはアンナさんが"
-              },
-              {
-                "text": "作",
-                "reading": "つく"
-              },
-              {
-                "text": "った"
-              },
-              {
-                "text": "料理",
-                "reading": "りょうり"
-              },
-              {
-                "text": "です。"
-              }
-            ]
-          },
-          "explanationId": "Dalam klausa relatif, pelaku tindakan dapat ditandai が: アンナさんが作った料理 = masakan yang dibuat Anna.",
-          "solvingSteps": [
-            "作った menerangkan 料理.",
-            "Pelaku yang membuat = アンナさん.",
-            "Gunakan が."
-          ],
-          "grammarPoint": "普通形 + N / 主語が"
-        },
-        {
-          "id": "13-15-s2-q6",
+          "id": "10-12-s2-q2",
           "question": {
             "text": "風邪（　）学校を休みました。",
             "segments": [
@@ -433,32 +487,110 @@ export const dekiruExam4Data: DekiruExamData = {
               }
             ]
           },
-          "explanationId": "で dapat menunjukkan sebab/alasan berupa nomina: 風邪で学校を休みました = absen sekolah karena flu.",
-          "solvingSteps": [
-            "風邪 adalah penyebab.",
-            "Untuk sebab berupa nomina gunakan で.",
-            "Jawab で."
-          ],
+          "explanationId": "で dapat menunjukkan alasan/sebab berupa nomina.",
           "grammarPoint": "Nで（理由）"
         },
         {
-          "id": "13-15-s2-q7",
+          "id": "10-12-s2-q3",
           "question": {
-            "text": "今度、さくらホテル（　）泊まります。",
+            "text": "食事（　）30分前（　）薬を飲んでください。",
             "segments": [
               {
-                "text": "今度",
-                "reading": "こんど"
+                "text": "食事",
+                "reading": "しょくじ"
               },
               {
-                "text": "、さくらホテル（　）"
+                "text": "（　）"
               },
               {
-                "text": "泊",
-                "reading": "と"
+                "text": "30分",
+                "reading": "さんじゅっぷん"
               },
               {
-                "text": "まります。"
+                "text": "前",
+                "reading": "まえ"
+              },
+              {
+                "text": "（　）"
+              },
+              {
+                "text": "薬",
+                "reading": "くすり"
+              },
+              {
+                "text": "を"
+              },
+              {
+                "text": "飲",
+                "reading": "の"
+              },
+              {
+                "text": "んでください。"
+              }
+            ]
+          },
+          "answer": [
+            "の",
+            "に"
+          ],
+          "completed": {
+            "text": "食事の30分前に薬を飲んでください。",
+            "segments": [
+              {
+                "text": "食事",
+                "reading": "しょくじ"
+              },
+              {
+                "text": "の"
+              },
+              {
+                "text": "30分",
+                "reading": "さんじゅっぷん"
+              },
+              {
+                "text": "前",
+                "reading": "まえ"
+              },
+              {
+                "text": "に"
+              },
+              {
+                "text": "薬",
+                "reading": "くすり"
+              },
+              {
+                "text": "を"
+              },
+              {
+                "text": "飲",
+                "reading": "の"
+              },
+              {
+                "text": "んでください。"
+              }
+            ]
+          },
+          "explanationId": "Nomina + の + 前に: 食事の30分前に.",
+          "grammarPoint": "Nの前に"
+        },
+        {
+          "id": "10-12-s2-q4",
+          "question": {
+            "text": "体（　）よくないですから、たばこを吸わないほうがいいです。",
+            "segments": [
+              {
+                "text": "体",
+                "reading": "からだ"
+              },
+              {
+                "text": "（　）よくないですから、たばこを"
+              },
+              {
+                "text": "吸",
+                "reading": "す"
+              },
+              {
+                "text": "わないほうがいいです。"
               }
             ]
           },
@@ -466,530 +598,671 @@ export const dekiruExam4Data: DekiruExamData = {
             "に"
           ],
           "completed": {
-            "text": "今度、さくらホテルに泊まります。",
+            "text": "体によくないですから、たばこを吸わないほうがいいです。",
             "segments": [
               {
-                "text": "今度",
-                "reading": "こんど"
+                "text": "体",
+                "reading": "からだ"
               },
               {
-                "text": "、さくらホテルに"
+                "text": "によくないですから、たばこを"
               },
               {
-                "text": "泊",
-                "reading": "と"
+                "text": "吸",
+                "reading": "す"
               },
               {
-                "text": "まります。"
+                "text": "わないほうがいいです。"
               }
             ]
           },
-          "explanationId": "Tempat menginap dengan 泊まります memakai に: ホテルに泊まります.",
-          "solvingSteps": [
-            "Cari verba 泊まります.",
-            "Tempat yang ditinggali/menginap → に.",
-            "Jawab に."
-          ],
-          "grammarPoint": "場所に泊まります"
+          "explanationId": "体によくない = tidak baik untuk tubuh.",
+          "grammarPoint": "Nによくない"
         }
       ]
     },
     {
       "section": 3,
-      "title": "正しい形に変える",
-      "titleReading": "ただしいかたちにかえる",
-      "instruction": {
-        "text": "（　）の中を正しい形に変えてください。",
-        "segments": [
-          {
-            "text": "（　）の"
-          },
-          {
-            "text": "中",
-            "reading": "なか"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "正",
-            "reading": "ただ"
-          },
-          {
-            "text": "しい"
-          },
-          {
-            "text": "形",
-            "reading": "かたち"
-          },
-          {
-            "text": "に"
-          },
-          {
-            "text": "変",
-            "reading": "か"
-          },
-          {
-            "text": "えてください。"
-          }
-        ]
-      },
+      "title": "形を変える",
       "type": "conjugation",
       "items": [
         {
-          "id": "13-15-s3-q1",
+          "id": "10-12-s3-q1",
           "question": {
-            "text": "A：来月、カルロスさんが（結婚します → ＿＿＿）そうですよ。\nB：えっ？そうなんですか。",
+            "text": "ここでたばこを（吸います → ＿＿＿）ください。",
             "segments": [
               {
-                "text": "A："
+                "text": "ここでたばこを（"
               },
               {
-                "text": "来月",
-                "reading": "らいげつ"
+                "text": "吸",
+                "reading": "す"
               },
               {
-                "text": "、カルロスさんが（"
-              },
-              {
-                "text": "結婚",
-                "reading": "けっこん"
-              },
-              {
-                "text": "します → ＿＿＿）そうですよ。\n"
-              },
-              {
-                "text": "B：えっ？そうなんですか。"
+                "text": "います → ＿＿＿）ください。"
               }
             ]
           },
           "answer": {
-            "text": "結婚する",
+            "text": "吸わないで",
             "segments": [
               {
-                "text": "結婚",
-                "reading": "けっこん"
+                "text": "吸",
+                "reading": "す"
               },
               {
-                "text": "する"
+                "text": "わないで"
               }
             ]
           },
-          "explanationId": "Hearsay 〜そうです memakai bentuk biasa. 結婚します → 結婚するそうです.",
+          "explanationId": "Larangan sopan memakai Vないでください.",
           "solvingSteps": [
-            "Sesudah blank ada そうです (katanya).",
-            "Gunakan bentuk biasa.",
-            "します → する."
+            "吸います → bentuk nai 吸わない.",
+            "Tambahkan でください."
           ],
-          "grammarPoint": "普通形 + そうです（伝聞）"
+          "grammarPoint": "Vないでください"
         },
         {
-          "id": "13-15-s3-q2",
+          "id": "10-12-s3-q2",
           "question": {
-            "text": "A：おいしいレストランを（知ります → ＿＿＿）か。\nB：いいえ、（知ります → ＿＿＿）。",
+            "text": "まだ宿題を（します → ＿＿＿）。",
             "segments": [
               {
-                "text": "A：おいしいレストランを（"
+                "text": "まだ"
               },
               {
-                "text": "知",
-                "reading": "し"
+                "text": "宿題",
+                "reading": "しゅくだい"
               },
               {
-                "text": "ります → ＿＿＿）か。\n"
+                "text": "を（します → ＿＿＿）。"
+              }
+            ]
+          },
+          "answer": {
+            "text": "していません",
+            "segments": [
+              {
+                "text": "していません"
+              }
+            ]
+          },
+          "explanationId": "まだ + aktivitas yang belum selesai → Vていません.",
+          "grammarPoint": "まだ Vていません"
+        },
+        {
+          "id": "10-12-s3-q3",
+          "question": {
+            "text": "日曜日、買い物に（行きます → ＿＿＿）たり、友達と食事に（行きます → ＿＿＿）たりします。",
+            "segments": [
+              {
+                "text": "日曜日",
+                "reading": "にちようび"
               },
               {
-                "text": "B：いいえ、（"
+                "text": "、"
               },
               {
-                "text": "知",
-                "reading": "し"
+                "text": "買",
+                "reading": "か"
               },
               {
-                "text": "ります → ＿＿＿）。"
+                "text": "い"
+              },
+              {
+                "text": "物",
+                "reading": "もの"
+              },
+              {
+                "text": "に（"
+              },
+              {
+                "text": "行",
+                "reading": "い"
+              },
+              {
+                "text": "きます → ＿＿＿）たり、"
+              },
+              {
+                "text": "友達",
+                "reading": "ともだち"
+              },
+              {
+                "text": "と"
+              },
+              {
+                "text": "食事",
+                "reading": "しょくじ"
+              },
+              {
+                "text": "に（"
+              },
+              {
+                "text": "行",
+                "reading": "い"
+              },
+              {
+                "text": "きます → ＿＿＿）たりします。"
               }
             ]
           },
           "answer": [
             {
-              "text": "知っています",
+              "text": "行った",
               "segments": [
                 {
-                  "text": "知",
-                  "reading": "し"
+                  "text": "行",
+                  "reading": "い"
                 },
                 {
-                  "text": "っています"
+                  "text": "った"
                 }
               ]
             },
             {
-              "text": "知りません",
+              "text": "行った",
               "segments": [
                 {
-                  "text": "知",
-                  "reading": "し"
+                  "text": "行",
+                  "reading": "い"
                 },
                 {
-                  "text": "りません"
+                  "text": "った"
                 }
               ]
             }
           ],
-          "explanationId": "知る adalah verba yang keadaan 'tahu' dinyatakan dengan 知っています. Bentuk negatif lazimnya 知りません.",
-          "solvingSteps": [
-            "Pertanyaan 'apakah tahu?' → 知っていますか.",
-            "Jawaban negatif → 知りません."
-          ],
-          "grammarPoint": "知っています / 知りません"
+          "explanationId": "〜たり〜たりします memakai bentuk ta + り.",
+          "grammarPoint": "Vたり、Vたりします"
         },
         {
-          "id": "13-15-s3-q3",
+          "id": "10-12-s3-q4",
           "question": {
-            "text": "A：オレンジは何の店ですか。\nB：オレンジはおいしいケーキを（売ります → ＿＿＿）店です。",
+            "text": "雨のとき、部屋で本を（読みます → ＿＿＿）。",
             "segments": [
               {
-                "text": "A：オレンジは"
+                "text": "雨",
+                "reading": "あめ"
               },
               {
-                "text": "何",
-                "reading": "なん"
+                "text": "のとき、"
+              },
+              {
+                "text": "部屋",
+                "reading": "へや"
+              },
+              {
+                "text": "で"
+              },
+              {
+                "text": "本",
+                "reading": "ほん"
+              },
+              {
+                "text": "を（"
+              },
+              {
+                "text": "読",
+                "reading": "よ"
+              },
+              {
+                "text": "みます → ＿＿＿）。"
+              }
+            ]
+          },
+          "answer": {
+            "text": "読みます",
+            "segments": [
+              {
+                "text": "読",
+                "reading": "よ"
+              },
+              {
+                "text": "みます"
+              }
+            ]
+          },
+          "explanationId": "Kalimat utama tetap bentuk sopan. Nのとき menunjukkan waktu/kondisi.",
+          "grammarPoint": "Nのとき"
+        },
+        {
+          "id": "10-12-s3-q5",
+          "question": {
+            "text": "疲れたとき、早く（寝ます → ＿＿＿）。",
+            "segments": [
+              {
+                "text": "疲",
+                "reading": "つか"
+              },
+              {
+                "text": "れたとき、"
+              },
+              {
+                "text": "早",
+                "reading": "はや"
+              },
+              {
+                "text": "く（"
+              },
+              {
+                "text": "寝",
+                "reading": "ね"
+              },
+              {
+                "text": "ます → ＿＿＿）。"
+              }
+            ]
+          },
+          "answer": {
+            "text": "寝ます",
+            "segments": [
+              {
+                "text": "寝",
+                "reading": "ね"
+              },
+              {
+                "text": "ます"
+              }
+            ]
+          },
+          "explanationId": "疲れたとき = ketika lelah. Predikat utama tetap 寝ます."
+        },
+        {
+          "id": "10-12-s3-q6",
+          "question": {
+            "text": "日本語が上手に（なります → ＿＿＿）たいです。",
+            "segments": [
+              {
+                "text": "日本語",
+                "reading": "にほんご"
+              },
+              {
+                "text": "が"
+              },
+              {
+                "text": "上手",
+                "reading": "じょうず"
+              },
+              {
+                "text": "に（なります → ＿＿＿）たいです。"
+              }
+            ]
+          },
+          "answer": {
+            "text": "なり",
+            "segments": [
+              {
+                "text": "なり"
+              }
+            ]
+          },
+          "completed": {
+            "text": "日本語が上手になりたいです。",
+            "segments": [
+              {
+                "text": "日本語",
+                "reading": "にほんご"
+              },
+              {
+                "text": "が"
+              },
+              {
+                "text": "上手",
+                "reading": "じょうず"
+              },
+              {
+                "text": "になりたいです。"
+              }
+            ]
+          },
+          "explanationId": "〜たいです memakai stem bentuk ます: なります → なりたいです.",
+          "grammarPoint": "Vます-stem + たいです"
+        }
+      ]
+    },
+    {
+      "section": 4,
+      "title": "正しいものを選ぶ",
+      "type": "multiple-choice",
+      "items": [
+        {
+          "id": "10-12-s4-q1",
+          "question": {
+            "text": "ここに荷物を［置いてもいいですか・置かないでください］。",
+            "segments": [
+              {
+                "text": "ここに"
+              },
+              {
+                "text": "荷物",
+                "reading": "にもつ"
+              },
+              {
+                "text": "を［"
+              },
+              {
+                "text": "置",
+                "reading": "お"
+              },
+              {
+                "text": "いてもいいですか・"
+              },
+              {
+                "text": "置",
+                "reading": "お"
+              },
+              {
+                "text": "かないでください］。"
+              }
+            ]
+          },
+          "choices": [
+            "置いてもいいですか",
+            "置かないでください"
+          ],
+          "answer": "置いてもいいですか",
+          "explanationId": "Ini meminta izin: boleh taruh barang di sini?",
+          "grammarPoint": "Vてもいいですか"
+        },
+        {
+          "id": "10-12-s4-q2",
+          "question": {
+            "text": "病院へ行った［ほうがいいです・ないほうがいいです］。",
+            "segments": [
+              {
+                "text": "病院",
+                "reading": "びょういん"
+              },
+              {
+                "text": "へ"
+              },
+              {
+                "text": "行",
+                "reading": "い"
+              },
+              {
+                "text": "った［ほうがいいです・ないほうがいいです］。"
+              }
+            ]
+          },
+          "choices": [
+            "ほうがいいです",
+            "ないほうがいいです"
+          ],
+          "answer": "ほうがいいです",
+          "explanationId": "Untuk saran positif: Vたほうがいいです."
+        },
+        {
+          "id": "10-12-s4-q3",
+          "question": {
+            "text": "体の調子がよくないとき、無理を［した・しない］ほうがいいです。",
+            "segments": [
+              {
+                "text": "体",
+                "reading": "からだ"
               },
               {
                 "text": "の"
               },
               {
-                "text": "店",
-                "reading": "みせ"
+                "text": "調子",
+                "reading": "ちょうし"
               },
               {
-                "text": "ですか。\n"
+                "text": "がよくないとき、"
               },
               {
-                "text": "B：オレンジはおいしいケーキを（"
+                "text": "無理",
+                "reading": "むり"
               },
               {
-                "text": "売",
-                "reading": "う"
-              },
-              {
-                "text": "ります → ＿＿＿）"
-              },
-              {
-                "text": "店",
-                "reading": "みせ"
-              },
-              {
-                "text": "です。"
+                "text": "を［した・しない］ほうがいいです。"
               }
             ]
           },
-          "answer": {
-            "text": "売っている",
-            "segments": [
-              {
-                "text": "売",
-                "reading": "う"
-              },
-              {
-                "text": "っている"
-              }
-            ]
-          },
-          "explanationId": "Untuk menerangkan jenis toko berdasarkan aktivitas yang berlangsung, gunakan klausa relatif ケーキを売っている店 = toko yang menjual kue.",
-          "solvingSteps": [
-            "Blank langsung menerangkan 店.",
-            "Gunakan bentuk biasa sebelum nomina.",
-            "Untuk keadaan/aktivitas toko 'menjual' gunakan 売っている."
+          "choices": [
+            "した",
+            "しない"
           ],
-          "grammarPoint": "Vている + N"
+          "answer": "しない",
+          "explanationId": "Saran negatif: Vないほうがいいです."
         },
         {
-          "id": "13-15-s3-q4",
+          "id": "10-12-s4-q4",
           "question": {
-            "text": "A：いっしょに「ほしの美術館」へ行きませんか。\n来週まで（無料です → ＿＿＿）そうですよ。\nB：いいですね。行きましょう。",
+            "text": "中学生［の・な］とき、ギターを始めました。",
             "segments": [
               {
-                "text": "A：いっしょに「ほしの"
+                "text": "中学生",
+                "reading": "ちゅうがくせい"
               },
               {
-                "text": "美術館",
-                "reading": "びじゅつかん"
-              },
-              {
-                "text": "」へ"
-              },
-              {
-                "text": "行",
-                "reading": "い"
-              },
-              {
-                "text": "きませんか。\n"
-              },
-              {
-                "text": "来週",
-                "reading": "らいしゅう"
-              },
-              {
-                "text": "まで（"
-              },
-              {
-                "text": "無料",
-                "reading": "むりょう"
-              },
-              {
-                "text": "です → ＿＿＿）そうですよ。\n"
-              },
-              {
-                "text": "B：いいですね。"
-              },
-              {
-                "text": "行",
-                "reading": "い"
-              },
-              {
-                "text": "きましょう。"
-              }
-            ]
-          },
-          "answer": {
-            "text": "無料だ",
-            "segments": [
-              {
-                "text": "無料",
-                "reading": "むりょう"
-              },
-              {
-                "text": "だ"
-              }
-            ]
-          },
-          "explanationId": "Pada 〜そうです yang berarti 'katanya', noun/na-adjective memakai だ sebelum そうです: 無料だそうです.",
-          "solvingSteps": [
-            "Ini そうです = informasi yang didengar.",
-            "無料 adalah noun/na-adjective.",
-            "Bentuk biasa → 無料だ."
-          ],
-          "grammarPoint": "N / な形容詞 + だそうです"
-        },
-        {
-          "id": "13-15-s3-q5",
-          "question": {
-            "text": "A：先週、おもしろい映画が（始まります → ＿＿＿）そうですよ。\nB：そうですか。\nA：週末、時間が（あります → ＿＿＿）ら、いっしょに見に行きませんか。\nB：いいですね。行きましょう。",
-            "segments": [
-              {
-                "text": "A："
-              },
-              {
-                "text": "先週",
-                "reading": "せんしゅう"
-              },
-              {
-                "text": "、おもしろい"
-              },
-              {
-                "text": "映画",
-                "reading": "えいが"
-              },
-              {
-                "text": "が（"
+                "text": "［の・な］とき、ギターを"
               },
               {
                 "text": "始",
                 "reading": "はじ"
               },
               {
-                "text": "まります → ＿＿＿）そうですよ。\n"
+                "text": "めました。"
+              }
+            ]
+          },
+          "choices": [
+            "の",
+            "な"
+          ],
+          "answer": "の",
+          "explanationId": "Nomina + のとき.",
+          "grammarPoint": "Nのとき"
+        },
+        {
+          "id": "10-12-s4-q5",
+          "question": {
+            "text": "暇［の・な］とき、音楽を聞きます。",
+            "segments": [
+              {
+                "text": "暇",
+                "reading": "ひま"
               },
               {
-                "text": "B：そうですか。\n"
+                "text": "［の・な］とき、"
               },
               {
-                "text": "A："
+                "text": "音楽",
+                "reading": "おんがく"
               },
               {
-                "text": "週末",
-                "reading": "しゅうまつ"
+                "text": "を"
               },
               {
-                "text": "、"
+                "text": "聞",
+                "reading": "き"
               },
               {
-                "text": "時間",
-                "reading": "じかん"
+                "text": "きます。"
+              }
+            ]
+          },
+          "choices": [
+            "の",
+            "な"
+          ],
+          "answer": "な",
+          "explanationId": "Na-adjective + なとき.",
+          "grammarPoint": "な形容詞 + なとき"
+        },
+        {
+          "id": "10-12-s4-q6",
+          "question": {
+            "text": "昨日はパーティーでした。マルコさんはギターを［弾いた・弾く］り、歌を［歌った・歌う］りしました。",
+            "segments": [
+              {
+                "text": "昨日",
+                "reading": "きのう"
               },
               {
-                "text": "が（あります → ＿＿＿）ら、いっしょに"
+                "text": "はパーティーでした。マルコさんはギターを［"
+              },
+              {
+                "text": "弾",
+                "reading": "ひ"
+              },
+              {
+                "text": "いた・"
+              },
+              {
+                "text": "弾",
+                "reading": "ひ"
+              },
+              {
+                "text": "く］り、"
+              },
+              {
+                "text": "歌",
+                "reading": "うた"
+              },
+              {
+                "text": "を［"
+              },
+              {
+                "text": "歌",
+                "reading": "うた"
+              },
+              {
+                "text": "った・"
+              },
+              {
+                "text": "歌",
+                "reading": "うた"
+              },
+              {
+                "text": "う］りしました。"
+              }
+            ]
+          },
+          "choices": {
+            "blank1": [
+              "弾いた",
+              "弾く"
+            ],
+            "blank2": [
+              "歌った",
+              "歌う"
+            ]
+          },
+          "answer": [
+            "弾いた",
+            "歌った"
+          ],
+          "explanationId": "〜たり〜たりしました memakai bentuk ta + り.",
+          "grammarPoint": "Vたり Vたりします"
+        }
+      ]
+    },
+    {
+      "section": 5,
+      "title": "普通形・カジュアル",
+      "type": "casual-form",
+      "items": [
+        {
+          "id": "10-12-s5-q1",
+          "question": {
+            "text": "よく日本のドラマを見ますか。→ カジュアル",
+            "segments": [
+              {
+                "text": "よく"
+              },
+              {
+                "text": "日本",
+                "reading": "にほん"
+              },
+              {
+                "text": "のドラマを"
               },
               {
                 "text": "見",
                 "reading": "み"
               },
               {
-                "text": "に"
-              },
-              {
-                "text": "行",
-                "reading": "い"
-              },
-              {
-                "text": "きませんか。\n"
-              },
-              {
-                "text": "B：いいですね。"
-              },
-              {
-                "text": "行",
-                "reading": "い"
-              },
-              {
-                "text": "きましょう。"
-              }
-            ]
-          },
-          "answer": [
-            {
-              "text": "始まった",
-              "segments": [
-                {
-                  "text": "始",
-                  "reading": "はじ"
-                },
-                {
-                  "text": "まった"
-                }
-              ]
-            },
-            {
-              "text": "あった",
-              "segments": [
-                {
-                  "text": "あった"
-                }
-              ]
-            }
-          ],
-          "explanationId": "先週 menunjukkan masa lalu, jadi 始まったそうです. Kondisi 〜たら dibentuk dari bentuk lampau: あります → あったら.",
-          "solvingSteps": [
-            "Untuk hearsay, lihat waktu 先週 → 始まった.",
-            "Untuk 〜たら, ubah あります ke あった + ら.",
-            "Jawab 始まった / あった."
-          ],
-          "grammarPoint": "普通形 + そうです / 〜たら"
-        },
-        {
-          "id": "13-15-s3-q6",
-          "question": {
-            "text": "天気が（いいです → ＿＿＿）ら、公園へ遊びに行きたいです。",
-            "segments": [
-              {
-                "text": "天気",
-                "reading": "てんき"
-              },
-              {
-                "text": "が（いいです → ＿＿＿）ら、"
-              },
-              {
-                "text": "公園",
-                "reading": "こうえん"
-              },
-              {
-                "text": "へ"
-              },
-              {
-                "text": "遊",
-                "reading": "あそ"
-              },
-              {
-                "text": "びに"
-              },
-              {
-                "text": "行",
-                "reading": "い"
-              },
-              {
-                "text": "きたいです。"
+                "text": "ますか。→ カジュアル"
               }
             ]
           },
           "answer": {
-            "text": "よかった",
+            "text": "よく日本のドラマを見る？",
             "segments": [
               {
-                "text": "よかった"
+                "text": "よく"
+              },
+              {
+                "text": "日本",
+                "reading": "にほん"
+              },
+              {
+                "text": "のドラマを"
+              },
+              {
+                "text": "見",
+                "reading": "み"
+              },
+              {
+                "text": "る？"
               }
             ]
           },
-          "completed": {
-            "text": "天気がよかったら、公園へ遊びに行きたいです。",
-            "segments": [
-              {
-                "text": "天気",
-                "reading": "てんき"
-              },
-              {
-                "text": "がよかったら、"
-              },
-              {
-                "text": "公園",
-                "reading": "こうえん"
-              },
-              {
-                "text": "へ"
-              },
-              {
-                "text": "遊",
-                "reading": "あそ"
-              },
-              {
-                "text": "びに"
-              },
-              {
-                "text": "行",
-                "reading": "い"
-              },
-              {
-                "text": "きたいです。"
-              }
-            ]
-          },
-          "explanationId": "〜たら memakai bentuk lampau + ら. いいです mempunyai bentuk lampau よかった, sehingga よかったら.",
-          "solvingSteps": [
-            "Cari pola 〜たら.",
-            "いい → よかった.",
-            "Tambahkan ら → よかったら."
-          ],
-          "grammarPoint": "いい → よかったら"
+          "explanationId": "Bentuk sopan 見ますか → casual 見る？",
+          "grammarPoint": "普通形"
         },
         {
-          "id": "13-15-s3-q7",
+          "id": "10-12-s5-q2",
           "question": {
-            "text": "週末、（暇です → ＿＿＿）ら、いっしょに買い物に行きませんか。",
+            "text": "いいえ、見ません。→ カジュアル",
             "segments": [
               {
-                "text": "週末",
-                "reading": "しゅうまつ"
+                "text": "いいえ、"
               },
               {
-                "text": "、（"
+                "text": "見",
+                "reading": "み"
               },
               {
-                "text": "暇",
-                "reading": "ひま"
+                "text": "ません。→ カジュアル"
+              }
+            ]
+          },
+          "answer": {
+            "text": "ううん、見ない。",
+            "segments": [
+              {
+                "text": "ううん、"
               },
               {
-                "text": "です → ＿＿＿）ら、いっしょに"
+                "text": "見",
+                "reading": "み"
               },
               {
-                "text": "買",
-                "reading": "か"
+                "text": "ない。"
+              }
+            ]
+          },
+          "explanationId": "ません → ない dalam casual."
+        },
+        {
+          "id": "10-12-s5-q3",
+          "question": {
+            "text": "一緒に食事に行きませんか。→ カジュアル",
+            "segments": [
+              {
+                "text": "一緒",
+                "reading": "いっしょ"
               },
               {
-                "text": "い"
+                "text": "に"
               },
               {
-                "text": "物",
-                "reading": "もの"
+                "text": "食事",
+                "reading": "しょくじ"
               },
               {
                 "text": "に"
@@ -999,224 +1272,357 @@ export const dekiruExam4Data: DekiruExamData = {
                 "reading": "い"
               },
               {
-                "text": "きませんか。"
+                "text": "きませんか。→ カジュアル"
               }
             ]
           },
           "answer": {
-            "text": "暇だった",
+            "text": "一緒に食事に行かない？",
             "segments": [
               {
-                "text": "暇",
-                "reading": "ひま"
+                "text": "一緒",
+                "reading": "いっしょ"
               },
               {
-                "text": "だった"
+                "text": "に"
+              },
+              {
+                "text": "食事",
+                "reading": "しょくじ"
+              },
+              {
+                "text": "に"
+              },
+              {
+                "text": "行",
+                "reading": "い"
+              },
+              {
+                "text": "かない？"
               }
             ]
           },
-          "completed": {
-            "text": "週末、暇だったら、いっしょに買い物に行きませんか。",
+          "explanationId": "Ajakan casual sering memakai bentuk negatif biasa + ?"
+        },
+        {
+          "id": "10-12-s5-q4",
+          "question": {
+            "text": "今、何をしていますか。→ カジュアル",
             "segments": [
               {
-                "text": "週末",
-                "reading": "しゅうまつ"
+                "text": "今",
+                "reading": "いま"
               },
               {
                 "text": "、"
               },
               {
-                "text": "暇",
-                "reading": "ひま"
+                "text": "何",
+                "reading": "なに"
               },
               {
-                "text": "だったら、いっしょに"
+                "text": "をしていますか。→ カジュアル"
+              }
+            ]
+          },
+          "answer": {
+            "text": "今、何してる？",
+            "segments": [
+              {
+                "text": "今",
+                "reading": "いま"
               },
               {
-                "text": "買",
-                "reading": "か"
+                "text": "、"
               },
               {
-                "text": "い"
+                "text": "何",
+                "reading": "なに"
               },
               {
-                "text": "物",
-                "reading": "もの"
+                "text": "してる？"
+              }
+            ]
+          },
+          "acceptedVariants": [
+            {
+              "text": "今、何をしてる？",
+              "segments": [
+                {
+                  "text": "今",
+                  "reading": "いま"
+                },
+                {
+                  "text": "、"
+                },
+                {
+                  "text": "何",
+                  "reading": "なに"
+                },
+                {
+                  "text": "をしてる？"
+                }
+              ]
+            }
+          ],
+          "explanationId": "していますか → してる？ adalah bentuk percakapan kasual."
+        }
+      ]
+    },
+    {
+      "section": 6,
+      "title": "会話",
+      "type": "dialogue-completion",
+      "items": [
+        {
+          "id": "10-12-s6-q1",
+          "dialogue": [
+            {
+              "speaker": "A",
+              "content": {
+                "text": "どうしたんですか。",
+                "segments": [
+                  {
+                    "text": "どうしたんですか。"
+                  }
+                ]
+              }
+            },
+            {
+              "speaker": "B",
+              "content": {
+                "text": "のどが（　）。",
+                "segments": [
+                  {
+                    "text": "のどが（　）。"
+                  }
+                ]
+              }
+            }
+          ],
+          "answer": {
+            "text": "痛いんです",
+            "segments": [
+              {
+                "text": "痛",
+                "reading": "いた"
               },
               {
-                "text": "に"
+                "text": "いんです"
+              }
+            ]
+          },
+          "explanationId": "Gejala + んです dipakai untuk menjelaskan keadaan.",
+          "grammarPoint": "〜んです"
+        },
+        {
+          "id": "10-12-s6-q2",
+          "dialogue": [
+            {
+              "speaker": "A",
+              "content": {
+                "text": "熱があります。",
+                "segments": [
+                  {
+                    "text": "熱",
+                    "reading": "ねつ"
+                  },
+                  {
+                    "text": "があります。"
+                  }
+                ]
+              }
+            },
+            {
+              "speaker": "B",
+              "content": {
+                "text": "じゃ、今日は（　）ほうがいいですよ。",
+                "segments": [
+                  {
+                    "text": "じゃ、"
+                  },
+                  {
+                    "text": "今日",
+                    "reading": "きょう"
+                  },
+                  {
+                    "text": "は（　）ほうがいいですよ。"
+                  }
+                ]
+              }
+            }
+          ],
+          "answer": {
+            "text": "休んだ",
+            "segments": [
+              {
+                "text": "休",
+                "reading": "やす"
               },
+              {
+                "text": "んだ"
+              }
+            ]
+          },
+          "explanationId": "Saran positif: Vたほうがいいです. 休みます → 休んだ."
+        },
+        {
+          "id": "10-12-s6-q3",
+          "dialogue": [
+            {
+              "speaker": "A",
+              "content": {
+                "text": "薬はいつ飲みますか。",
+                "segments": [
+                  {
+                    "text": "薬",
+                    "reading": "くすり"
+                  },
+                  {
+                    "text": "はいつ"
+                  },
+                  {
+                    "text": "飲",
+                    "reading": "の"
+                  },
+                  {
+                    "text": "みますか。"
+                  }
+                ]
+              }
+            },
+            {
+              "speaker": "B",
+              "content": {
+                "text": "食事の30分（　）に飲んでください。",
+                "segments": [
+                  {
+                    "text": "食事",
+                    "reading": "しょくじ"
+                  },
+                  {
+                    "text": "の"
+                  },
+                  {
+                    "text": "30分",
+                    "reading": "さんじゅっぷん"
+                  },
+                  {
+                    "text": "（　）に"
+                  },
+                  {
+                    "text": "飲",
+                    "reading": "の"
+                  },
+                  {
+                    "text": "んでください。"
+                  }
+                ]
+              }
+            }
+          ],
+          "answer": {
+            "text": "前",
+            "segments": [
+              {
+                "text": "前",
+                "reading": "まえ"
+              }
+            ]
+          },
+          "explanationId": "30分前に = 30 menit sebelumnya."
+        },
+        {
+          "id": "10-12-s6-q4",
+          "dialogue": [
+            {
+              "speaker": "A",
+              "content": {
+                "text": "昨日、何をしましたか。",
+                "segments": [
+                  {
+                    "text": "昨日",
+                    "reading": "きのう"
+                  },
+                  {
+                    "text": "、"
+                  },
+                  {
+                    "text": "何",
+                    "reading": "なに"
+                  },
+                  {
+                    "text": "をしましたか。"
+                  }
+                ]
+              }
+            },
+            {
+              "speaker": "B",
+              "content": {
+                "text": "買い物に行ったり、友達と食事に（　）たりしました。",
+                "segments": [
+                  {
+                    "text": "買",
+                    "reading": "か"
+                  },
+                  {
+                    "text": "い"
+                  },
+                  {
+                    "text": "物",
+                    "reading": "もの"
+                  },
+                  {
+                    "text": "に"
+                  },
+                  {
+                    "text": "行",
+                    "reading": "い"
+                  },
+                  {
+                    "text": "ったり、"
+                  },
+                  {
+                    "text": "友達",
+                    "reading": "ともだち"
+                  },
+                  {
+                    "text": "と"
+                  },
+                  {
+                    "text": "食事",
+                    "reading": "しょくじ"
+                  },
+                  {
+                    "text": "に（　）たりしました。"
+                  }
+                ]
+              }
+            }
+          ],
+          "answer": {
+            "text": "行った",
+            "segments": [
               {
                 "text": "行",
                 "reading": "い"
               },
               {
-                "text": "きませんか。"
+                "text": "った"
               }
             ]
           },
-          "explanationId": "Na-adjective/noun membentuk 〜たら dari bentuk lampau だった: 暇だったら.",
-          "solvingSteps": [
-            "暇 adalah na-adjective.",
-            "Lampau bentuk biasa = 暇だった.",
-            "Tambahkan ら → 暇だったら."
-          ],
-          "grammarPoint": "な形容詞 + だったら"
-        },
-        {
-          "id": "13-15-s3-q8",
-          "question": {
-            "text": "A：雨が（降ります → ＿＿＿）も、試合はありますか。\nB：はい、あります。",
-            "segments": [
-              {
-                "text": "A："
-              },
-              {
-                "text": "雨",
-                "reading": "あめ"
-              },
-              {
-                "text": "が（"
-              },
-              {
-                "text": "降",
-                "reading": "ふ"
-              },
-              {
-                "text": "ります → ＿＿＿）も、"
-              },
-              {
-                "text": "試合",
-                "reading": "しあい"
-              },
-              {
-                "text": "はありますか。\n"
-              },
-              {
-                "text": "B：はい、あります。"
-              }
-            ]
-          },
-          "answer": {
-            "text": "降って",
-            "segments": [
-              {
-                "text": "降",
-                "reading": "ふ"
-              },
-              {
-                "text": "って"
-              }
-            ]
-          },
-          "completed": {
-            "text": "雨が降っても、試合はありますか。",
-            "segments": [
-              {
-                "text": "雨",
-                "reading": "あめ"
-              },
-              {
-                "text": "が"
-              },
-              {
-                "text": "降",
-                "reading": "ふ"
-              },
-              {
-                "text": "っても、"
-              },
-              {
-                "text": "試合",
-                "reading": "しあい"
-              },
-              {
-                "text": "はありますか。"
-              }
-            ]
-          },
-          "explanationId": "〜ても berarti 'meskipun/walaupun'. Sebelum も gunakan bentuk て: 降ります → 降って.",
-          "solvingSteps": [
-            "Sesudah blank ada も.",
-            "Pola = Vても.",
-            "降ります → 降って."
-          ],
-          "grammarPoint": "Vても"
+          "explanationId": "〜たり〜たりしました membutuhkan bentuk ta."
         }
       ]
     },
     {
-      "section": 4,
-      "title": "寮のルール",
-      "titleReading": "りょうのルール",
-      "instruction": {
-        "text": "例のように口の中から正しいものを選んで、（　）に書いてください。",
-        "segments": [
-          {
-            "text": "例",
-            "reading": "れい"
-          },
-          {
-            "text": "のように"
-          },
-          {
-            "text": "口",
-            "reading": "くち"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "中",
-            "reading": "なか"
-          },
-          {
-            "text": "から"
-          },
-          {
-            "text": "正",
-            "reading": "ただ"
-          },
-          {
-            "text": "しいものを"
-          },
-          {
-            "text": "選",
-            "reading": "えら"
-          },
-          {
-            "text": "んで、（　）に"
-          },
-          {
-            "text": "書",
-            "reading": "か"
-          },
-          {
-            "text": "いてください。"
-          }
-        ]
-      },
-      "type": "grammar-choice",
-      "choiceBank": [
-        {
-          "id": "a",
-          "text": "はいけません"
-        },
-        {
-          "id": "b",
-          "text": "なければなりません"
-        },
-        {
-          "id": "c",
-          "text": "なくてもいいです"
-        },
-        {
-          "id": "d",
-          "text": "と思いました"
-        }
-      ],
+      "section": 7,
+      "title": "読解",
+      "type": "reading-true-false",
       "passage": {
-        "text": "私は寮に住んでいます。寮にいろいろなルールがあります。\n夜、ほかの人に迷惑ですから、9時前に洗濯をしなければなりません。\n毎月1回、8時半からみんなで寮の前を掃除します。でも、用事がある人や体の調子が悪い人は参加しなくてもいいです。\n寮の台所に大きい冷蔵庫があります。冷蔵庫に自分が買った物を入れるとき、名前を書かなければなりません。\n食事は寮の台所で作ります。危ないですから、自分の部屋で作ってはいけません。\n初めはちょっと変だと思いましたが、今は慣れました。",
+        "text": "私は日本へ来たばかりのとき、日本語があまり話せませんでした。初めは生活も大変でしたが、今は毎日が楽しいです。\n平日は学校へ行って、夜は家で日本語を勉強しています。休みの日は、買い物に行ったり、友達と食事に行ったりします。\n先週、風邪をひきました。熱もありましたから、病院へ行きました。医者に「今日は早く寝たほうがいいです。たばこも吸わないほうがいいです」と言われました。",
         "segments": [
           {
             "text": "私",
@@ -1226,302 +1632,53 @@ export const dekiruExam4Data: DekiruExamData = {
             "text": "は"
           },
           {
-            "text": "寮",
-            "reading": "りょう"
+            "text": "日本",
+            "reading": "にほん"
           },
           {
-            "text": "に"
+            "text": "へ"
           },
           {
-            "text": "住",
-            "reading": "す"
+            "text": "来",
+            "reading": "き"
           },
           {
-            "text": "んでいます。"
+            "text": "たばかりのとき、"
           },
           {
-            "text": "寮",
-            "reading": "りょう"
+            "text": "日本語",
+            "reading": "にほんご"
           },
           {
-            "text": "にいろいろなルールがあります。\n"
+            "text": "があまり"
           },
           {
-            "text": "夜",
-            "reading": "よる"
+            "text": "話",
+            "reading": "はな"
           },
           {
-            "text": "、ほかの"
-          },
-          {
-            "text": "人",
-            "reading": "ひと"
-          },
-          {
-            "text": "に"
-          },
-          {
-            "text": "迷惑",
-            "reading": "めいわく"
-          },
-          {
-            "text": "ですから、"
-          },
-          {
-            "text": "9時前",
-            "reading": "くじまえ"
-          },
-          {
-            "text": "に"
-          },
-          {
-            "text": "洗濯",
-            "reading": "せんたく"
-          },
-          {
-            "text": "をしなければなりません。\n"
-          },
-          {
-            "text": "毎月",
-            "reading": "まいつき"
-          },
-          {
-            "text": "1回",
-            "reading": "いっかい"
-          },
-          {
-            "text": "、"
-          },
-          {
-            "text": "8時半",
-            "reading": "はちじはん"
-          },
-          {
-            "text": "からみんなで"
-          },
-          {
-            "text": "寮",
-            "reading": "りょう"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "前",
-            "reading": "まえ"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "掃除",
-            "reading": "そうじ"
-          },
-          {
-            "text": "します。でも、"
-          },
-          {
-            "text": "用事",
-            "reading": "ようじ"
-          },
-          {
-            "text": "がある"
-          },
-          {
-            "text": "人",
-            "reading": "ひと"
-          },
-          {
-            "text": "や"
-          },
-          {
-            "text": "体",
-            "reading": "からだ"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "調子",
-            "reading": "ちょうし"
-          },
-          {
-            "text": "が"
-          },
-          {
-            "text": "悪",
-            "reading": "わる"
-          },
-          {
-            "text": "い"
-          },
-          {
-            "text": "人",
-            "reading": "ひと"
-          },
-          {
-            "text": "は"
-          },
-          {
-            "text": "参加",
-            "reading": "さんか"
-          },
-          {
-            "text": "しなくてもいいです。\n"
-          },
-          {
-            "text": "寮",
-            "reading": "りょう"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "台所",
-            "reading": "だいどころ"
-          },
-          {
-            "text": "に"
-          },
-          {
-            "text": "大",
-            "reading": "おお"
-          },
-          {
-            "text": "きい"
-          },
-          {
-            "text": "冷蔵庫",
-            "reading": "れいぞうこ"
-          },
-          {
-            "text": "があります。"
-          },
-          {
-            "text": "冷蔵庫",
-            "reading": "れいぞうこ"
-          },
-          {
-            "text": "に"
-          },
-          {
-            "text": "自分",
-            "reading": "じぶん"
-          },
-          {
-            "text": "が"
-          },
-          {
-            "text": "買",
-            "reading": "か"
-          },
-          {
-            "text": "った"
-          },
-          {
-            "text": "物",
-            "reading": "もの"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "入",
-            "reading": "い"
-          },
-          {
-            "text": "れるとき、"
-          },
-          {
-            "text": "名前",
-            "reading": "なまえ"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "書",
-            "reading": "か"
-          },
-          {
-            "text": "かなければなりません。\n"
-          },
-          {
-            "text": "食事",
-            "reading": "しょくじ"
-          },
-          {
-            "text": "は"
-          },
-          {
-            "text": "寮",
-            "reading": "りょう"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "台所",
-            "reading": "だいどころ"
-          },
-          {
-            "text": "で"
-          },
-          {
-            "text": "作",
-            "reading": "つく"
-          },
-          {
-            "text": "ります。"
-          },
-          {
-            "text": "危",
-            "reading": "あぶ"
-          },
-          {
-            "text": "ないですから、"
-          },
-          {
-            "text": "自分",
-            "reading": "じぶん"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "部屋",
-            "reading": "へや"
-          },
-          {
-            "text": "で"
-          },
-          {
-            "text": "作",
-            "reading": "つく"
-          },
-          {
-            "text": "ってはいけません。\n"
+            "text": "せませんでした。"
           },
           {
             "text": "初",
             "reading": "はじ"
           },
           {
-            "text": "めはちょっと"
+            "text": "めは"
           },
           {
-            "text": "変",
-            "reading": "へん"
+            "text": "生活",
+            "reading": "せいかつ"
           },
           {
-            "text": "だと"
+            "text": "も"
           },
           {
-            "text": "思",
-            "reading": "おも"
+            "text": "大変",
+            "reading": "たいへん"
           },
           {
-            "text": "いましたが、"
+            "text": "でしたが、"
           },
           {
             "text": "今",
@@ -1531,1312 +1688,11 @@ export const dekiruExam4Data: DekiruExamData = {
             "text": "は"
           },
           {
-            "text": "慣",
-            "reading": "な"
-          },
-          {
-            "text": "れました。"
-          }
-        ]
-      },
-      "items": [
-        {
-          "id": "13-15-s4-q1",
-          "base": {
-            "text": "参加します",
-            "segments": [
-              {
-                "text": "参加",
-                "reading": "さんか"
-              },
-              {
-                "text": "します"
-              }
-            ]
-          },
-          "answer": {
-            "text": "参加しなくてもいいです",
-            "segments": [
-              {
-                "text": "参加",
-                "reading": "さんか"
-              },
-              {
-                "text": "しなくてもいいです"
-              }
-            ]
-          },
-          "choice": "c",
-          "explanationId": "用事がある人や体調が悪い人は参加する必要がありません. 〜なくてもいいです = tidak harus / boleh tidak.",
-          "solvingSteps": [
-            "Konteks memberi pengecualian aturan.",
-            "Makna yang dibutuhkan = 'tidak perlu ikut'.",
-            "Pilih なくてもいいです."
-          ],
-          "grammarPoint": "Vなくてもいいです"
-        },
-        {
-          "id": "13-15-s4-q2",
-          "base": {
-            "text": "書きます",
-            "segments": [
-              {
-                "text": "書",
-                "reading": "か"
-              },
-              {
-                "text": "きます"
-              }
-            ]
-          },
-          "answer": {
-            "text": "書かなければなりません",
-            "segments": [
-              {
-                "text": "書",
-                "reading": "か"
-              },
-              {
-                "text": "かなければなりません"
-              }
-            ]
-          },
-          "choice": "b",
-          "explanationId": "Barang di kulkas harus diberi nama. 〜なければなりません = harus.",
-          "solvingSteps": [
-            "Ini aturan wajib.",
-            "書きます → 書かない → 書かなければなりません."
-          ],
-          "grammarPoint": "Vなければなりません"
-        },
-        {
-          "id": "13-15-s4-q3",
-          "base": {
-            "text": "作ります",
-            "segments": [
-              {
-                "text": "作",
-                "reading": "つく"
-              },
-              {
-                "text": "ります"
-              }
-            ]
-          },
-          "answer": {
-            "text": "作ってはいけません",
-            "segments": [
-              {
-                "text": "作",
-                "reading": "つく"
-              },
-              {
-                "text": "ってはいけません"
-              }
-            ]
-          },
-          "choice": "a",
-          "explanationId": "Karena berbahaya, memasak di kamar sendiri dilarang. Vてはいけません = tidak boleh.",
-          "solvingSteps": [
-            "Kata 危ないですから memberi alasan larangan.",
-            "作ります → 作って.",
-            "Tambahkan はいけません."
-          ],
-          "grammarPoint": "Vてはいけません"
-        },
-        {
-          "id": "13-15-s4-q4",
-          "base": {
-            "text": "変です",
-            "segments": [
-              {
-                "text": "変",
-                "reading": "へん"
-              },
-              {
-                "text": "です"
-              }
-            ]
-          },
-          "answer": {
-            "text": "変だと思いました",
-            "segments": [
-              {
-                "text": "変",
-                "reading": "へん"
-              },
-              {
-                "text": "だと"
-              },
-              {
-                "text": "思",
-                "reading": "おも"
-              },
-              {
-                "text": "いました"
-              }
-            ]
-          },
-          "choice": "d",
-          "explanationId": "Untuk menyatakan pendapat masa lalu: 普通形 + と思いました. Na-adjective 変です menjadi 変だ.",
-          "solvingSteps": [
-            "Konteks: 'awalnya saya berpikir...'.",
-            "変です → bentuk biasa 変だ.",
-            "Tambahkan と思いました."
-          ],
-          "grammarPoint": "普通形 + と思いました"
-        }
-      ]
-    },
-    {
-      "section": 5,
-      "title": "絵を見て文を書く",
-      "titleReading": "えをみてぶんをかく",
-      "instruction": {
-        "text": "絵を見て、例のように文を書いてください。",
-        "segments": [
-          {
-            "text": "絵",
-            "reading": "え"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "見",
-            "reading": "み"
-          },
-          {
-            "text": "て、"
-          },
-          {
-            "text": "例",
-            "reading": "れい"
-          },
-          {
-            "text": "のように"
-          },
-          {
-            "text": "文",
-            "reading": "ぶん"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "書",
-            "reading": "か"
-          },
-          {
-            "text": "いてください。"
-          }
-        ]
-      },
-      "type": "picture-writing",
-      "items": [
-        {
-          "id": "13-15-s5-q1",
-          "visual": {
-            "description": "Seorang pelanggan menunjukkan gelas yang pecah/rusak kepada pegawai."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "あのう、（　）。",
-                "segments": [
-                  {
-                    "text": "あのう、（　）。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "店員",
-              "content": {
-                "text": "店員：あっ、すみません。",
-                "segments": [
-                  {
-                    "text": "店員",
-                    "reading": "てんいん"
-                  },
-                  {
-                    "text": "：あっ、すみません。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "グラスがこわれています。",
-            "segments": [
-              {
-                "text": "グラスがこわれています。"
-              }
-            ]
-          },
-          "explanationId": "〜ています dapat menyatakan keadaan hasil perubahan. Gelas sudah rusak, jadi グラスがこわれています。",
-          "solvingSteps": [
-            "Identifikasi keadaan benda pada gambar.",
-            "Gunakan verba intransitif こわれます.",
-            "Keadaan hasil → こわれています."
-          ],
-          "grammarPoint": "自動詞 + ています"
-        },
-        {
-          "id": "13-15-s5-q2",
-          "visual": {
-            "description": "Seseorang jatuh/tergeletak di tanah."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "あっ、（　）よ。",
-                "segments": [
-                  {
-                    "text": "あっ、（　）よ。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "本当だ。大変！",
-                "segments": [
-                  {
-                    "text": "本当",
-                    "reading": "ほんとう"
-                  },
-                  {
-                    "text": "だ。"
-                  },
-                  {
-                    "text": "大変",
-                    "reading": "たいへん"
-                  },
-                  {
-                    "text": "！"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "人がたおれています",
-            "segments": [
-              {
-                "text": "人",
-                "reading": "ひと"
-              },
-              {
-                "text": "がたおれています"
-              }
-            ]
-          },
-          "explanationId": "Orang terlihat dalam keadaan sudah jatuh/tergeletak, sehingga gunakan たおれています.",
-          "solvingSteps": [
-            "Lihat kondisi orang.",
-            "Verba たおれます → keadaan たおれています.",
-            "Tambahkan 人が."
-          ],
-          "grammarPoint": "倒れています"
-        },
-        {
-          "id": "13-15-s5-q3",
-          "visual": {
-            "description": "Sebuah pintu terlihat terbuka."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "あれ？（　）。",
-                "segments": [
-                  {
-                    "text": "あれ？（　）。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "本当だ。",
-                "segments": [
-                  {
-                    "text": "本当",
-                    "reading": "ほんとう"
-                  },
-                  {
-                    "text": "だ。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "ドアが開いています",
-            "segments": [
-              {
-                "text": "ドアが"
-              },
-              {
-                "text": "開",
-                "reading": "あ"
-              },
-              {
-                "text": "いています"
-              }
-            ]
-          },
-          "explanationId": "Pintu berada dalam keadaan terbuka. 自動詞 開きます → 開いています.",
-          "solvingSteps": [
-            "Subjek = ドア.",
-            "Gunakan 開きます untuk 'terbuka'.",
-            "Keadaan hasil → 開いています."
-          ],
-          "grammarPoint": "開いています"
-        },
-        {
-          "id": "13-15-s5-q4",
-          "visual": {
-            "description": "Toko memiliki shutter tertutup dan tanda CLOSED."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "あっ、（　）。",
-                "segments": [
-                  {
-                    "text": "あっ、（　）。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "本当だ。ほかのお店へ行きませんか。",
-                "segments": [
-                  {
-                    "text": "本当",
-                    "reading": "ほんとう"
-                  },
-                  {
-                    "text": "だ。ほかのお"
-                  },
-                  {
-                    "text": "店",
-                    "reading": "みせ"
-                  },
-                  {
-                    "text": "へ"
-                  },
-                  {
-                    "text": "行",
-                    "reading": "い"
-                  },
-                  {
-                    "text": "きませんか。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "お店が閉まっています",
-            "segments": [
-              {
-                "text": "お"
-              },
-              {
-                "text": "店",
-                "reading": "みせ"
-              },
-              {
-                "text": "が"
-              },
-              {
-                "text": "閉",
-                "reading": "し"
-              },
-              {
-                "text": "まっています"
-              }
-            ]
-          },
-          "explanationId": "Toko terlihat dalam keadaan tutup. 閉まります adalah intransitif; keadaan hasil → 閉まっています.",
-          "solvingSteps": [
-            "Gambar menunjukkan toko tertutup.",
-            "Gunakan 閉まります, bukan 閉めます.",
-            "Ubah ke 閉まっています."
-          ],
-          "grammarPoint": "閉まっています"
-        },
-        {
-          "id": "13-15-s5-q5",
-          "visual": {
-            "description": "Banyak orang sedang mengantre."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "あっ、（　）ね。",
-                "segments": [
-                  {
-                    "text": "あっ、（　）ね。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "そうですね。どうしますか。",
-                "segments": [
-                  {
-                    "text": "そうですね。どうしますか。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "A",
-              "content": {
-                "text": "待ちましょう。",
-                "segments": [
-                  {
-                    "text": "待",
-                    "reading": "ま"
-                  },
-                  {
-                    "text": "ちましょう。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "たくさん人がならんでいます",
-            "segments": [
-              {
-                "text": "たくさん"
-              },
-              {
-                "text": "人",
-                "reading": "ひと"
-              },
-              {
-                "text": "がならんでいます"
-              }
-            ]
-          },
-          "explanationId": "Orang-orang sedang berbaris/mengantre, sehingga gunakan 人が並んでいます.",
-          "solvingSteps": [
-            "Identifikasi aktivitas kelompok orang: mengantre.",
-            "ならびます → ならんでいます.",
-            "Tambahkan たくさん人が."
-          ],
-          "grammarPoint": "並んでいます"
-        },
-        {
-          "id": "13-15-s5-q6",
-          "visual": {
-            "description": "Sebuah dompet terlihat terjatuh di lantai dekat dua orang."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "あっ、（　）。",
-                "segments": [
-                  {
-                    "text": "あっ、（　）。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "本当だ。",
-                "segments": [
-                  {
-                    "text": "本当",
-                    "reading": "ほんとう"
-                  },
-                  {
-                    "text": "だ。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "さいふが落ちています",
-            "segments": [
-              {
-                "text": "さいふが"
-              },
-              {
-                "text": "落",
-                "reading": "お"
-              },
-              {
-                "text": "ちています"
-              }
-            ]
-          },
-          "explanationId": "Dompet berada dalam keadaan jatuh/tertinggal di lantai. 落ちます → 落ちています.",
-          "solvingSteps": [
-            "Identifikasi benda: さいふ.",
-            "Gunakan intransitif 落ちます.",
-            "Keadaan hasil → 落ちています."
-          ],
-          "grammarPoint": "落ちています"
-        }
-      ]
-    },
-    {
-      "section": 6,
-      "title": "絵を見て文を書く",
-      "titleReading": "えをみてぶんをかく",
-      "instruction": {
-        "text": "絵を見て文を書いてください。",
-        "segments": [
-          {
-            "text": "絵",
-            "reading": "え"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "見",
-            "reading": "み"
-          },
-          {
-            "text": "て"
-          },
-          {
-            "text": "文",
-            "reading": "ぶん"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "書",
-            "reading": "か"
-          },
-          {
-            "text": "いてください。"
-          }
-        ]
-      },
-      "type": "picture-dialogue",
-      "items": [
-        {
-          "id": "13-15-s6-q1",
-          "visual": {
-            "description": "A berada dekat toilet/lampu dan tidak tahu cara menyalakan listrik; B menunjukkan tombol."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "あれ？電気が……。",
-                "segments": [
-                  {
-                    "text": "あれ？"
-                  },
-                  {
-                    "text": "電気",
-                    "reading": "でんき"
-                  },
-                  {
-                    "text": "が……。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "あっ、そのボタンを（　）。",
-                "segments": [
-                  {
-                    "text": "あっ、そのボタンを（　）。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "A",
-              "content": {
-                "text": "ありがとうございます。",
-                "segments": [
-                  {
-                    "text": "ありがとうございます。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "押すと、電気がつきます",
-            "segments": [
-              {
-                "text": "押",
-                "reading": "お"
-              },
-              {
-                "text": "すと、"
-              },
-              {
-                "text": "電気",
-                "reading": "でんき"
-              },
-              {
-                "text": "がつきます"
-              }
-            ]
-          },
-          "explanationId": "〜と digunakan untuk hasil otomatis: ボタンを押すと、電気がつきます = kalau tombol ditekan, lampu menyala.",
-          "solvingSteps": [
-            "Gambar menunjukkan tombol sebagai pemicu.",
-            "Hasilnya lampu menyala.",
-            "Gunakan pola V辞書形 + と."
-          ],
-          "grammarPoint": "Vると、〜"
-        },
-        {
-          "id": "13-15-s6-q2a",
-          "visual": {
-            "description": "B sedang mencari taman tempat bisa melakukan BBQ."
-          },
-          "dialogue": [
-            {
-              "speaker": "A",
-              "content": {
-                "text": "何をしていますか。",
-                "segments": [
-                  {
-                    "text": "何",
-                    "reading": "なに"
-                  },
-                  {
-                    "text": "をしていますか。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "（　）。",
-                "segments": [
-                  {
-                    "text": "（　）。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "バーベキューができる公園をさがしています",
-            "segments": [
-              {
-                "text": "バーベキューができる"
-              },
-              {
-                "text": "公園",
-                "reading": "こうえん"
-              },
-              {
-                "text": "をさがしています"
-              }
-            ]
-          },
-          "explanationId": "公園 diterangkan oleh klausa バーベキューができる. Seluruh frasa menjadi objek dari さがしています.",
-          "solvingSteps": [
-            "Yang dicari = 公園.",
-            "Syarat taman = BBQ bisa dilakukan.",
-            "Bentuk klausa relatif: バーベキューができる公園."
-          ],
-          "grammarPoint": "普通形 + N"
-        },
-        {
-          "id": "13-15-s6-q2b",
-          "visual": {
-            "description": "Peta menunjukkan みどり公園 sekitar 5 menit jalan kaki dari stasiun."
-          },
-          "dialogue": [
-            {
-              "speaker": "B",
-              "content": {
-                "text": "Aさん、いい公園を知っていますか。",
-                "segments": [
-                  {
-                    "text": "Aさん、いい"
-                  },
-                  {
-                    "text": "公園",
-                    "reading": "こうえん"
-                  },
-                  {
-                    "text": "を"
-                  },
-                  {
-                    "text": "知",
-                    "reading": "し"
-                  },
-                  {
-                    "text": "っていますか。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "A",
-              "content": {
-                "text": "うーん、みどり公園はどうですか。（　）。",
-                "segments": [
-                  {
-                    "text": "うーん、みどり"
-                  },
-                  {
-                    "text": "公園",
-                    "reading": "こうえん"
-                  },
-                  {
-                    "text": "はどうですか。（　）。"
-                  }
-                ]
-              }
-            },
-            {
-              "speaker": "B",
-              "content": {
-                "text": "へえ、いいですね。",
-                "segments": [
-                  {
-                    "text": "へえ、いいですね。"
-                  }
-                ]
-              }
-            }
-          ],
-          "answer": {
-            "text": "駅から歩いて5分ぐらいです",
-            "segments": [
-              {
-                "text": "駅",
-                "reading": "えき"
-              },
-              {
-                "text": "から"
-              },
-              {
-                "text": "歩",
-                "reading": "ある"
-              },
-              {
-                "text": "いて"
-              },
-              {
-                "text": "5分",
-                "reading": "ごふん"
-              },
-              {
-                "text": "ぐらいです"
-              }
-            ]
-          },
-          "explanationId": "Peta menunjukkan taman sekitar 5 menit berjalan kaki dari stasiun. Pola alami: 駅から歩いて5分ぐらいです.",
-          "solvingSteps": [
-            "Baca peta: titik awal 駅.",
-            "Moda = berjalan kaki → 歩いて.",
-            "Durasi = 5分ぐらい."
-          ],
-          "grammarPoint": "場所から歩いて時間"
-        }
-      ]
-    },
-    {
-      "section": 7,
-      "title": "あなたの答え",
-      "titleReading": "あなたのこたえ",
-      "instruction": {
-        "text": "あなたの答えを書いてください。",
-        "segments": [
-          {
-            "text": "あなたの"
-          },
-          {
-            "text": "答",
-            "reading": "こた"
-          },
-          {
-            "text": "えを"
-          },
-          {
-            "text": "書",
-            "reading": "か"
-          },
-          {
-            "text": "いてください。"
-          }
-        ]
-      },
-      "type": "open-answer",
-      "grading": "open",
-      "items": [
-        {
-          "id": "13-15-s7-q1",
-          "question": {
-            "text": "日本の食べ物を食べたことがありますか。",
-            "segments": [
-              {
-                "text": "日本",
-                "reading": "にほん"
-              },
-              {
-                "text": "の"
-              },
-              {
-                "text": "食",
-                "reading": "た"
-              },
-              {
-                "text": "べ"
-              },
-              {
-                "text": "物",
-                "reading": "もの"
-              },
-              {
-                "text": "を"
-              },
-              {
-                "text": "食",
-                "reading": "た"
-              },
-              {
-                "text": "べたことがありますか。"
-              }
-            ]
-          },
-          "sampleAnswers": [
-            {
-              "text": "はい、何回もあります。",
-              "segments": [
-                {
-                  "text": "はい、"
-                },
-                {
-                  "text": "何回",
-                  "reading": "なんかい"
-                },
-                {
-                  "text": "もあります。"
-                }
-              ]
-            },
-            {
-              "text": "はい、あります。ラーメンや寿司を食べたことがあります。",
-              "segments": [
-                {
-                  "text": "はい、あります。ラーメンや"
-                },
-                {
-                  "text": "寿司",
-                  "reading": "すし"
-                },
-                {
-                  "text": "を"
-                },
-                {
-                  "text": "食",
-                  "reading": "た"
-                },
-                {
-                  "text": "べたことがあります。"
-                }
-              ]
-            }
-          ],
-          "explanationId": "Pengalaman memakai Vたことがあります. Jika pernah berkali-kali, bisa menjawab 何回もあります.",
-          "solvingSteps": [
-            "Tentukan apakah pernah.",
-            "Jika ya → はい、あります.",
-            "Boleh tambahkan contoh makanan atau frekuensi."
-          ],
-          "grammarPoint": "Vたことがあります"
-        },
-        {
-          "id": "13-15-s7-q2",
-          "question": {
-            "text": "日本の食べ物についてどう思いますか。",
-            "segments": [
-              {
-                "text": "日本",
-                "reading": "にほん"
-              },
-              {
-                "text": "の"
-              },
-              {
-                "text": "食",
-                "reading": "た"
-              },
-              {
-                "text": "べ"
-              },
-              {
-                "text": "物",
-                "reading": "もの"
-              },
-              {
-                "text": "についてどう"
-              },
-              {
-                "text": "思",
-                "reading": "おも"
-              },
-              {
-                "text": "いますか。"
-              }
-            ]
-          },
-          "sampleAnswers": [
-            {
-              "text": "インドネシア料理より味があまり濃くないですが、おいしいと思います。",
-              "segments": [
-                {
-                  "text": "インドネシア"
-                },
-                {
-                  "text": "料理",
-                  "reading": "りょうり"
-                },
-                {
-                  "text": "より"
-                },
-                {
-                  "text": "味",
-                  "reading": "あじ"
-                },
-                {
-                  "text": "があまり"
-                },
-                {
-                  "text": "濃",
-                  "reading": "こ"
-                },
-                {
-                  "text": "くないですが、おいしいと"
-                },
-                {
-                  "text": "思",
-                  "reading": "おも"
-                },
-                {
-                  "text": "います。"
-                }
-              ]
-            },
-            {
-              "text": "日本の食べ物はヘルシーで、おいしいと思います。",
-              "segments": [
-                {
-                  "text": "日本",
-                  "reading": "にほん"
-                },
-                {
-                  "text": "の"
-                },
-                {
-                  "text": "食",
-                  "reading": "た"
-                },
-                {
-                  "text": "べ"
-                },
-                {
-                  "text": "物",
-                  "reading": "もの"
-                },
-                {
-                  "text": "はヘルシーで、おいしいと"
-                },
-                {
-                  "text": "思",
-                  "reading": "おも"
-                },
-                {
-                  "text": "います。"
-                }
-              ]
-            }
-          ],
-          "explanationId": "Pendapat memakai 普通形 + と思います. Untuk membandingkan bisa memakai Nより. 味が濃い = rasanya kuat/pekat.",
-          "solvingSteps": [
-            "Tentukan pendapat utama.",
-            "Jika membandingkan, gunakan AよりB.",
-            "Akhiri dengan 〜と思います."
-          ],
-          "grammarPoint": "〜について / Nより / 〜と思います"
-        }
-      ]
-    },
-    {
-      "section": 8,
-      "title": "読解：青春18きっぷ",
-      "titleReading": "どっかい：せいしゅんじゅうはちきっぷ",
-      "instruction": {
-        "text": "次の文を読んでください。正しいものに○、間違っているものに×をつけてください。",
-        "segments": [
-          {
-            "text": "次",
-            "reading": "つぎ"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "文",
-            "reading": "ぶん"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "読",
-            "reading": "よ"
-          },
-          {
-            "text": "んでください。"
-          },
-          {
-            "text": "正",
-            "reading": "ただ"
-          },
-          {
-            "text": "しいものに○、"
-          },
-          {
-            "text": "間違",
-            "reading": "まちが"
-          },
-          {
-            "text": "っているものに×をつけてください。"
-          }
-        ]
-      },
-      "type": "reading-true-false",
-      "passage": {
-        "text": "私のおすすめは青春18きっぷです。\n青春18きっぷは1日どこへでも行くことができるきっぷです。春休みや夏休みなど長い休みのとき、買うことができます。5枚で12,050円です。友達と旅行に行くとき、いっしょに使うこともできます。\n新幹線や特急電車に乗ることができませんが、旅行が好きな人にはおすすめです。電車の窓から景色を見たり、お弁当を食べたりすることができますから、楽しいです。\n時間がある人はぜひ青春18きっぷで旅行してください。",
-        "segments": [
-          {
-            "text": "私",
-            "reading": "わたし"
-          },
-          {
-            "text": "のおすすめは"
-          },
-          {
-            "text": "青春18",
-            "reading": "せいしゅんじゅうはち"
-          },
-          {
-            "text": "きっぷです。\n"
-          },
-          {
-            "text": "青春18",
-            "reading": "せいしゅんじゅうはち"
-          },
-          {
-            "text": "きっぷは"
-          },
-          {
-            "text": "1日",
-            "reading": "いちにち"
-          },
-          {
-            "text": "どこへでも"
-          },
-          {
-            "text": "行",
-            "reading": "い"
-          },
-          {
-            "text": "くことができるきっぷです。"
-          },
-          {
-            "text": "春休",
-            "reading": "はるやす"
-          },
-          {
-            "text": "みや"
-          },
-          {
-            "text": "夏休",
-            "reading": "なつやす"
-          },
-          {
-            "text": "みなど"
-          },
-          {
-            "text": "長",
-            "reading": "なが"
-          },
-          {
-            "text": "い"
-          },
-          {
-            "text": "休",
-            "reading": "やす"
-          },
-          {
-            "text": "みのとき、"
-          },
-          {
-            "text": "買",
-            "reading": "か"
-          },
-          {
-            "text": "うことができます。"
-          },
-          {
-            "text": "5枚",
-            "reading": "ごまい"
-          },
-          {
-            "text": "で"
-          },
-          {
-            "text": "12,050円",
-            "reading": "いちまんにせんごじゅうえん"
-          },
-          {
-            "text": "です。"
-          },
-          {
-            "text": "友達",
-            "reading": "ともだち"
-          },
-          {
-            "text": "と"
-          },
-          {
-            "text": "旅行",
-            "reading": "りょこう"
-          },
-          {
-            "text": "に"
-          },
-          {
-            "text": "行",
-            "reading": "い"
-          },
-          {
-            "text": "くとき、いっしょに"
-          },
-          {
-            "text": "使",
-            "reading": "つか"
-          },
-          {
-            "text": "うこともできます。\n"
-          },
-          {
-            "text": "新幹線",
-            "reading": "しんかんせん"
-          },
-          {
-            "text": "や"
-          },
-          {
-            "text": "特急電車",
-            "reading": "とっきゅうでんしゃ"
-          },
-          {
-            "text": "に"
-          },
-          {
-            "text": "乗",
-            "reading": "の"
-          },
-          {
-            "text": "ることができませんが、"
-          },
-          {
-            "text": "旅行",
-            "reading": "りょこう"
+            "text": "毎日",
+            "reading": "まいにち"
           },
           {
             "text": "が"
-          },
-          {
-            "text": "好",
-            "reading": "す"
-          },
-          {
-            "text": "きな"
-          },
-          {
-            "text": "人",
-            "reading": "ひと"
-          },
-          {
-            "text": "にはおすすめです。"
-          },
-          {
-            "text": "電車",
-            "reading": "でんしゃ"
-          },
-          {
-            "text": "の"
-          },
-          {
-            "text": "窓",
-            "reading": "まど"
-          },
-          {
-            "text": "から"
-          },
-          {
-            "text": "景色",
-            "reading": "けしき"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "見",
-            "reading": "み"
-          },
-          {
-            "text": "たり、お"
-          },
-          {
-            "text": "弁当",
-            "reading": "べんとう"
-          },
-          {
-            "text": "を"
-          },
-          {
-            "text": "食",
-            "reading": "た"
-          },
-          {
-            "text": "べたりすることができますから、"
           },
           {
             "text": "楽",
@@ -2846,172 +1702,315 @@ export const dekiruExam4Data: DekiruExamData = {
             "text": "しいです。\n"
           },
           {
-            "text": "時間",
-            "reading": "じかん"
+            "text": "平日",
+            "reading": "へいじつ"
           },
           {
-            "text": "がある"
+            "text": "は"
           },
           {
-            "text": "人",
-            "reading": "ひと"
+            "text": "学校",
+            "reading": "がっこう"
           },
           {
-            "text": "はぜひ"
+            "text": "へ"
           },
           {
-            "text": "青春18",
-            "reading": "せいしゅんじゅうはち"
+            "text": "行",
+            "reading": "い"
           },
           {
-            "text": "きっぷで"
+            "text": "って、"
           },
           {
-            "text": "旅行",
-            "reading": "りょこう"
+            "text": "夜",
+            "reading": "よる"
           },
           {
-            "text": "してください。"
+            "text": "は"
+          },
+          {
+            "text": "家",
+            "reading": "いえ"
+          },
+          {
+            "text": "で"
+          },
+          {
+            "text": "日本語",
+            "reading": "にほんご"
+          },
+          {
+            "text": "を"
+          },
+          {
+            "text": "勉強",
+            "reading": "べんきょう"
+          },
+          {
+            "text": "しています。"
+          },
+          {
+            "text": "休",
+            "reading": "やす"
+          },
+          {
+            "text": "みの"
+          },
+          {
+            "text": "日",
+            "reading": "ひ"
+          },
+          {
+            "text": "は、"
+          },
+          {
+            "text": "買",
+            "reading": "か"
+          },
+          {
+            "text": "い"
+          },
+          {
+            "text": "物",
+            "reading": "もの"
+          },
+          {
+            "text": "に"
+          },
+          {
+            "text": "行",
+            "reading": "い"
+          },
+          {
+            "text": "ったり、"
+          },
+          {
+            "text": "友達",
+            "reading": "ともだち"
+          },
+          {
+            "text": "と"
+          },
+          {
+            "text": "食事",
+            "reading": "しょくじ"
+          },
+          {
+            "text": "に"
+          },
+          {
+            "text": "行",
+            "reading": "い"
+          },
+          {
+            "text": "ったりします。\n"
+          },
+          {
+            "text": "先週",
+            "reading": "せんしゅう"
+          },
+          {
+            "text": "、"
+          },
+          {
+            "text": "風邪",
+            "reading": "かぜ"
+          },
+          {
+            "text": "をひきました。"
+          },
+          {
+            "text": "熱",
+            "reading": "ねつ"
+          },
+          {
+            "text": "もありましたから、"
+          },
+          {
+            "text": "病院",
+            "reading": "びょういん"
+          },
+          {
+            "text": "へ"
+          },
+          {
+            "text": "行",
+            "reading": "い"
+          },
+          {
+            "text": "きました。"
+          },
+          {
+            "text": "医者",
+            "reading": "いしゃ"
+          },
+          {
+            "text": "に「"
+          },
+          {
+            "text": "今日",
+            "reading": "きょう"
+          },
+          {
+            "text": "は"
+          },
+          {
+            "text": "早",
+            "reading": "はや"
+          },
+          {
+            "text": "く"
+          },
+          {
+            "text": "寝",
+            "reading": "ね"
+          },
+          {
+            "text": "たほうがいいです。たばこも"
+          },
+          {
+            "text": "吸",
+            "reading": "す"
+          },
+          {
+            "text": "わないほうがいいです」と"
+          },
+          {
+            "text": "言",
+            "reading": "い"
+          },
+          {
+            "text": "われました。"
           }
         ]
       },
       "readingStrategy": [
-        "Tandai angka, jumlah lembar, jenis kereta, dan kapan tiket bisa dibeli.",
-        "Bedakan '5枚で12,050円' dari '1枚で12,050円'.",
-        "Perhatikan bentuk negatif seperti 乗ることができません.",
-        "Cari bukti langsung di teks sebelum memilih ○ atau ×."
+        "Cari kata kunci di pernyataan.",
+        "Bandingkan dengan informasi literal di bacaan.",
+        "Perhatikan bentuk kontras 〜ですが dan aktivitas berulang 〜たり〜たりします.",
+        "Saran dokter dibedakan antara 〜たほうがいい dan 〜ないほうがいい."
       ],
       "items": [
         {
-          "id": "13-15-s8-example",
-          "isExample": true,
+          "id": "10-12-s7-q1",
           "statement": {
-            "text": "春休みや夏休みに買うことができます。",
+            "text": "日本へ来た時、日本語が上手でした。",
             "segments": [
               {
-                "text": "春休",
-                "reading": "はるやす"
+                "text": "日本",
+                "reading": "にほん"
               },
               {
-                "text": "みや"
+                "text": "へ"
               },
               {
-                "text": "夏休",
-                "reading": "なつやす"
+                "text": "来",
+                "reading": "き"
               },
               {
-                "text": "みに"
+                "text": "た"
+              },
+              {
+                "text": "時",
+                "reading": "とき"
+              },
+              {
+                "text": "、"
+              },
+              {
+                "text": "日本語",
+                "reading": "にほんご"
+              },
+              {
+                "text": "が"
+              },
+              {
+                "text": "上手",
+                "reading": "じょうず"
+              },
+              {
+                "text": "でした。"
+              }
+            ]
+          },
+          "answer": "×",
+          "explanationId": "Bacaan mengatakan 日本語があまり話せませんでした."
+        },
+        {
+          "id": "10-12-s7-q2",
+          "statement": {
+            "text": "休みの日は買い物や食事に行きます。",
+            "segments": [
+              {
+                "text": "休",
+                "reading": "やす"
+              },
+              {
+                "text": "みの"
+              },
+              {
+                "text": "日",
+                "reading": "ひ"
+              },
+              {
+                "text": "は"
               },
               {
                 "text": "買",
                 "reading": "か"
               },
               {
-                "text": "うことができます。"
-              }
-            ]
-          },
-          "answer": "○",
-          "explanationId": "Teks mengatakan 春休みや夏休みなど長い休みのとき、買うことができます."
-        },
-        {
-          "id": "13-15-s8-q1",
-          "statement": {
-            "text": "1枚で12,050円です。",
-            "segments": [
-              {
-                "text": "1枚",
-                "reading": "いちまい"
+                "text": "い"
               },
               {
-                "text": "で"
+                "text": "物",
+                "reading": "もの"
               },
               {
-                "text": "12,050円",
-                "reading": "いちまんにせんごじゅうえん"
+                "text": "や"
               },
               {
-                "text": "です。"
-              }
-            ]
-          },
-          "answer": "×",
-          "explanationId": "Teks mengatakan 5枚で12,050円です, bukan 1枚.",
-          "solvingSteps": [
-            "Cari angka 12,050円.",
-            "Teks memasangkannya dengan 5枚.",
-            "Soal mengatakan 1枚 → ×."
-          ]
-        },
-        {
-          "id": "13-15-s8-q2",
-          "statement": {
-            "text": "友達と5人で1日旅行することができます。",
-            "segments": [
-              {
-                "text": "友達",
-                "reading": "ともだち"
-              },
-              {
-                "text": "と"
-              },
-              {
-                "text": "5人",
-                "reading": "ごにん"
-              },
-              {
-                "text": "で"
-              },
-              {
-                "text": "1日",
-                "reading": "いちにち"
-              },
-              {
-                "text": "旅行",
-                "reading": "りょこう"
-              },
-              {
-                "text": "することができます。"
-              }
-            ]
-          },
-          "answer": "○",
-          "explanationId": "Tiket terdiri dari 5 lembar dan teks menyebut bisa digunakan bersama teman. Jadi lima orang dapat menggunakan lima lembar untuk satu hari.",
-          "solvingSteps": [
-            "Teks: 5枚.",
-            "Teks: 友達といっしょに使うこともできます.",
-            "5 orang memakai 5 lembar untuk satu hari sesuai informasi → ○."
-          ]
-        },
-        {
-          "id": "13-15-s8-q3",
-          "statement": {
-            "text": "新幹線に乗って遠い所へ行くことができます。",
-            "segments": [
-              {
-                "text": "新幹線",
-                "reading": "しんかんせん"
+                "text": "食事",
+                "reading": "しょくじ"
               },
               {
                 "text": "に"
               },
               {
-                "text": "乗",
-                "reading": "の"
+                "text": "行",
+                "reading": "い"
               },
               {
-                "text": "って"
+                "text": "きます。"
+              }
+            ]
+          },
+          "answer": "○",
+          "explanationId": "Bacaan menyebut 買い物に行ったり、友達と食事に行ったりします."
+        },
+        {
+          "id": "10-12-s7-q3",
+          "statement": {
+            "text": "先週、風邪をひきましたが、病院へ行きませんでした。",
+            "segments": [
+              {
+                "text": "先週",
+                "reading": "せんしゅう"
               },
               {
-                "text": "遠",
-                "reading": "とお"
+                "text": "、"
               },
               {
-                "text": "い"
+                "text": "風邪",
+                "reading": "かぜ"
               },
               {
-                "text": "所",
-                "reading": "ところ"
+                "text": "をひきましたが、"
+              },
+              {
+                "text": "病院",
+                "reading": "びょういん"
               },
               {
                 "text": "へ"
@@ -3021,17 +2020,439 @@ export const dekiruExam4Data: DekiruExamData = {
                 "reading": "い"
               },
               {
-                "text": "くことができます。"
+                "text": "きませんでした。"
               }
             ]
           },
           "answer": "×",
-          "explanationId": "Teks secara eksplisit mengatakan 新幹線や特急電車に乗ることができません.",
-          "solvingSteps": [
-            "Cari 新幹線 dalam teks.",
-            "Ada できません = tidak bisa.",
-            "Pernyataan mengatakan bisa → ×."
-          ]
+          "explanationId": "Bacaan mengatakan 病院へ行きました."
+        },
+        {
+          "id": "10-12-s7-q4",
+          "statement": {
+            "text": "医者は、たばこを吸わないほうがいいと言いました。",
+            "segments": [
+              {
+                "text": "医者",
+                "reading": "いしゃ"
+              },
+              {
+                "text": "は、たばこを"
+              },
+              {
+                "text": "吸",
+                "reading": "す"
+              },
+              {
+                "text": "わないほうがいいと"
+              },
+              {
+                "text": "言",
+                "reading": "い"
+              },
+              {
+                "text": "いました。"
+              }
+            ]
+          },
+          "answer": "○",
+          "explanationId": "Itu sesuai persis dengan saran dokter di bacaan."
+        }
+      ]
+    },
+    {
+      "section": 8,
+      "title": "テスト形式の練習",
+      "type": "mixed-exam-style",
+      "items": [
+        {
+          "id": "10-12-s8-q1",
+          "question": {
+            "text": "A：もう薬を飲みましたか。\nB：いいえ、まだ（　）。",
+            "segments": [
+              {
+                "text": "A：もう"
+              },
+              {
+                "text": "薬",
+                "reading": "くすり"
+              },
+              {
+                "text": "を"
+              },
+              {
+                "text": "飲",
+                "reading": "の"
+              },
+              {
+                "text": "みましたか。\nB：いいえ、まだ（　）。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "飲んでいません",
+              "segments": [
+                {
+                  "text": "飲",
+                  "reading": "の"
+                },
+                {
+                  "text": "んでいません"
+                }
+              ]
+            },
+            {
+              "text": "飲みません",
+              "segments": [
+                {
+                  "text": "飲",
+                  "reading": "の"
+                },
+                {
+                  "text": "みません"
+                }
+              ]
+            },
+            {
+              "text": "飲まないでください",
+              "segments": [
+                {
+                  "text": "飲",
+                  "reading": "の"
+                },
+                {
+                  "text": "まないでください"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "飲んでいません",
+            "segments": [
+              {
+                "text": "飲",
+                "reading": "の"
+              },
+              {
+                "text": "んでいません"
+              }
+            ]
+          },
+          "explanationId": "まだ + Vていません."
+        },
+        {
+          "id": "10-12-s8-q2",
+          "question": {
+            "text": "危ないですから、ここに（　）ください。",
+            "segments": [
+              {
+                "text": "危",
+                "reading": "あぶ"
+              },
+              {
+                "text": "ないですから、ここに（　）ください。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "入らないで",
+              "segments": [
+                {
+                  "text": "入",
+                  "reading": "はい"
+                },
+                {
+                  "text": "らないで"
+                }
+              ]
+            },
+            {
+              "text": "入っても",
+              "segments": [
+                {
+                  "text": "入",
+                  "reading": "はい"
+                },
+                {
+                  "text": "っても"
+                }
+              ]
+            },
+            {
+              "text": "入ってきて",
+              "segments": [
+                {
+                  "text": "入",
+                  "reading": "はい"
+                },
+                {
+                  "text": "ってきて"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "入らないで",
+            "segments": [
+              {
+                "text": "入",
+                "reading": "はい"
+              },
+              {
+                "text": "らないで"
+              }
+            ]
+          },
+          "explanationId": "Larangan → Vないでください."
+        },
+        {
+          "id": "10-12-s8-q3",
+          "question": {
+            "text": "暇（　）、よく映画を見ます。",
+            "segments": [
+              {
+                "text": "暇",
+                "reading": "ひま"
+              },
+              {
+                "text": "（　）、よく"
+              },
+              {
+                "text": "映画",
+                "reading": "えいが"
+              },
+              {
+                "text": "を"
+              },
+              {
+                "text": "見",
+                "reading": "み"
+              },
+              {
+                "text": "ます。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "なとき",
+              "segments": [
+                {
+                  "text": "なとき"
+                }
+              ]
+            },
+            {
+              "text": "のとき",
+              "segments": [
+                {
+                  "text": "のとき"
+                }
+              ]
+            },
+            {
+              "text": "たとき",
+              "segments": [
+                {
+                  "text": "たとき"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "なとき",
+            "segments": [
+              {
+                "text": "なとき"
+              }
+            ]
+          },
+          "explanationId": "暇 adalah na-adjective → 暇なとき."
+        },
+        {
+          "id": "10-12-s8-q4",
+          "question": {
+            "text": "食事を（　）、薬を飲みました。",
+            "segments": [
+              {
+                "text": "食事",
+                "reading": "しょくじ"
+              },
+              {
+                "text": "を（　）、"
+              },
+              {
+                "text": "薬",
+                "reading": "くすり"
+              },
+              {
+                "text": "を"
+              },
+              {
+                "text": "飲",
+                "reading": "の"
+              },
+              {
+                "text": "みました。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "食べてから",
+              "segments": [
+                {
+                  "text": "食",
+                  "reading": "た"
+                },
+                {
+                  "text": "べてから"
+                }
+              ]
+            },
+            {
+              "text": "食べたほうがいい",
+              "segments": [
+                {
+                  "text": "食",
+                  "reading": "た"
+                },
+                {
+                  "text": "べたほうがいい"
+                }
+              ]
+            },
+            {
+              "text": "食べないで",
+              "segments": [
+                {
+                  "text": "食",
+                  "reading": "た"
+                },
+                {
+                  "text": "べないで"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "食べてから",
+            "segments": [
+              {
+                "text": "食",
+                "reading": "た"
+              },
+              {
+                "text": "べてから"
+              }
+            ]
+          },
+          "explanationId": "Urutan kegiatan: setelah makan → Vて colonial/てから."
+        },
+        {
+          "id": "10-12-s8-q5",
+          "question": {
+            "text": "日本語が上手になりたいです。どうしたらいいですか。",
+            "segments": [
+              {
+                "text": "日本語",
+                "reading": "にほんご"
+              },
+              {
+                "text": "が"
+              },
+              {
+                "text": "上手",
+                "reading": "じょうず"
+              },
+              {
+                "text": "になりたいです。どうしたらいいですか。"
+              }
+            ]
+          },
+          "choices": [
+            {
+              "text": "毎日、日本語を話したほうがいいです。",
+              "segments": [
+                {
+                  "text": "毎日",
+                  "reading": "まいにち"
+                },
+                {
+                  "text": "、"
+                },
+                {
+                  "text": "日本語",
+                  "reading": "にほんご"
+                },
+                {
+                  "text": "を"
+                },
+                {
+                  "text": "話",
+                  "reading": "はな"
+                },
+                {
+                  "text": "したほうがいいです。"
+                }
+              ]
+            },
+            {
+              "text": "毎日、日本語を話さないほうがいいです。",
+              "segments": [
+                {
+                  "text": "毎日",
+                  "reading": "まいにち"
+                },
+                {
+                  "text": "、"
+                },
+                {
+                  "text": "日本語",
+                  "reading": "にほんご"
+                },
+                {
+                  "text": "を"
+                },
+                {
+                  "text": "話",
+                  "reading": "はな"
+                },
+                {
+                  "text": "さないほうがいいです。"
+                }
+              ]
+            }
+          ],
+          "answer": {
+            "text": "毎日、日本語を話したほうがいいです。",
+            "segments": [
+              {
+                "text": "毎日",
+                "reading": "まいにち"
+              },
+              {
+                "text": "、"
+              },
+              {
+                "text": "日本語",
+                "reading": "にほんご"
+              },
+              {
+                "text": "を"
+              },
+              {
+                "text": "話",
+                "reading": "はな"
+              },
+              {
+                "text": "したほうがいいです。"
+              }
+            ]
+          },
+          "explanationId": "Untuk menjadi lebih mahir, saran positif memakai Vたほうがいいです."
         }
       ]
     }

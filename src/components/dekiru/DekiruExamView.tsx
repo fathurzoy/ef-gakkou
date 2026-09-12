@@ -136,6 +136,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         s.type === "picture-writing" ||
         s.type === "dialogue-completion" ||
         s.type === "picture-dialogue" ||
+        s.type === "casual-form" ||
         s.type === "open-answer"
     );
   }, [currentExamData]);
@@ -246,20 +247,22 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
     return (
       <div style={{ marginTop: "0.75rem", marginBottom: "0.75rem" }}>
-        {/* 1. Multiple Choice (Exam 1 Sec 4) */}
-        {"choices" in item && Array.isArray(item.choices) && typeof item.choices[0] === "string" && (
+        {/* 1. Multiple Choice (Exam 1 Sec 4, Exam 4 Sec 1, Sec 4, Sec 8) */}
+        {"choices" in item && Array.isArray(item.choices) && (
           <div className="review-options-grid" style={{ marginBottom: "0.5rem" }}>
-            {item.choices.map((ch: string, cIdx: number) => {
-              const isSelected = userAnswer === ch;
-              const isCorrect = "answer" in item && item.answer === ch;
+            {item.choices.map((rawCh: any, cIdx: number) => {
+              const chText = typeof rawCh === "string" ? rawCh : rawCh.text;
+              const isSelected = userAnswer === chText;
+              const correctAnsText = "answer" in item ? (typeof item.answer === "string" ? item.answer : item.answer?.text || "") : "";
+              const isCorrect = correctAnsText === chText;
               const showCorrect = isRevealed && isCorrect;
               const showWrong = isRevealed && isSelected && !isCorrect;
 
               return (
                 <button
-                  key={ch}
+                  key={cIdx}
                   type="button"
-                  onClick={() => handleSelectAnswer(item.id, ch)}
+                  onClick={() => handleSelectAnswer(item.id, chText)}
                   style={{
                     padding: "0.75rem 0.95rem",
                     borderRadius: "10px",
@@ -305,7 +308,11 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     {cIdx + 1}
                   </span>
                   <span style={{ fontSize: "1.05rem", fontWeight: isSelected || showCorrect ? 700 : 500 }}>
-                    {ch}
+                    {typeof rawCh === "object" && rawCh.segments ? (
+                      <SegmentFurigana segments={rawCh.segments} />
+                    ) : (
+                      chText
+                    )}
                   </span>
                   {showCorrect && (
                     <div style={{ marginLeft: "auto" }}>
@@ -1303,7 +1310,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           );
         })()}
 
-        {/* 11c. Picture Dialogue (Exam 4 Sec 6) */}
+        {/* 11c. Picture Dialogue (Exam 5 Sec 6) */}
         {sec.type === "picture-dialogue" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
             <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
@@ -1319,6 +1326,32 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               }}
               style={{
                 width: "100%",
+                padding: "0.55rem 0.85rem",
+                borderRadius: "10px",
+                border: "1.5px solid #cbd5e1",
+                fontSize: "0.95rem",
+              }}
+            />
+          </div>
+        )}
+
+        {/* 11d. Casual Form Text Input (Exam 4 Sec 5) */}
+        {sec.type === "casual-form" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+              ✍️ Tulis bentuk kasual (フツウ形・カジュアル) yang tepat:
+            </label>
+            <input
+              type="text"
+              placeholder="Contoh: よく見る？"
+              value={userAnswers[item.id] || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+              }}
+              style={{
+                width: "100%",
+                maxWidth: "420px",
                 padding: "0.55rem 0.85rem",
                 borderRadius: "10px",
                 border: "1.5px solid #cbd5e1",
@@ -1457,6 +1490,19 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 }}
               >
                 Kunci: {item.answer}
+              </div>
+            )}
+            {"answer" in item && typeof item.answer === "object" && item.answer !== null && "text" in item.answer && (
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  padding: "0.2rem 0.65rem",
+                  borderRadius: "9999px",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                }}
+              >
+                Kunci: {item.answer.text}
               </div>
             )}
           </div>
@@ -1764,6 +1810,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 { accent: "#0284c7", light: "#f0f9ff", border: "#38bdf8", shadow: "rgba(2, 132, 199, 0.3)" },
                 { accent: "#059669", light: "#ecfdf5", border: "#34d399", shadow: "rgba(5, 150, 105, 0.3)" },
                 { accent: "#d97706", light: "#fffbeb", border: "#fbbf24", shadow: "rgba(217, 119, 6, 0.3)" },
+                { accent: "#8b5cf6", light: "#faf5ff", border: "#a78bfa", shadow: "rgba(139, 92, 246, 0.3)" },
               ];
               const theme = cardThemes[idx % cardThemes.length];
               const accentColor = theme.accent;
@@ -1913,6 +1960,8 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       ? "Ujian 2 (Bab 4-6)"
                       : currentExamData.exam.id === 'dekiru-review-7-9'
                       ? "Ujian 3 (Bab 7-9)"
+                      : currentExamData.exam.id === 'dekiru-review-10-12'
+                      ? "Ujian 4 (Bab 10-12)"
                       : "Ujian 5 (Bab 13-15)"}
                   </div>
                 </div>
@@ -2281,7 +2330,11 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             {/* Instruction block */}
             <div style={{ padding: "0.65rem 1rem", background: "#f8fafc", borderRadius: "10px", border: "1px solid #e2e8f0", fontSize: "0.85rem", color: "#475569" }}>
               <strong>Petunjuk Bagian {currentQ.section.section}:</strong>{" "}
-              <SegmentFurigana segments={currentQ.section.instruction.segments} />
+              {currentQ.section.instruction && currentQ.section.instruction.segments ? (
+                <SegmentFurigana segments={currentQ.section.instruction.segments} />
+              ) : (
+                currentQ.section.instruction?.text || currentQ.section.title
+              )}
             </div>
 
             {/* Section Specific Reading Passage (e.g. Exam 1 Sec 8, Exam 2 Sec 10, Exam 4 Sec 8, Exam 4 Sec 4) */}
@@ -2600,12 +2653,18 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         <h3 style={{ fontSize: "1.1rem", fontWeight: 800, margin: 0, color: "#1e1b4b" }}>
                           {sec.title}
                         </h3>
-                        <span style={{ fontSize: "0.82rem", color: "#64748b" }}>
-                          ({sec.titleReading})
-                        </span>
+                        {sec.titleReading && (
+                          <span style={{ fontSize: "0.82rem", color: "#64748b" }}>
+                            ({sec.titleReading})
+                          </span>
+                        )}
                       </div>
                       <div style={{ fontSize: "0.85rem", color: "#475569" }}>
-                        <SegmentFurigana segments={sec.instruction.segments} />
+                        {sec.instruction && sec.instruction.segments ? (
+                          <SegmentFurigana segments={sec.instruction.segments} />
+                        ) : (
+                          sec.instruction?.text || sec.title
+                        )}
                       </div>
                     </div>
                   </div>

@@ -16,7 +16,7 @@ export interface WordBankItem {
 
 export interface SectionInstruction {
   text: string;
-  segments: TextSegment[];
+  segments?: TextSegment[];
 }
 
 // Section 2 (Exam 1): Word Bank Item
@@ -39,20 +39,20 @@ export interface ParticleFillQuestionItem {
   answer: string[];
   completed?: SegmentContent;
   explanationId: string;
-  solvingSteps: string[];
-  grammarPoint: string;
+  solvingSteps?: string[];
+  grammarPoint?: string;
 }
 
 // Multiple Choice Item
 export interface MultipleChoiceQuestionItem {
   id: string;
   question: SegmentContent;
-  choices: string[] | Record<string, string[]>;
-  answer: string | string[];
+  choices: Array<{ text: string; segments?: TextSegment[] } | string> | Record<string, string[]>;
+  answer: SegmentContent | string | string[];
   answerRuby?: SegmentContent;
   explanationId: string;
-  solvingSteps: string[];
-  grammarPoint: string;
+  solvingSteps?: string[];
+  grammarPoint?: string;
 }
 
 // Dialogue Writing Item
@@ -159,8 +159,8 @@ export interface ConjugationQuestionItem {
   acceptedVariants?: SegmentContent[];
   completed?: SegmentContent;
   explanationId: string;
-  solvingSteps: string[];
-  grammarPoint: string;
+  solvingSteps?: string[];
+  grammarPoint?: string;
 }
 
 export interface PictureWritingQuestionItem {
@@ -217,8 +217,8 @@ export interface DialogueCompletionQuestionItem {
   acceptedVariants?: any;
   acceptedResponses?: SegmentContent[];
   explanationId: string;
-  solvingSteps: string[];
-  grammarPoint: string;
+  solvingSteps?: string[];
+  grammarPoint?: string;
 }
 
 // Exam 4 Specific Items
@@ -249,13 +249,34 @@ export interface PictureDialogueQuestionItem {
   grammarPoint: string;
 }
 
+// Exam 4 (Bab 10-12) Specific Items
+export interface CasualFormQuestionItem {
+  id: string;
+  question: SegmentContent;
+  answer: SegmentContent;
+  acceptedVariants?: SegmentContent[];
+  explanationId: string;
+  solvingSteps?: string[];
+  grammarPoint?: string;
+}
+
+export interface MixedExamStyleQuestionItem {
+  id: string;
+  question: SegmentContent;
+  choices: Array<{ text: string; segments?: TextSegment[] } | string>;
+  answer: SegmentContent | string;
+  explanationId: string;
+  solvingSteps?: string[];
+  grammarPoint?: string;
+}
+
 // Section Discriminated Union
 export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'word-bank';
       score?: { earned: number; max: number };
       wordBank: WordBankItem[];
@@ -264,8 +285,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'particle-fill';
       score?: { earned: number; max: number };
       items: ParticleFillQuestionItem[];
@@ -273,8 +294,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'multiple-choice';
       score?: { earned: number; max: number };
       items: MultipleChoiceQuestionItem[];
@@ -282,8 +303,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'dialogue-writing';
       score?: { earned: number; max: number };
       items: DialogueWritingQuestionItem[];
@@ -291,8 +312,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'dialogue-matching';
       score?: { earned: number; max: number };
       choices: MatchingChoice[];
@@ -301,8 +322,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'open-answer';
       score?: { earned: number; max: number };
       grading?: string;
@@ -311,8 +332,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'reading-true-false';
       score?: { earned: number; max: number };
       passage: SegmentContent;
@@ -322,8 +343,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'time-vocabulary';
       score?: { earned: number; max: number };
       items: TimeVocabularyQuestionItem[];
@@ -331,8 +352,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'antonym';
       score?: { earned: number; max: number };
       items: AntonymQuestionItem[];
@@ -340,8 +361,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'counter-fill';
       score?: { earned: number; max: number };
       items: CounterFillQuestionItem[];
@@ -349,8 +370,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'conjugation';
       score?: { earned: number; max: number };
       items: ConjugationQuestionItem[];
@@ -358,8 +379,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'picture-writing';
       score?: { earned: number; max: number };
       items: PictureWritingQuestionItem[];
@@ -367,8 +388,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'picture-vocabulary';
       score?: { earned: number; max: number };
       items: PictureVocabularyQuestionItem[];
@@ -376,8 +397,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'location-existence';
       score?: { earned: number; max: number };
       items: LocationExistenceQuestionItem[];
@@ -385,8 +406,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'dialogue-completion';
       score?: { earned: number; max: number };
       items: DialogueCompletionQuestionItem[];
@@ -394,8 +415,8 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'grammar-choice';
       score?: { earned: number; max: number };
       choiceBank: ChoiceBankItem[];
@@ -405,11 +426,29 @@ export type DekiruSection =
   | {
       section: number;
       title: string;
-      titleReading: string;
-      instruction: SectionInstruction;
+      titleReading?: string;
+      instruction?: SectionInstruction;
       type: 'picture-dialogue';
       score?: { earned: number; max: number };
       items: PictureDialogueQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading?: string;
+      instruction?: SectionInstruction;
+      type: 'casual-form';
+      score?: { earned: number; max: number };
+      items: CasualFormQuestionItem[];
+    }
+  | {
+      section: number;
+      title: string;
+      titleReading?: string;
+      instruction?: SectionInstruction;
+      type: 'mixed-exam-style';
+      score?: { earned: number; max: number };
+      items: MixedExamStyleQuestionItem[];
     };
 
 export interface DekiruExamData {
@@ -423,12 +462,12 @@ export interface DekiruExamData {
     originalScore?: { earned: number; max: number };
     datasetScore?: { earned: number; max: number };
     audioSkipped: boolean;
-    skippedSections: Array<{ section: number; reason: string }>;
+    skippedSections?: Array<{ section: number; reason: string }>;
   };
   furigana: {
     format: string;
     description: string;
-    htmlExample: string;
+    htmlExample?: string;
   };
   sections: DekiruSection[];
 }
