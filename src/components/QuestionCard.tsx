@@ -495,15 +495,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             marginBottom: '1.25rem',
-            flexWrap: 'wrap',
-            gap: '0.75rem',
+            gap: '0.65rem',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', minWidth: 0, flex: '1 1 180px' }}>
             {userAnswer.isCorrect ? (
               <>
                 <CheckCircle2 size={24} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <div>
+                <div style={{ minWidth: 0, wordBreak: 'break-word' }}>
                   <strong style={{ color: '#065f46', fontSize: '1rem', display: 'block' }}>
                     正解！ Jawaban Anda Benar!
                   </strong>
@@ -524,7 +525,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             ) : (
               <>
                 <XCircle size={24} color="#ef4444" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <div>
+                <div style={{ minWidth: 0, wordBreak: 'break-word' }}>
                   <strong style={{ color: '#991b1b', fontSize: '1rem', display: 'block' }}>
                     不正解！ Jawaban Anda Salah.
                   </strong>
@@ -549,7 +550,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <button
               onClick={onResetSingleQuestion}
               className="btn btn-secondary"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '8px' }}
+              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '8px' }}
               title="Coba jawab ulang soal ini"
             >
               <RotateCcw size={14} /> Coba Lagi

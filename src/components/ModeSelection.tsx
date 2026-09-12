@@ -156,6 +156,8 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
               boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
               flexWrap: 'wrap',
               justifyContent: 'center',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
