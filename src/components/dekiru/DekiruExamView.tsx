@@ -494,7 +494,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <input
                 type="text"
-                placeholder="Contoh: きのう, あした, せんしゅう..."
+                placeholder="Contoh: きのう"
                 value={userAnswers[item.id] || ""}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -522,7 +522,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <input
                 type="text"
-                placeholder="Contoh: 少ない / むずかしい / 暇..."
+                placeholder="Contoh: 少ない"
                 value={userAnswers[item.id] || ""}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -550,7 +550,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <input
                 type="text"
-                placeholder="Contoh: さんさつ, さんばい, ごほん..."
+                placeholder="Contoh: さんさつ"
                 value={userAnswers[item.id] || ""}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -578,7 +578,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <input
                 type="text"
-                placeholder="Contoh: 読み / 開けて / 置いて / 聞く..."
+                placeholder="Contoh: 読み"
                 value={userAnswers[item.id] || ""}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -1013,80 +1013,91 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
       <div className="source-selection-container" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
         {/* Navbar Header */}
         <header className="app-header">
-          <div className="header-inner" style={{ alignItems: "center", justifyContent: "space-between" }}>
-            <button
-              onClick={onBackToSourceSelect}
-              className="btn btn-ghost"
-              style={{ padding: "0.4rem 0.75rem", borderRadius: "10px", gap: "0.4rem" }}
-              title="Kembali ke Pilihan Sumber Soal"
-            >
-              <ArrowLeft size={16} />
-              <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>Sumber Soal</span>
-            </button>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-              <div
+          <div className="header-inner">
+            <div className="header-top-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <button
+                onClick={onBackToSourceSelect}
+                className="btn btn-ghost"
                 style={{
-                  width: "36px",
-                  height: "36px",
+                  padding: "0.35rem 0.65rem",
                   borderRadius: "10px",
-                  background: "linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)",
-                  color: "#ffffff",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "1.15rem",
-                  boxShadow: "0 2px 8px rgba(79, 70, 229, 0.3)",
-                  flexShrink: 0,
+                  gap: "0.35rem",
+                  border: "1px solid #e2e8f0",
+                  background: "#f8fafc",
                 }}
+                title="Kembali ke Pilihan Sumber Soal"
               >
-                ⛩️
-              </div>
-              <div>
-                <div style={{ fontSize: "0.98rem", fontWeight: 800, color: "#0f172a", lineHeight: 1.2 }}>
-                  Gakkou 日本語
-                </div>
-                <div style={{ fontSize: "0.72rem", color: "#64748b", fontWeight: 600 }}>
-                  Portal Latihan & Ujian Bahasa Jepang
-                </div>
-              </div>
-            </div>
+                <ArrowLeft size={16} />
+                <span style={{ fontSize: "0.82rem", fontWeight: 600 }}>Sumber Soal</span>
+              </button>
 
-            <div style={{ width: "90px" }} />
+              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                <div
+                  style={{
+                    width: "34px",
+                    height: "34px",
+                    borderRadius: "8px",
+                    background: "linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)",
+                    color: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.1rem",
+                    boxShadow: "0 2px 8px rgba(79, 70, 229, 0.25)",
+                    flexShrink: 0,
+                  }}
+                >
+                  ⛩️
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", lineHeight: 1.2 }}>
+                    Gakkou 日本語
+                  </div>
+                  <div style={{ fontSize: "0.72rem", color: "#64748b", fontWeight: 600 }}>
+                    Portal Latihan & Ujian Bahasa Jepang
+                  </div>
+                </div>
+              </div>
+
+              <div className="desktop-only" style={{ width: "90px" }} />
+            </div>
           </div>
         </header>
 
         {/* Selection Main Content */}
-        <main className="main-content" style={{ maxWidth: "960px", margin: "0 auto", padding: "2rem 1rem 3rem 1rem", width: "100%" }}>
+        <main className="main-content" style={{ maxWidth: "960px", margin: "0 auto", padding: "1.5rem 1rem 3rem 1rem", width: "100%" }}>
           {/* Hero Section */}
           <div
             className="hero-card"
             style={{
               textAlign: "center",
-              padding: "2.5rem 1.5rem",
+              padding: "1.75rem 1rem",
               background: "radial-gradient(ellipse at top, #eef2ff 0%, #f8fafc 70%)",
-              borderRadius: "24px",
+              borderRadius: "20px",
               border: "1px solid #e2e8f0",
-              marginBottom: "2.5rem",
+              marginBottom: "2rem",
             }}
           >
             <div
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "0.5rem",
+                gap: "0.4rem",
                 background: "#ffffff",
-                padding: "0.5rem 1.25rem",
+                padding: "0.4rem 0.85rem",
                 borderRadius: "9999px",
                 border: "1px solid #e0e7ff",
                 boxShadow: "0 2px 8px rgba(79, 70, 229, 0.08)",
+                maxWidth: "100%",
               }}
             >
-              <Sparkles size={18} color="#4f46e5" />
+              <Sparkles size={16} color="#4f46e5" style={{ flexShrink: 0 }} />
               <h1
                 className="hero-title"
                 style={{
-                  fontSize: "1.35rem",
+                  fontSize: "clamp(0.95rem, 3.8vw, 1.25rem)",
                   fontWeight: 800,
                   color: "#3730a3",
                   margin: 0,
@@ -1240,7 +1251,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 </div>
                 <div>
                   <div style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", lineHeight: 1.2 }}>
-                    {currentExamData.exam.title.split("初級")[0] + "初級"}
+                    {currentExamData.exam.title.replace(/『できる日本語初級』/g, "").trim()}
                   </div>
                   <div style={{ fontSize: "0.72rem", color: "#4f46e5", fontWeight: 700 }}>
                     {currentExamData.exam.title.includes("1〜3") ? "Ujian 1 (Bab 1-3)" : "Ujian 2 (Bab 4-6)"}

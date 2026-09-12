@@ -5,7 +5,7 @@ export const dekiruExam1Data: DekiruExamData = {
   book: "できる日本語 初級",
   exam: {
     id: "dekiru-review-1-3",
-    title: "『できる日本語初級』1〜3課 復習テスト",
+    title: "1〜3課 復習テスト",
     lessonRange: [1, 3],
     source: "actual-test-photo",
     originalScore: {

@@ -17,7 +17,7 @@ export const dekiruExamsList: DekiruExamMeta[] = [
   {
     id: 'dekiru-review-1-3',
     title: 'Ujian 1 (Bab 1〜3)',
-    subtitle: '『できる日本語初級』1〜3課 復習テスト',
+    subtitle: '1〜3課 復習テスト',
     lessonRange: [1, 3],
     badgeText: 'Bab 1-3 • 35 Soal',
     totalQuestions: 35,
@@ -27,7 +27,7 @@ export const dekiruExamsList: DekiruExamMeta[] = [
   {
     id: 'dekiru-review-4-6',
     title: 'Ujian 2 (Bab 4〜6)',
-    subtitle: '『できる日本語初級』4〜6課 復習テスト',
+    subtitle: '4〜6課 復習テスト',
     lessonRange: [4, 6],
     badgeText: 'Bab 4-6 • 30 Soal',
     totalQuestions: 30,

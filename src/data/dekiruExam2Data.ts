@@ -5,7 +5,7 @@ export const dekiruExam2Data: DekiruExamData = {
   "book": "できる日本語 初級",
   "exam": {
     "id": "dekiru-review-4-6",
-    "title": "『できる日本語初級』4〜6課 復習テスト",
+    "title": "4〜6課 復習テスト",
     "lessonRange": [
       4,
       6
