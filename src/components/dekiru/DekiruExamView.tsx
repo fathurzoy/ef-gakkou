@@ -14,6 +14,8 @@ import {
   Check,
   Camera,
   PenTool,
+  CheckCircle2,
+  Lightbulb,
 } from 'lucide-react';
 
 interface DekiruExamViewProps {
@@ -28,11 +30,19 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
   // key: questionId -> value
   const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
   const [revealedQuestions, setRevealedQuestions] = useState<Record<string, boolean>>({});
+  const [expandedExplanations, setExpandedExplanations] = useState<Record<string, boolean>>({});
   const [copiedPromptSection, setCopiedPromptSection] = useState<string | null>(null);
   const [aiMode, setAiMode] = useState<Record<string, 'web' | 'photo'>>({
     'sec-7': 'web',
     'sec-5': 'web',
   });
+
+  const toggleExpand = (qId: string) => {
+    setExpandedExplanations((prev) => ({
+      ...prev,
+      [qId]: prev[qId] === undefined ? false : !prev[qId],
+    }));
+  };
 
   const handleSelectAnswer = (qId: string, answer: any) => {
     setUserAnswers((prev) => ({ ...prev, [qId]: answer }));
@@ -208,25 +218,29 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
       {/* Main Container */}
       <main className="main-content" style={{ maxWidth: '960px', margin: '0 auto', padding: '1.5rem 1rem 3rem 1rem' }}>
-        {/* Exam Banner Header */}
+        {/* Banner */}
         <div
-          className="hero-card"
+          className="card mb-6 card-responsive-padding"
           style={{
-            padding: '1.5rem 1.25rem',
-            background: 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #eff6ff 100%)',
-            borderRadius: '20px',
-            border: '1px solid #e2e8f0',
-            marginBottom: '1.5rem',
+            padding: '1.5rem',
+            background: 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)',
+            color: '#ffffff',
+            marginBottom: '1.25rem',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.35rem' }}>
-                <span className="badge badge-emerald">Ujian Evaluasi Bab 1-3</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.4rem' }}>
+                <BookOpen size={22} color="#a5b4fc" />
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>
+                  {dekiruExam1Data.exam.title}
+                </h2>
               </div>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                {dekiruExam1Data.exam.title}
-              </h1>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: '#c7d2fe', lineHeight: 1.5 }}>
+                {activeTab === 'study'
+                  ? 'Pelajari seluruh seksi soal ujian Dekiru Nihongo Bab 1-3 lengkap dengan furigana, terjemahan, kunci jawaban, dan langkah pengerjaan.'
+                  : 'Simulasi mode ujian interaktif: pilih atau ketik jawaban Anda, lalu verifikasi mandiri atau gunakan bantuan AI.'}
+              </p>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -234,47 +248,58 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 style={{
                   fontSize: '0.8rem',
                   fontWeight: 700,
-                  color: activeTab === 'study' ? '#0284c7' : '#4f46e5',
-                  background: '#ffffff',
+                  color: '#ffffff',
+                  background: 'rgba(255, 255, 255, 0.15)',
                   padding: '0.4rem 0.85rem',
-                  borderRadius: '10px',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                  borderRadius: '9999px',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                  backdropFilter: 'blur(8px)',
                 }}
               >
-                {activeTab === 'study' ? '📖 Mode Belajar (Kunci & Pembahasan)' : '⚡ Mode Ujian (Simulasi Interaktif)'}
+                {activeTab === 'study' ? '📖 Mode Belajar (Review)' : '⚡ Mode Ujian (Simulasi)'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Section Filter Pills */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
-            <Layers size={16} color="#4f46e5" />
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569' }}>
-              Pilih Bagian Soal (Section):
+        {/* Filter and Section Selector Card */}
+        <div
+          className="card mb-6 card-responsive-padding"
+          style={{
+            padding: '1rem 1.25rem',
+            marginBottom: '1.25rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.25rem', flexShrink: 0 }}>
+              <Layers size={13} /> Filter Bagian:
             </span>
+            <div className="scroll-pills-row" style={{ flex: 1 }}>
+              <button
+                onClick={() => setSelectedSection('ALL')}
+                className={`btn scroll-pill-btn ${selectedSection === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
+              >
+                Semua Bagian (2-8)
+              </button>
+              {dekiruExam1Data.sections.map((sec) => (
+                <button
+                  key={sec.section}
+                  onClick={() => setSelectedSection(sec.section)}
+                  className={`btn scroll-pill-btn ${selectedSection === sec.section ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '9999px' }}
+                >
+                  Bagian {sec.section}: {sec.title}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="scroll-pills-row">
-            <button
-              onClick={() => setSelectedSection('ALL')}
-              className={`btn scroll-pill-btn ${selectedSection === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', height: '32px' }}
-            >
-              Semua Bagian (2-8)
-            </button>
-            {dekiruExam1Data.sections.map((sec) => (
-              <button
-                key={sec.section}
-                onClick={() => setSelectedSection(sec.section)}
-                className={`btn scroll-pill-btn ${selectedSection === sec.section ? 'btn-primary' : 'btn-secondary'}`}
-                style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', borderRadius: '9999px', height: '32px' }}
-              >
-                Bagian {sec.section}: {sec.title}
-              </button>
-            ))}
+          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            Menampilkan <strong>{filteredSections.length}</strong> bagian soal
           </div>
         </div>
 
@@ -424,41 +449,56 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   const isRevealed = activeTab === 'study' || revealedQuestions[item.id];
                   const userAnswer = userAnswers[item.id];
 
+                  const isExpanded = expandedExplanations[item.id] !== false; // expanded by default in study mode
+
                   return (
                     <div
                       key={item.id}
+                      className="card shadow-sm card-responsive-padding"
                       style={{
-                        padding: '1.25rem',
+                        padding: '1.5rem',
+                        borderLeft: '4px solid #4f46e5',
                         borderRadius: '14px',
                         background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                        borderTop: '1px solid #e2e8f0',
+                        borderRight: '1px solid #e2e8f0',
+                        borderBottom: '1px solid #e2e8f0',
                       }}
                     >
                       {/* Question Number & Tags */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '1rem',
+                          borderBottom: '1px solid #f1f5f9',
+                          paddingBottom: '0.65rem',
+                          flexWrap: 'wrap',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                           <span
                             style={{
-                              width: '26px',
-                              height: '26px',
-                              borderRadius: '50%',
-                              background: '#4f46e5',
-                              color: '#ffffff',
-                              fontSize: '0.8rem',
-                              fontWeight: 700,
-                              display: 'flex',
+                              display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center',
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '8px',
+                              background: '#4f46e5',
+                              color: '#ffffff',
+                              fontSize: '0.85rem',
+                              fontWeight: 800,
                             }}
                           >
                             {itemIdx + 1}
                           </span>
-                          {'isExample' in item && item.isExample && (
-                            <span className="badge badge-emerald">Contoh (Rei)</span>
-                          )}
                           {'grammarPoint' in item && item.grammarPoint && (
-                            <span className="badge badge-indigo">{item.grammarPoint}</span>
+                            <span className="badge badge-indigo" style={{ fontSize: '0.75rem' }}>
+                              {item.grammarPoint}
+                            </span>
                           )}
                         </div>
 
@@ -482,7 +522,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
                       {/* Question Sentence */}
                       {'question' in item && item.question && (
-                        <div style={{ fontSize: '1.15rem', lineHeight: 2.1, color: '#0f172a', marginBottom: '0.85rem' }}>
+                        <div className="question-text-mobile" style={{ fontSize: '1.2rem', fontWeight: 600, lineHeight: 2.1, color: '#0f172a', marginBottom: '0.85rem' }}>
                           <SegmentFurigana segments={item.question.segments} />
                         </div>
                       )}
@@ -491,7 +531,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       {'dialogue' in item && item.dialogue && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.85rem' }}>
                           {item.dialogue.map((turn, tIdx) => (
-                            <div key={tIdx} style={{ fontSize: '1.05rem', lineHeight: 1.9, color: turn.speaker === '客' ? '#0369a1' : '#1e293b' }}>
+                            <div key={tIdx} style={{ fontSize: '1.08rem', lineHeight: 2, color: turn.speaker === '客' ? '#0369a1' : '#1e293b' }}>
                               <SegmentFurigana segments={turn.content.segments} />
                             </div>
                           ))}
@@ -500,43 +540,94 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
                       {/* Reading statement (Section 8) */}
                       {'statement' in item && item.statement && (
-                        <div style={{ fontSize: '1.15rem', lineHeight: 2.1, color: '#0f172a', marginBottom: '0.85rem' }}>
+                        <div className="question-text-mobile" style={{ fontSize: '1.2rem', fontWeight: 600, lineHeight: 2.1, color: '#0f172a', marginBottom: '0.85rem' }}>
                           <SegmentFurigana segments={item.statement.segments} />
                         </div>
                       )}
 
                       {/* INTERACTIVE CONTROLS (MODE UJIAN) */}
                       {activeTab === 'exam' && (
-                        <div style={{ marginTop: '0.5rem', marginBottom: '0.75rem' }}>
+                        <div style={{ marginTop: '0.75rem', marginBottom: '0.75rem' }}>
                           {/* 1. Choices for Section 4 */}
                           {'choices' in item && Array.isArray(item.choices) && typeof item.choices[0] === 'string' && (
-                            <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
-                              {item.choices.map((ch: string) => {
+                            <div className="review-options-grid" style={{ marginBottom: '0.5rem' }}>
+                              {item.choices.map((ch: string, cIdx: number) => {
                                 const isSelected = userAnswer === ch;
                                 const isCorrect = 'answer' in item && item.answer === ch;
-                                let btnClass = 'btn-secondary';
-                                if (isRevealed) {
-                                  if (isCorrect) btnClass = 'btn-primary';
-                                  else if (isSelected) btnClass = 'btn-ghost';
-                                } else if (isSelected) {
-                                  btnClass = 'btn-primary';
-                                }
+                                const showCorrect = isRevealed && isCorrect;
+                                const showWrong = isRevealed && isSelected && !isCorrect;
 
                                 return (
                                   <button
                                     key={ch}
+                                    type="button"
                                     onClick={() => handleSelectAnswer(item.id, ch)}
-                                    className={`btn ${btnClass}`}
                                     style={{
-                                      padding: '0.5rem 1.25rem',
-                                      fontSize: '0.95rem',
+                                      padding: '0.75rem 0.95rem',
                                       borderRadius: '10px',
-                                      border: isRevealed && isCorrect ? '2px solid #10b981' : undefined,
-                                      background: isRevealed && isCorrect ? '#ecfdf5' : undefined,
-                                      color: isRevealed && isCorrect ? '#065f46' : undefined,
+                                      border: `2px solid ${
+                                        showCorrect
+                                          ? '#10b981'
+                                          : showWrong
+                                          ? '#ef4444'
+                                          : isSelected
+                                          ? '#4f46e5'
+                                          : '#e2e8f0'
+                                      }`,
+                                      background: showCorrect
+                                        ? '#ecfdf5'
+                                        : showWrong
+                                        ? '#fef2f2'
+                                        : isSelected
+                                        ? '#eef2ff'
+                                        : '#ffffff',
+                                      color: showCorrect
+                                        ? '#065f46'
+                                        : showWrong
+                                        ? '#991b1b'
+                                        : isSelected
+                                        ? '#312e81'
+                                        : '#1e293b',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '0.65rem',
+                                      cursor: 'pointer',
+                                      textAlign: 'left',
+                                      fontFamily: 'inherit',
+                                      transition: 'all 0.15s ease',
                                     }}
                                   >
-                                    <span>{ch}</span>
+                                    <span
+                                      style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '50%',
+                                        background: showCorrect
+                                          ? '#10b981'
+                                          : showWrong
+                                          ? '#ef4444'
+                                          : isSelected
+                                          ? '#4f46e5'
+                                          : '#f1f5f9',
+                                        color: isSelected || showCorrect || showWrong ? '#ffffff' : '#64748b',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '0.8rem',
+                                        fontWeight: 700,
+                                        flexShrink: 0,
+                                      }}
+                                    >
+                                      {cIdx + 1}
+                                    </span>
+                                    <span style={{ fontSize: '1.05rem', fontWeight: isSelected || showCorrect ? 700 : 500 }}>
+                                      {ch}
+                                    </span>
+                                    {showCorrect && (
+                                      <div style={{ marginLeft: 'auto' }}>
+                                        <CheckCircle2 size={18} color="#10b981" />
+                                      </div>
+                                    )}
                                   </button>
                                 );
                               })}
@@ -611,7 +702,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                                         <input
                                           type="text"
                                           value={currentVal}
-                                          placeholder="contoh: を / ×"
+                                          placeholder="—"
                                           onChange={(e) => {
                                             const val = e.target.value;
                                             const arr = Array.isArray(userAnswers[item.id])
@@ -721,7 +812,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                               <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <input
                                   type="text"
-                                  placeholder="Ketik kalimat bahasa Jepang di sini (contoh: これはいくらですか)..."
+                                  placeholder="Ketik kalimat bahasa Jepang di sini..."
                                   value={userAnswers[item.id] || ''}
                                   onChange={(e) => {
                                     const val = e.target.value;
@@ -748,7 +839,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                               <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <input
                                   type="text"
-                                  placeholder="Ketik jawaban bebas Anda dalam bahasa Jepang..."
+                                  placeholder="Ketik jawaban Anda dalam bahasa Jepang..."
                                   value={userAnswers[item.id] || ''}
                                   onChange={(e) => {
                                     const val = e.target.value;
@@ -811,100 +902,175 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         </div>
                       )}
 
-                      {/* ANSWERS & EXPLANATION BOX */}
+                      {/* Toggle Explanation Button (Always available in study mode, or when revealed in exam mode) */}
                       {isRevealed && (
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem', marginBottom: '0.25rem' }}>
+                          <button
+                            onClick={() => toggleExpand(item.id)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#4f46e5',
+                              fontSize: '0.82rem',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              textDecoration: 'underline',
+                            }}
+                          >
+                            {isExpanded ? '▲ Sembunyikan Pembahasan' : '▼ Buka Pembahasan & Kunci'}
+                          </button>
+                        </div>
+                      )}
+
+                      {/* ANSWERS & EXPLANATION BOX (Styled like ExplanationBox.tsx) */}
+                      {isRevealed && isExpanded && (
                         <div
+                          className="animate-fade-in"
                           style={{
-                            background: '#f8fafc',
-                            borderRadius: '12px',
-                            border: '1px solid #e2e8f0',
-                            padding: '1rem',
-                            marginTop: '0.75rem',
+                            marginTop: '0.85rem',
+                            borderRadius: '14px',
+                            border: '1px solid #c7d2fe',
+                            background: '#ffffff',
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 16px -2px rgba(79, 70, 229, 0.08)',
                           }}
                         >
-                          {/* Answer Badge */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#059669' }}>
-                              ✅ Kunci Jawaban Resmi:
-                            </span>
+                          {/* Header bar */}
+                          <div
+                            style={{
+                              background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+                              color: '#ffffff',
+                              padding: '0.85rem 1.25rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              flexWrap: 'wrap',
+                              gap: '0.5rem',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.95rem' }}>
+                              <Lightbulb size={18} />
+                              <span>Pembahasan & Kunci Jawaban</span>
+                            </div>
 
-                            {/* Section 2 answer */}
-                            {'answer' in item && typeof item.answer === 'object' && 'value' in item.answer && 'content' in item.answer && (
-                              <span className="badge badge-emerald" style={{ fontSize: '0.88rem' }}>
-                                <strong>{item.answer.value}.</strong>{' '}
-                                <SegmentFurigana segments={item.answer.content.segments} />
-                              </span>
-                            )}
-
-                            {/* Section 3 particle answer */}
-                            {'answer' in item && Array.isArray(item.answer) && (
-                              <div style={{ display: 'inline-flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-                                {item.answer.map((ans: string, aIdx: number) => (
-                                  <span key={aIdx} className="badge badge-emerald" style={{ fontSize: '0.85rem' }}>
-                                    Blank {aIdx + 1}: <strong>{ans}</strong>
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* Section 4 single string choice answer */}
+                            {/* Section 4 single choice display */}
                             {'answer' in item && typeof item.answer === 'string' && (
-                              <span className="badge badge-emerald" style={{ fontSize: '0.9rem' }}>
-                                {'answerRuby' in item && item.answerRuby ? (
-                                  <SegmentFurigana segments={item.answerRuby.segments} />
-                                ) : (
-                                  item.answer
-                                )}
-                              </span>
-                            )}
-
-                            {/* Section 5 dialogue answer */}
-                            {'answer' in item && typeof item.answer === 'object' && 'segments' in item.answer && (
-                              <span className="badge badge-emerald" style={{ fontSize: '0.9rem' }}>
-                                <SegmentFurigana segments={item.answer.segments} />
-                              </span>
-                            )}
-
-                            {/* Section 7 open answer */}
-                            {'paperAnswer' in item && item.paperAnswer && (
-                              <span className="badge badge-emerald" style={{ fontSize: '0.85rem' }}>
-                                Lembar Ujian: <SegmentFurigana segments={item.paperAnswer.segments} />
-                              </span>
+                              <div
+                                style={{
+                                  background: 'rgba(255,255,255,0.2)',
+                                  padding: '0.2rem 0.65rem',
+                                  borderRadius: '9999px',
+                                  fontSize: '0.82rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                Kunci: {item.answer}
+                              </div>
                             )}
                           </div>
 
-                          {/* Section 7 Sample Answers */}
-                          {'sampleAnswers' in item && item.sampleAnswers && (
-                            <div style={{ marginBottom: '0.65rem', fontSize: '0.82rem', color: '#475569' }}>
-                              <strong>Contoh Variasi Jawaban Lain:</strong>
-                              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
-                                {item.sampleAnswers.map((sa, sIdx) => (
-                                  <span key={sIdx} style={{ background: '#ffffff', padding: '0.25rem 0.5rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
-                                    <SegmentFurigana segments={sa.segments} />
+                          <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                            {/* Official Answer Box */}
+                            <div
+                              style={{
+                                background: '#ecfdf5',
+                                border: '1px solid #a7f3d0',
+                                borderRadius: '10px',
+                                padding: '0.85rem 1rem',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#065f46', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.35rem' }}>
+                                <CheckCircle2 size={16} color="#10b981" />
+                                <span>KUNCI JAWABAN RESMI:</span>
+                              </div>
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                {/* Section 2 answer */}
+                                {'answer' in item && typeof item.answer === 'object' && 'value' in item.answer && 'content' in item.answer && (
+                                  <span className="badge badge-emerald" style={{ fontSize: '0.88rem' }}>
+                                    <strong>{item.answer.value}.</strong>{' '}
+                                    <SegmentFurigana segments={item.answer.content.segments} />
                                   </span>
-                                ))}
+                                )}
+
+                                {/* Section 3 particle answer */}
+                                {'answer' in item && Array.isArray(item.answer) && (
+                                  <div style={{ display: 'inline-flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                                    {item.answer.map((ans: string, aIdx: number) => (
+                                      <span key={aIdx} className="badge badge-emerald" style={{ fontSize: '0.85rem' }}>
+                                        Blank {aIdx + 1}: <strong>{ans}</strong>
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Section 4 single string choice answer */}
+                                {'answer' in item && typeof item.answer === 'string' && (
+                                  <span className="badge badge-emerald" style={{ fontSize: '0.9rem' }}>
+                                    {'answerRuby' in item && item.answerRuby ? (
+                                      <SegmentFurigana segments={item.answerRuby.segments} />
+                                    ) : (
+                                      item.answer
+                                    )}
+                                  </span>
+                                )}
+
+                                {/* Section 5 dialogue answer */}
+                                {'answer' in item && typeof item.answer === 'object' && 'segments' in item.answer && (
+                                  <span className="badge badge-emerald" style={{ fontSize: '0.9rem' }}>
+                                    <SegmentFurigana segments={item.answer.segments} />
+                                  </span>
+                                )}
+
+                                {/* Section 7 open answer */}
+                                {'paperAnswer' in item && item.paperAnswer && (
+                                  <span className="badge badge-emerald" style={{ fontSize: '0.85rem' }}>
+                                    Lembar Ujian: <SegmentFurigana segments={item.paperAnswer.segments} />
+                                  </span>
+                                )}
                               </div>
                             </div>
-                          )}
 
-                          {/* Indonesian Explanation */}
-                          {'explanationId' in item && item.explanationId && (
-                            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: '0 0 0.5rem 0' }}>
-                              <strong>Pembahasan:</strong> {item.explanationId}
-                            </p>
-                          )}
+                            {/* Section 7 Sample Answers */}
+                            {'sampleAnswers' in item && item.sampleAnswers && (
+                              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem' }}>
+                                <strong style={{ fontSize: '0.82rem', color: '#475569' }}>Variasi Jawaban Lain:</strong>
+                                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.35rem' }}>
+                                  {item.sampleAnswers.map((sa, sIdx) => (
+                                    <span key={sIdx} style={{ background: '#ffffff', padding: '0.25rem 0.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}>
+                                      <SegmentFurigana segments={sa.segments} />
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
 
-                          {/* Solving Steps */}
-                          {'solvingSteps' in item && Array.isArray(item.solvingSteps) && item.solvingSteps.length > 0 && (
-                            <div style={{ fontSize: '0.8rem', color: '#475569', background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                              <strong style={{ color: '#4f46e5' }}>Langkah Pengerjaan:</strong>
-                              <ol style={{ margin: '0.25rem 0 0 1.25rem', padding: 0 }}>
-                                {item.solvingSteps.map((step, sIdx) => (
-                                  <li key={sIdx}>{step}</li>
-                                ))}
-                              </ol>
-                            </div>
-                          )}
+                            {/* Indonesian Explanation */}
+                            {'explanationId' in item && item.explanationId && (
+                              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.85rem 1rem' }}>
+                                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                                  💡 Penjelasan & Alasan
+                                </div>
+                                <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
+                                  {item.explanationId}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Solving Steps */}
+                            {'solvingSteps' in item && Array.isArray(item.solvingSteps) && item.solvingSteps.length > 0 && (
+                              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.85rem 1rem' }}>
+                                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4f46e5', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                                  📝 Langkah Pengerjaan
+                                </div>
+                                <ol style={{ margin: '0.25rem 0 0 1.25rem', padding: 0, fontSize: '0.88rem', color: '#334155', lineHeight: 1.6 }}>
+                                  {item.solvingSteps.map((step, sIdx) => (
+                                    <li key={sIdx}>{step}</li>
+                                  ))}
+                                </ol>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
