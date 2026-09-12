@@ -1,8 +1,6 @@
 import React from 'react';
 import { AppMode } from '../types/quiz';
 import {
-  GraduationCap,
-  BookOpen,
   LayoutGrid,
   RotateCcw,
   CheckCircle2,

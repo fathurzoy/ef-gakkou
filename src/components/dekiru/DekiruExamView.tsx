@@ -196,15 +196,6 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
     setProgressRevision((prev) => prev + 1);
   };
 
-  const handleTabChange = (tab: "study" | "exam") => {
-    setActiveTab(tab);
-    try {
-      localStorage.setItem("dekiru_active_tab_v1", tab);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const toggleExpand = (qId: string) => {
     setExpandedExplanations((prev) => ({
       ...prev,
