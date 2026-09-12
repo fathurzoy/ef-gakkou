@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { dekiruExamsList, dekiruExamsMap } from "../../data/dekiruExams";
 import { SegmentFurigana } from "../SegmentFurigana";
 import {
@@ -34,25 +34,100 @@ interface FlattenedExamQuestion {
   itemIdx: number;
 }
 
+// Helpers for localStorage progress management
+export const countAnswered = (answers: Record<string, any> | undefined | null): number => {
+  if (!answers) return 0;
+  return Object.values(answers).filter((v) => {
+    if (v === undefined || v === null || v === "") return false;
+    if (Array.isArray(v)) return v.some((item: any) => item && String(item).trim() !== "");
+    if (typeof v === "object") return Object.values(v).some((item: any) => item && String(item).trim() !== "");
+    return true;
+  }).length;
+};
+
+export const loadDekiruProgress = (examId: string) => {
+  try {
+    const raw = localStorage.getItem(`dekiru_exam_progress_v1_${examId}`);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to load progress for", examId, e);
+    return null;
+  }
+};
+
 export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSelect }) => {
   // Exam selection state (null means show selection screen)
-  const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
+  const [selectedExamId, setSelectedExamId] = useState<string | null>(() => {
+    try {
+      const saved = localStorage.getItem("dekiru_active_exam_id_v1");
+      if (saved && dekiruExamsMap[saved]) {
+        return saved;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  });
 
-  const [activeTab, setActiveTab] = useState<"study" | "exam">("exam");
+  const [activeTab, setActiveTab] = useState<"study" | "exam">(() => {
+    try {
+      return (localStorage.getItem("dekiru_active_tab_v1") as "study" | "exam") || "exam";
+    } catch {
+      return "exam";
+    }
+  });
   const [selectedSection, setSelectedSection] = useState<number | "ALL">("ALL");
+  const [progressRevision, setProgressRevision] = useState<number>(0);
+
+  // Keep track of which exam is currently active in memory
+  const currentLoadedExamRef = useRef<string | null>(selectedExamId);
+
+  // Initial progress on mount for previously selected exam
+  const initialProgress = useMemo(() => {
+    if (!selectedExamId) return null;
+    return loadDekiruProgress(selectedExamId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Single question navigation in exam mode
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(() => {
+    return typeof initialProgress?.currentQuestionIndex === "number" ? initialProgress.currentQuestionIndex : 0;
+  });
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
   const [isSectionMenuOpen, setIsSectionMenuOpen] = useState<boolean>(false);
 
   // Interactive exam answers state
-  const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
-  const [revealedQuestions, setRevealedQuestions] = useState<Record<string, boolean>>({});
-  const [expandedExplanations, setExpandedExplanations] = useState<Record<string, boolean>>({});
+  const [userAnswers, setUserAnswers] = useState<Record<string, any>>(() => {
+    return initialProgress?.userAnswers || {};
+  });
+  const [revealedQuestions, setRevealedQuestions] = useState<Record<string, boolean>>(() => {
+    return initialProgress?.revealedQuestions || {};
+  });
+  const [expandedExplanations, setExpandedExplanations] = useState<Record<string, boolean>>(() => {
+    return initialProgress?.expandedExplanations || {};
+  });
   const [copiedPromptSection, setCopiedPromptSection] = useState<string | null>(null);
   const [aiMode, setAiMode] = useState<"web" | "photo">("web");
+
+  // Auto-save progress effect whenever answers, revealed, or question index changes
+  useEffect(() => {
+    if (!selectedExamId || currentLoadedExamRef.current !== selectedExamId) return;
+    try {
+      const payload = {
+        userAnswers,
+        revealedQuestions,
+        expandedExplanations,
+        currentQuestionIndex,
+        lastUpdated: Date.now(),
+      };
+      localStorage.setItem(`dekiru_exam_progress_v1_${selectedExamId}`, JSON.stringify(payload));
+      localStorage.setItem("dekiru_active_exam_id_v1", selectedExamId);
+    } catch (e) {
+      console.error("Failed to auto-save dekiru progress", e);
+    }
+  }, [selectedExamId, userAnswers, revealedQuestions, expandedExplanations, currentQuestionIndex]);
 
   // Active exam data
   const currentExamData: DekiruExamData = useMemo(() => {
@@ -83,13 +158,51 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
   const totalQuestions = allExamQuestions.length;
 
   const handleSelectExam = (examId: string, initialTab: "study" | "exam" = "exam") => {
+    currentLoadedExamRef.current = examId;
     setSelectedExamId(examId);
     setActiveTab(initialTab);
-    setCurrentQuestionIndex(0);
-    setUserAnswers({});
-    setRevealedQuestions({});
-    setExpandedExplanations({});
+    try {
+      localStorage.setItem("dekiru_active_exam_id_v1", examId);
+      localStorage.setItem("dekiru_active_tab_v1", initialTab);
+      const saved = loadDekiruProgress(examId);
+      if (saved) {
+        setUserAnswers(saved.userAnswers || {});
+        setRevealedQuestions(saved.revealedQuestions || {});
+        setExpandedExplanations(saved.expandedExplanations || {});
+        setCurrentQuestionIndex(
+          typeof saved.currentQuestionIndex === "number" ? Math.max(0, saved.currentQuestionIndex) : 0
+        );
+      } else {
+        setUserAnswers({});
+        setRevealedQuestions({});
+        setExpandedExplanations({});
+        setCurrentQuestionIndex(0);
+      }
+    } catch (e) {
+      console.error("Failed to switch exam progress", e);
+    }
     setSelectedSection("ALL");
+    setProgressRevision((prev) => prev + 1);
+  };
+
+  const handleBackToExamSelection = () => {
+    currentLoadedExamRef.current = null;
+    setSelectedExamId(null);
+    try {
+      localStorage.removeItem("dekiru_active_exam_id_v1");
+    } catch (e) {
+      console.error(e);
+    }
+    setProgressRevision((prev) => prev + 1);
+  };
+
+  const handleTabChange = (tab: "study" | "exam") => {
+    setActiveTab(tab);
+    try {
+      localStorage.setItem("dekiru_active_tab_v1", tab);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const toggleExpand = (qId: string) => {
@@ -104,11 +217,24 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
     setRevealedQuestions((prev) => ({ ...prev, [qId]: true }));
   };
 
-  const handleResetExam = () => {
-    if (window.confirm("Reset semua jawaban pada ujian ini?")) {
-      setUserAnswers({});
-      setRevealedQuestions({});
-      setCurrentQuestionIndex(0);
+  const handleResetExam = (examIdToReset?: string) => {
+    const targetId = examIdToReset || selectedExamId;
+    if (!targetId) return;
+    const examMeta = dekiruExamsMap[targetId];
+    const examTitle = examMeta ? examMeta.exam.title : "ujian ini";
+    if (window.confirm(`Reset semua jawaban dan kemajuan belajar pada ${examTitle}?`)) {
+      if (targetId === selectedExamId) {
+        setUserAnswers({});
+        setRevealedQuestions({});
+        setExpandedExplanations({});
+        setCurrentQuestionIndex(0);
+      }
+      try {
+        localStorage.removeItem(`dekiru_exam_progress_v1_${targetId}`);
+      } catch (e) {
+        console.error(e);
+      }
+      setProgressRevision((prev) => prev + 1);
     }
   };
 
@@ -126,7 +252,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
       : currentExamData.sections.filter((s) => s.section === selectedSection);
 
   // Check how many questions answered
-  const answeredCount = Object.keys(userAnswers).length;
+  const answeredCount = countAnswered(userAnswers);
 
   // Build dynamic unified AI prompt based on subjective sections
   const aiSections = useMemo(() => {
@@ -1839,109 +1965,162 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           </div>
 
           {/* Exam Cards Grid */}
-          <div className="mode-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.75rem" }}>
-            {dekiruExamsList.map((examMeta, idx) => {
-              const cardThemes = [
-                { accent: "#4f46e5", light: "#f5f3ff", border: "#818cf8", shadow: "rgba(79, 70, 229, 0.3)" },
-                { accent: "#0284c7", light: "#f0f9ff", border: "#38bdf8", shadow: "rgba(2, 132, 199, 0.3)" },
-                { accent: "#059669", light: "#ecfdf5", border: "#34d399", shadow: "rgba(5, 150, 105, 0.3)" },
-                { accent: "#d97706", light: "#fffbeb", border: "#fbbf24", shadow: "rgba(217, 119, 6, 0.3)" },
-                { accent: "#8b5cf6", light: "#faf5ff", border: "#a78bfa", shadow: "rgba(139, 92, 246, 0.3)" },
-              ];
-              const theme = cardThemes[idx % cardThemes.length];
-              const accentColor = theme.accent;
-              const lightBg = theme.light;
+          {(() => {
+            return (
+              <div className="mode-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.75rem" }}>
+                {dekiruExamsList.map((examMeta, idx) => {
+                  // Re-evaluate saved progress (depends on progressRevision)
+                  void progressRevision;
+                  const savedProg = loadDekiruProgress(examMeta.id);
+                  const answeredProgCount = countAnswered(savedProg?.userAnswers);
+                  const hasProgress = answeredProgCount > 0;
 
-              return (
-                <div
-                  key={examMeta.id}
-                  className="card card-hover"
-                  style={{
-                    padding: "2.25rem 1.75rem",
-                    border: `2px solid ${theme.border}`,
-                    borderRadius: "22px",
-                    background: "linear-gradient(180deg, #ffffff 0%, " + lightBg + " 100%)",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.06)",
-                    position: "relative",
-                  }}
-                >
-                  <div>
-                    {/* Badge header */}
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
-                      <span
-                        style={{
-                          background: accentColor,
-                          color: "#ffffff",
-                          fontSize: "0.8rem",
-                          fontWeight: 800,
-                          padding: "0.35rem 0.75rem",
-                          borderRadius: "9999px",
-                        }}
-                      >
-                        {examMeta.title}
-                      </span>
-                      <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 700 }}>
-                        {examMeta.totalQuestions} Soal
-                      </span>
+                  const cardThemes = [
+                    { accent: "#4f46e5", light: "#f5f3ff", border: "#818cf8", shadow: "rgba(79, 70, 229, 0.3)" },
+                    { accent: "#0284c7", light: "#f0f9ff", border: "#38bdf8", shadow: "rgba(2, 132, 199, 0.3)" },
+                    { accent: "#059669", light: "#ecfdf5", border: "#34d399", shadow: "rgba(5, 150, 105, 0.3)" },
+                    { accent: "#d97706", light: "#fffbeb", border: "#fbbf24", shadow: "rgba(217, 119, 6, 0.3)" },
+                    { accent: "#8b5cf6", light: "#faf5ff", border: "#a78bfa", shadow: "rgba(139, 92, 246, 0.3)" },
+                  ];
+                  const theme = cardThemes[idx % cardThemes.length];
+                  const accentColor = theme.accent;
+                  const lightBg = theme.light;
+
+                  return (
+                    <div
+                      key={examMeta.id}
+                      className="card card-hover"
+                      style={{
+                        padding: "2.25rem 1.75rem",
+                        border: `2px solid ${theme.border}`,
+                        borderRadius: "22px",
+                        background: "linear-gradient(180deg, #ffffff 0%, " + lightBg + " 100%)",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.06)",
+                        position: "relative",
+                      }}
+                    >
+                      <div>
+                        {/* Badge header */}
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+                          <span
+                            style={{
+                              background: accentColor,
+                              color: "#ffffff",
+                              fontSize: "0.8rem",
+                              fontWeight: 800,
+                              padding: "0.35rem 0.75rem",
+                              borderRadius: "9999px",
+                            }}
+                          >
+                            {examMeta.title}
+                          </span>
+                          <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 700 }}>
+                            {examMeta.totalQuestions} Soal
+                          </span>
+                        </div>
+
+                        {/* Japanese Title */}
+                        <h2 style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", marginBottom: "1rem", lineHeight: 1.35 }}>
+                          {examMeta.subtitle}
+                        </h2>
+
+                        {/* Saved Progress Badge if exists */}
+                        {hasProgress ? (
+                          <div
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.35rem",
+                              background: "#ecfdf5",
+                              color: "#065f46",
+                              border: "1px solid #a7f3d0",
+                              padding: "0.25rem 0.65rem",
+                              borderRadius: "9999px",
+                              fontSize: "0.76rem",
+                              fontWeight: 700,
+                              marginBottom: "1.25rem",
+                            }}
+                          >
+                            <span>💾 Lanjut: {answeredProgCount} dari {examMeta.totalQuestions} soal terjawab</span>
+                          </div>
+                        ) : (
+                          <div style={{ marginBottom: "1.25rem" }} />
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        <button
+                          onClick={() => handleSelectExam(examMeta.id, "exam")}
+                          className="btn btn-primary"
+                          style={{
+                            width: "100%",
+                            padding: "0.85rem 1.25rem",
+                            borderRadius: "12px",
+                            fontSize: "0.95rem",
+                            fontWeight: 700,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem",
+                            background: accentColor,
+                            borderColor: accentColor,
+                            boxShadow: `0 4px 14px ${theme.shadow}`,
+                          }}
+                        >
+                          <GraduationCap size={18} />
+                          <span>{hasProgress ? "Lanjutkan Mode Ujian" : "Mulai Mode Ujian"}</span>
+                          <ArrowRight size={16} />
+                        </button>
+
+                        <button
+                          onClick={() => handleSelectExam(examMeta.id, "study")}
+                          className="btn btn-secondary"
+                          style={{
+                            width: "100%",
+                            padding: "0.75rem 1.25rem",
+                            borderRadius: "12px",
+                            fontSize: "0.88rem",
+                            fontWeight: 600,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.4rem",
+                          }}
+                        >
+                          <BookOpen size={16} />
+                          <span>Mode Belajar</span>
+                        </button>
+
+                        {hasProgress && (
+                          <div style={{ display: "flex", justifyContent: "center", marginTop: "-0.25rem" }}>
+                            <button
+                              type="button"
+                              onClick={() => handleResetExam(examMeta.id)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "#94a3b8",
+                                fontSize: "0.75rem",
+                                cursor: "pointer",
+                                textDecoration: "underline",
+                                padding: "0.2rem",
+                              }}
+                            >
+                              Reset progress ujian ini
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-
-                    {/* Japanese Title */}
-                    <h2 style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", marginBottom: "2rem", lineHeight: 1.35 }}>
-                      {examMeta.subtitle}
-                    </h2>
-                  </div>
-
-                  {/* Actions */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                    <button
-                      onClick={() => handleSelectExam(examMeta.id, "exam")}
-                      className="btn btn-primary"
-                      style={{
-                        width: "100%",
-                        padding: "0.85rem 1.25rem",
-                        borderRadius: "12px",
-                        fontSize: "0.95rem",
-                        fontWeight: 700,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "0.5rem",
-                        background: accentColor,
-                        borderColor: accentColor,
-                        boxShadow: `0 4px 14px ${theme.shadow}`,
-                      }}
-                    >
-                      <GraduationCap size={18} />
-                      <span>Mulai Mode Ujian</span>
-                      <ArrowRight size={16} />
-                    </button>
-
-                    <button
-                      onClick={() => handleSelectExam(examMeta.id, "study")}
-                      className="btn btn-secondary"
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1.25rem",
-                        borderRadius: "12px",
-                        fontSize: "0.88rem",
-                        fontWeight: 600,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "0.4rem",
-                      }}
-                    >
-                      <BookOpen size={16} />
-                      <span>Mode Belajar</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
         </main>
       </div>
     );
@@ -1959,7 +2138,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             {/* Left: Back to Exam Selection & Exam Switcher */}
             <div className="header-brand-group">
               <button
-                onClick={() => setSelectedExamId(null)}
+                onClick={handleBackToExamSelection}
                 className="btn btn-ghost"
                 style={{ padding: "0.35rem 0.65rem", borderRadius: "10px", gap: "0.3rem" }}
                 title="Ganti Paket Ujian"
@@ -2015,7 +2194,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               }}
             >
               <button
-                onClick={() => setActiveTab("study")}
+                onClick={() => handleTabChange("study")}
                 className={"btn " + (activeTab === "study" ? "btn-primary" : "btn-ghost")}
                 style={{
                   fontSize: "0.8rem",
@@ -2030,7 +2209,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               </button>
 
               <button
-                onClick={() => setActiveTab("exam")}
+                onClick={() => handleTabChange("exam")}
                 className={"btn " + (activeTab === "exam" ? "btn-primary" : "btn-ghost")}
                 style={{
                   fontSize: "0.8rem",
@@ -2096,21 +2275,38 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 </span>
               )}
 
-              {Object.keys(userAnswers).length > 0 && activeTab === "exam" && (
-                <button
-                  onClick={handleResetExam}
-                  className="btn btn-ghost"
-                  style={{
-                    padding: "0.35rem",
-                    borderRadius: "8px",
-                    height: "34px",
-                    width: "34px",
-                    color: "#94a3b8",
-                  }}
-                  title="Reset Jawaban Ujian"
-                >
-                  <RotateCcw size={15} />
-                </button>
+              {answeredCount > 0 && activeTab === "exam" && (
+                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <span
+                    className="desktop-only"
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "#059669",
+                      background: "#ecfdf5",
+                      border: "1px solid #a7f3d0",
+                      padding: "0.2rem 0.5rem",
+                      borderRadius: "6px",
+                      fontWeight: 700,
+                    }}
+                    title="Semua jawaban Anda tersimpan otomatis di perangkat ini"
+                  >
+                    💾 Tersimpan
+                  </span>
+                  <button
+                    onClick={() => handleResetExam()}
+                    className="btn btn-ghost"
+                    style={{
+                      padding: "0.35rem",
+                      borderRadius: "8px",
+                      height: "34px",
+                      width: "34px",
+                      color: "#94a3b8",
+                    }}
+                    title="Reset Jawaban Ujian Ini"
+                  >
+                    <RotateCcw size={15} />
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -2119,14 +2315,14 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           <div className="mobile-only header-sub-row">
             <div className="header-mode-switcher">
               <button
-                onClick={() => setActiveTab("study")}
+                onClick={() => handleTabChange("study")}
                 className={"btn " + (activeTab === "study" ? "btn-primary" : "btn-ghost")}
               >
                 <BookOpen size={14} />
                 <span>Mode Belajar</span>
               </button>
               <button
-                onClick={() => setActiveTab("exam")}
+                onClick={() => handleTabChange("exam")}
                 className={"btn " + (activeTab === "exam" ? "btn-primary" : "btn-ghost")}
               >
                 <GraduationCap size={14} />
