@@ -1,6 +1,7 @@
-import { UserAnswerRecord, AppMode, SectionId } from '../types/quiz';
+import { UserAnswerRecord, AppMode, SectionId, QuestionSource } from '../types/quiz';
 
 const STORAGE_KEYS = {
+  QUESTION_SOURCE: 'ef_exam_source_v1',
   USER_ANSWERS: 'ef_exam_user_answers_v1',
   CURRENT_QUESTION_ID: 'ef_exam_current_q_v1',
   APP_MODE: 'ef_exam_app_mode_v1',
@@ -85,5 +86,26 @@ export const saveActiveSection = (section: SectionId | 'ALL'): void => {
     localStorage.setItem(STORAGE_KEYS.ACTIVE_SECTION, section);
   } catch (e) {
     console.error('Failed to save active section', e);
+  }
+};
+
+export const getStoredQuestionSource = (): QuestionSource | null => {
+  try {
+    const src = localStorage.getItem(STORAGE_KEYS.QUESTION_SOURCE) as QuestionSource | null;
+    return src === 'ef' || src === 'dekiru' ? src : null;
+  } catch {
+    return null;
+  }
+};
+
+export const saveQuestionSource = (source: QuestionSource | null): void => {
+  try {
+    if (source) {
+      localStorage.setItem(STORAGE_KEYS.QUESTION_SOURCE, source);
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.QUESTION_SOURCE);
+    }
+  } catch (e) {
+    console.error('Failed to save question source', e);
   }
 };

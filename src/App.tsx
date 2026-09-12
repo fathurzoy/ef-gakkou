@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppMode, SectionId, UserAnswerRecord } from './types/quiz';
+import { AppMode, SectionId, UserAnswerRecord, QuestionSource } from './types/quiz';
 import { allQuestions, getQuestionById } from './data/examData';
 import {
   getStoredAnswers,
@@ -9,6 +9,8 @@ import {
   saveAppMode,
   getStoredQuestionId,
   saveCurrentQuestionId,
+  getStoredQuestionSource,
+  saveQuestionSource,
 } from './utils/storage';
 import { Header } from './components/Header';
 import { ModeSelection } from './components/ModeSelection';
@@ -17,8 +19,12 @@ import { QuestionDrawer } from './components/QuestionDrawer';
 import { ReviewListView } from './components/ReviewListView';
 import { ScoreSummaryModal } from './components/ScoreSummaryModal';
 import { TipsModal } from './components/TipsModal';
+import { SourceSelection } from './components/SourceSelection';
 
 export const App: React.FC = () => {
+  // Source State: null means on main source selection screen
+  const [questionSource, setQuestionSource] = useState<QuestionSource | null>(() => getStoredQuestionSource());
+
   // Application State
   const [appMode, setAppMode] = useState<AppMode>(() => getStoredAppMode());
   const [currentQuestionId, setCurrentQuestionId] = useState<number>(() => getStoredQuestionId(1));
@@ -26,6 +32,17 @@ export const App: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState<boolean>(false);
   const [isTipsOpen, setIsTipsOpen] = useState<boolean>(false);
+
+  // Source selection handlers
+  const handleSelectSource = (source: QuestionSource) => {
+    setQuestionSource(source);
+    saveQuestionSource(source);
+  };
+
+  const handleBackToSourceSelect = () => {
+    setQuestionSource(null);
+    saveQuestionSource(null);
+  };
 
   // Sync mode changes to storage
   const handleSwitchMode = (mode: AppMode) => {
@@ -126,6 +143,11 @@ export const App: React.FC = () => {
   const totalAnswered = Object.keys(userAnswers).length;
   const totalCorrect = Object.values(userAnswers).filter((a) => a.isCorrect).length;
 
+  // If no source is selected yet, show the 2 choices landing page
+  if (!questionSource) {
+    return <SourceSelection onSelectSource={handleSelectSource} />;
+  }
+
   return (
     <div className="app-container">
       {/* Top Header */}
@@ -138,6 +160,7 @@ export const App: React.FC = () => {
         onOpenDrawer={() => setIsDrawerOpen(true)}
         onResetProgress={handleResetAllProgress}
         onOpenTips={() => setIsTipsOpen(true)}
+        onBackToSourceSelect={handleBackToSourceSelect}
       />
 
       {/* Main App Body */}
@@ -152,6 +175,7 @@ export const App: React.FC = () => {
             onResetProgress={handleResetAllProgress}
             onSelectSectionExam={handleSelectSectionExam}
             onOpenTips={() => setIsTipsOpen(true)}
+            onBackToSourceSelect={handleBackToSourceSelect}
           />
         )}
 

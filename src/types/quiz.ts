@@ -64,3 +64,5 @@ export interface UserAnswerRecord {
 }
 
 export type AppMode = 'select' | 'exam' | 'review';
+
+export type QuestionSource = 'ef' | 'dekiru';

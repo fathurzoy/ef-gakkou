@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   XCircle,
   Lightbulb,
+  ArrowLeft,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -19,6 +20,7 @@ interface HeaderProps {
   onOpenDrawer: () => void;
   onResetProgress: () => void;
   onOpenTips: () => void;
+  onBackToSourceSelect?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -30,6 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDrawer,
   onResetProgress,
   onOpenTips,
+  onBackToSourceSelect,
 }) => {
   const totalIncorrect = totalAnswered - totalCorrect;
   const progressPercent = Math.round((totalAnswered / totalQuestions) * 100);
@@ -39,8 +42,33 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="header-inner">
         {/* Row 1: Top Bar on Mobile, Left + Center + Right on Desktop */}
         <div className="header-top-row">
-          {/* Logo and Home Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          {/* Back button & Logo */}
+          <div className="header-brand-group">
+            {onBackToSourceSelect && (
+              <button
+                onClick={onBackToSourceSelect}
+                className="btn btn-ghost"
+                style={{
+                  padding: '0.35rem 0.6rem',
+                  borderRadius: '8px',
+                  fontSize: '0.78rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  color: '#475569',
+                  border: '1px solid #e2e8f0',
+                  background: '#f8fafc',
+                  height: '36px',
+                  fontWeight: 600,
+                  flexShrink: 0,
+                }}
+                title="Kembali ke Pilihan Sumber Soal"
+              >
+                <ArrowLeft size={14} />
+                <span className="desktop-only">Ganti Sumber</span>
+              </button>
+            )}
+
             <button
               onClick={() => onSwitchMode('select')}
               style={{
@@ -84,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Desktop Center Mode Switcher Tabs */}
           <div
-            className="desktop-only"
+            className="desktop-only header-center-tabs"
             style={{
               background: '#f1f5f9',
               padding: '0.25rem',
@@ -124,7 +152,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Right Action Icons (Common & Desktop stats) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+          <div className="header-actions-group">
             {/* Desktop Score Badges */}
             {mode === 'exam' && (
               <div

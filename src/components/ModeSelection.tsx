@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   RotateCcw,
   ArrowRight,
+  ArrowLeft,
   BookmarkCheck,
   Layers,
   Lightbulb,
@@ -21,6 +22,7 @@ interface ModeSelectionProps {
   onResetProgress: () => void;
   onSelectSectionExam: (sectionId: SectionId) => void;
   onOpenTips: () => void;
+  onBackToSourceSelect?: () => void;
 }
 
 export const ModeSelection: React.FC<ModeSelectionProps> = ({
@@ -31,11 +33,37 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
   onResetProgress,
   onSelectSectionExam,
   onOpenTips,
+  onBackToSourceSelect,
 }) => {
   const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
 
   return (
     <div className="mode-selection animate-fade-in" style={{ maxWidth: '840px', margin: '0 auto' }}>
+      {/* Back to Source Selection */}
+      {onBackToSourceSelect && (
+        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-start' }}>
+          <button
+            onClick={onBackToSourceSelect}
+            className="btn btn-secondary"
+            style={{
+              padding: '0.45rem 0.9rem',
+              fontSize: '0.82rem',
+              borderRadius: '9999px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              color: '#475569',
+              border: '1px solid #cbd5e1',
+              background: '#ffffff',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+            }}
+          >
+            <ArrowLeft size={14} />
+            <span>Kembali ke Pilihan Sumber Soal</span>
+          </button>
+        </div>
+      )}
+
       {/* Hero Header */}
       <div
         className="hero-card"
