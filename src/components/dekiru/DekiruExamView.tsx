@@ -767,7 +767,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 }}
               >
                 <BookOpen size={15} />
-                <span>Mode Belajar & Pembahasan</span>
+                <span>Mode Belajar</span>
               </button>
 
               <button
@@ -782,7 +782,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 }}
               >
                 <GraduationCap size={15} />
-                <span>Mode Ujian (1 per 1 Soal)</span>
+                <span>Mode Ujian</span>
               </button>
             </div>
 
@@ -858,49 +858,49 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
       {/* Main Container */}
       <main className="main-content" style={{ maxWidth: "960px", margin: "0 auto", padding: "1.5rem 1rem 3rem 1rem", width: "100%" }}>
-        {/* Banner */}
-        <div
-          className="card mb-6 card-responsive-padding"
-          style={{
-            padding: "1.5rem",
-            background: "linear-gradient(135deg, #312e81 0%, #4338ca 100%)",
-            color: "#ffffff",
-            marginBottom: "1.25rem",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "0.4rem" }}>
-                <BookOpen size={22} color="#a5b4fc" />
-                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: 0, color: "#ffffff" }}>
-                  {dekiruExam1Data.exam.title}
-                </h2>
+        {/* Banner (Hanya di Mode Belajar agar card soal Mode Ujian lebih luas dan fokus) */}
+        {activeTab === "study" && (
+          <div
+            className="card mb-6 card-responsive-padding"
+            style={{
+              padding: "1.5rem",
+              background: "linear-gradient(135deg, #312e81 0%, #4338ca 100%)",
+              color: "#ffffff",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "0.4rem" }}>
+                  <BookOpen size={22} color="#a5b4fc" />
+                  <h2 style={{ fontSize: "1.25rem", fontWeight: 800, margin: 0, color: "#ffffff" }}>
+                    {dekiruExam1Data.exam.title}
+                  </h2>
+                </div>
+                <p style={{ margin: 0, fontSize: "0.9rem", color: "#c7d2fe", lineHeight: 1.5 }}>
+                  Pelajari seluruh seksi soal ujian Dekiru Nihongo Bab 1-3 lengkap dengan furigana, terjemahan, kunci jawaban, dan langkah pengerjaan.
+                </p>
               </div>
-              <p style={{ margin: 0, fontSize: "0.9rem", color: "#c7d2fe", lineHeight: 1.5 }}>
-                {activeTab === "study"
-                  ? "Pelajari seluruh seksi soal ujian Dekiru Nihongo Bab 1-3 lengkap dengan furigana, terjemahan, kunci jawaban, dan langkah pengerjaan."
-                  : "Simulasi mode ujian interaktif (1 soal per layar): pilih atau ketik jawaban Anda, lalu periksa hasil akhir dengan bantuan evaluasi AI."}
-              </p>
-            </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span
-                style={{
-                  fontSize: "0.8rem",
-                  fontWeight: 700,
-                  color: "#ffffff",
-                  background: "rgba(255, 255, 255, 0.15)",
-                  padding: "0.4rem 0.85rem",
-                  borderRadius: "9999px",
-                  border: "1px solid rgba(255, 255, 255, 0.25)",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                {activeTab === "study" ? "📖 Mode Belajar (Review List)" : ("⚡ Soal " + currentQ.questionNumber + " dari " + totalQuestions)}
-              </span>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "#ffffff",
+                    background: "rgba(255, 255, 255, 0.15)",
+                    padding: "0.4rem 0.85rem",
+                    borderRadius: "9999px",
+                    border: "1px solid rgba(255, 255, 255, 0.25)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  📖 Mode Belajar (Review List)
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* ================================================================================= */}
         {/* MODE UJIAN (1 SOAL PER 1 HALAMAN DENGAN DRAWER & VERIFIKASI AI DI AKHIR)           */}
