@@ -17,6 +17,7 @@ import {
   Lightbulb,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   HelpCircle,
   X,
 } from "lucide-react";
@@ -41,6 +42,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState<boolean>(false);
+  const [isSectionMenuOpen, setIsSectionMenuOpen] = useState<boolean>(false);
 
   // Interactive exam answers state
   // key: questionId -> value
@@ -921,13 +923,146 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 background: "#ffffff",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                <span className="badge badge-indigo" style={{ fontSize: "0.8rem", padding: "0.3rem 0.65rem" }}>
-                  Bagian {currentQ.section.section}: {currentQ.section.title}
-                </span>
-                <span style={{ fontSize: "0.82rem", color: "#64748b" }}>
-                  ({currentQ.section.titleReading})
-                </span>
+              <div style={{ position: "relative" }}>
+                <button
+                  type="button"
+                  onClick={() => setIsSectionMenuOpen(!isSectionMenuOpen)}
+                  className="badge badge-indigo"
+                  style={{
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.45rem",
+                    fontSize: "0.82rem",
+                    padding: "0.35rem 0.75rem",
+                    border: "1px solid #c7d2fe",
+                    borderRadius: "9999px",
+                    background: "#e0e7ff",
+                    color: "#3730a3",
+                    fontWeight: 700,
+                  }}
+                  title="Klik untuk pindah ke bagian lain"
+                >
+                  <span>Bagian {currentQ.section.section}: {currentQ.section.title}</span>
+                  <ChevronDown
+                    size={14}
+                    style={{
+                      transform: isSectionMenuOpen ? "rotate(180deg)" : "none",
+                      transition: "transform 0.2s",
+                    }}
+                  />
+                </button>
+
+                {isSectionMenuOpen && (
+                  <>
+                    <div
+                      onClick={() => setIsSectionMenuOpen(false)}
+                      style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 40,
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "calc(100% + 6px)",
+                        left: 0,
+                        zIndex: 50,
+                        background: "#ffffff",
+                        border: "1px solid #e2e8f0",
+                        borderRadius: "12px",
+                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+                        minWidth: "280px",
+                        padding: "0.4rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.2rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          padding: "0.4rem 0.65rem",
+                          fontSize: "0.72rem",
+                          fontWeight: 700,
+                          color: "#64748b",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        Pilih Bagian Soal
+                      </div>
+                      {dekiruExam1Data.sections.map((sec) => {
+                        const isCurrent = sec.section === currentQ.section.section;
+                        const targetIdx = allExamQuestions.findIndex((q) => q.section.section === sec.section);
+                        const sectionQuestions = allExamQuestions.filter((q) => q.section.section === sec.section);
+                        const qStart = sectionQuestions[0]?.questionNumber;
+                        const qEnd = sectionQuestions[sectionQuestions.length - 1]?.questionNumber;
+
+                        return (
+                          <button
+                            key={sec.section}
+                            type="button"
+                            onClick={() => {
+                              if (targetIdx !== -1) {
+                                setCurrentQuestionIndex(targetIdx);
+                              }
+                              setIsSectionMenuOpen(false);
+                            }}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              padding: "0.5rem 0.75rem",
+                              borderRadius: "8px",
+                              border: "none",
+                              background: isCurrent ? "#e0e7ff" : "transparent",
+                              color: isCurrent ? "#3730a3" : "#334155",
+                              fontWeight: isCurrent ? 700 : 500,
+                              fontSize: "0.82rem",
+                              cursor: "pointer",
+                              textAlign: "left",
+                              width: "100%",
+                              transition: "background 0.15s",
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isCurrent) e.currentTarget.style.background = "#f8fafc";
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isCurrent) e.currentTarget.style.background = "transparent";
+                            }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                              <span
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  width: "20px",
+                                  height: "20px",
+                                  borderRadius: "6px",
+                                  background: isCurrent ? "#4f46e5" : "#e2e8f0",
+                                  color: isCurrent ? "#ffffff" : "#475569",
+                                  fontSize: "0.72rem",
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {sec.section}
+                              </span>
+                              <span>{sec.title}</span>
+                            </div>
+                            <span style={{ fontSize: "0.72rem", color: isCurrent ? "#4f46e5" : "#94a3b8" }}>
+                              Soal {qStart}{qEnd !== qStart ? `-${qEnd}` : ""}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
