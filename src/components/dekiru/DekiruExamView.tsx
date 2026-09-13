@@ -25,6 +25,7 @@ import {
 import { DekiruSection, DekiruExamData } from "../../types/dekiru";
 import { SmartFurigana } from "../../utils/dekiruFurigana";
 import { getRichExplanation, inferPositionMeaning } from "../../data/dekiruRichExplanations";
+import { SAMPLE_ANSWER_TRANSLATIONS } from "../../data/dekiruTranslations";
 import { DekiruExplanationBox } from "./DekiruExplanationBox";
 
 interface DekiruExamViewProps {
@@ -216,6 +217,19 @@ export const isQuestionCorrect = (item: any, sec: DekiruSection, uAns: any): boo
   }
   if ("answer" in item && typeof item.answer === "object" && item.answer !== null && "text" in item.answer) {
     return String(uAns).trim().toLowerCase() === String(item.answer.text).trim().toLowerCase();
+  }
+
+  // 8. Open Answer with sampleAnswers
+  if ((sec.type === "open-answer" || item.sampleAnswers) && item.sampleAnswers && Array.isArray(item.sampleAnswers)) {
+    const cleanUser = String(uAns).trim().toLowerCase().replace(/[。、！？\s]/g, "");
+    if (!cleanUser) return false;
+    const matchSample = item.sampleAnswers.some((s: any) => {
+      const sText = typeof s === "string" ? s : s.text;
+      const cleanS = sText.trim().toLowerCase().replace(/[。、！？\s]/g, "");
+      return cleanUser === cleanS || cleanUser.includes(cleanS) || cleanS.includes(cleanUser);
+    });
+    if (matchSample) return true;
+    if (sec.type === "open-answer" && cleanUser.length >= 2) return true;
   }
 
   return false;
@@ -1791,9 +1805,9 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           </div>
         )}
 
-        {/* 11. Open Answer Text Input (Exam 1 Sec 7, Exam 2 Sec 9) */}
+        {/* 11. Open Answer Text Input (Exam 1 Sec 7, Exam 2 Sec 9, Exam 3 Sec 8, Exam 5 Sec 7) */}
         {sec.type === "open-answer" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
               ✍️ Jawaban Anda (Ketik di sini untuk verifikasi AI otomatis):
             </label>
@@ -1815,6 +1829,98 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 }}
               />
             </div>
+
+            {/* If revealed or in Mode Belajar, display clear sample answers */}
+            {isRevealed && item.sampleAnswers && item.sampleAnswers.length > 0 && (
+              <div
+                className="animate-fade-in"
+                style={{
+                  background: "#f0fdf4",
+                  border: "1.5px solid #86efac",
+                  borderRadius: "10px",
+                  padding: "0.75rem 0.9rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                  marginTop: "0.2rem",
+                }}
+              >
+                <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#166534", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <CheckCircle2 size={16} color="#16a34a" />
+                  <span>Contoh Jawaban yang Benar (Bisa Ditiru / Digunakan):</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                  {item.sampleAnswers.map((sAns: any, sIdx: number) => {
+                    const sText = typeof sAns === "string" ? sAns : sAns.text;
+                    const sSegments = typeof sAns === "object" && sAns.segments ? sAns.segments : null;
+                    const sTrans = SAMPLE_ANSWER_TRANSLATIONS[sText] || "";
+                    return (
+                      <div
+                        key={sIdx}
+                        style={{
+                          fontSize: "0.92rem",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          flexWrap: "wrap",
+                          gap: "0.5rem",
+                          background: "#ffffff",
+                          padding: "0.5rem 0.8rem",
+                          borderRadius: "8px",
+                          border: "1px solid #bbf7d0",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "baseline", gap: "0.45rem", flexWrap: "wrap" }}>
+                          <span
+                            style={{
+                              background: "#10b981",
+                              color: "#ffffff",
+                              fontWeight: 700,
+                              fontSize: "0.74rem",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "9999px",
+                            }}
+                          >
+                            Contoh {sIdx + 1}
+                          </span>
+                          <strong style={{ color: "#166534", fontSize: "0.98rem" }}>
+                            {sSegments ? (
+                              <SmartFurigana segments={sSegments} showFurigana={showFurigana} />
+                            ) : (
+                              <SmartFurigana text={sText} showFurigana={showFurigana} />
+                            )}
+                          </strong>
+                          {sTrans && (
+                            <span style={{ color: "#475569", fontSize: "0.85rem" }}>
+                              ({sTrans})
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserAnswers((prev) => ({ ...prev, [item.id]: sText }));
+                            setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                          }}
+                          style={{
+                            background: "#ecfdf5",
+                            border: "1px solid #10b981",
+                            color: "#047857",
+                            borderRadius: "6px",
+                            padding: "0.25rem 0.65rem",
+                            fontSize: "0.78rem",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                          }}
+                        >
+                          Gunakan Contoh Ini
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

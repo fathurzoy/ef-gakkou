@@ -1,5 +1,5 @@
 import { DEKIRU_KANJI_DICT } from '../utils/dekiruFurigana';
-import { DEKIRU_SENTENCE_TRANSLATIONS } from './dekiruTranslations';
+import { DEKIRU_SENTENCE_TRANSLATIONS, SAMPLE_ANSWER_TRANSLATIONS } from './dekiruTranslations';
 
 export interface OptionDetail {
   optionId?: string | number;
@@ -1305,6 +1305,95 @@ export function getRichExplanation(
         tips.push(`Blank (${bIdx + 1}) memerlukan partikel 「${p}」 (${pInfo.role}) yang bermakna: ${pInfo.meaning}.`);
       }
     });
+  }
+
+  // 9. Open Answer (Free response / subjective with sample answers)
+  if (section && (section.type === 'open-answer' || item.sampleAnswers)) {
+    const sAnswers = item.sampleAnswers || [];
+    const formattedSamples = sAnswers.map((s: any, idx: number) => {
+      const txt = typeof s === 'string' ? s : s.text;
+      const trans = SAMPLE_ANSWER_TRANSLATIONS[txt] || '';
+      return `Contoh ${idx + 1}: 「${txt}」${trans ? ` (${trans})` : ''}`;
+    }).join(' atau ');
+
+    whyCorrect = `Pertanyaan ini bersifat terbuka (jawaban bebas sesuai kondisi dan pengalaman Anda). ${item.explanationId || 'Gunakan bentuk tata bahasa yang tepat sesuai instruksi.'}${formattedSamples ? ` Contoh jawaban yang tepat dan alami: ${formattedSamples}.` : ''}`;
+
+    sAnswers.forEach((s: any, sIdx: number) => {
+      const sText = typeof s === 'string' ? s : s.text;
+      const sTrans = SAMPLE_ANSWER_TRANSLATIONS[sText] || 'Contoh jawaban yang tepat';
+      optionsBreakdown.push({
+        optionId: `Contoh ${sIdx + 1}`,
+        text: sText,
+        translation: sTrans,
+        isCorrect: true,
+        reason: `Contoh pola kalimat yang benar dan alami untuk menjawab pertanyaan ini.`,
+      });
+    });
+
+    // Specific common error tips for open questions
+    if (item.id === '7-9-s8-q1') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Bentuk non-lampau (misal: 買い物に行きます)',
+        reason: 'Digunakan untuk: rencana masa depan atau kebiasaan saat ini. Pada kalimat ini salah karena kata 先週 (minggu lalu) menanyakan kegiatan di masa lampau, sehingga wajib menggunakan verba bentuk lampau 〜ました (contoh: 買い物に行きました / 料理をしました).',
+      });
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 2',
+        text: 'Salah partikel rekan / tempat (misal: 友達に / 家を)',
+        reason: 'Digunakan untuk: partikel に untuk sasaran/target. Pada kalimat ini salah karena untuk rekan ("bersama teman") wajib partikel と (友達と), dan tempat aktivitas di rumah memakai で (家で料理をしました).',
+      });
+    } else if (item.id === '7-9-s8-q2') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Bentuk lampau (misal: 旅行しました)',
+        reason: 'Digunakan untuk: menyatakan kegiatan yang sudah selesai di masa lalu. Pada kalimat ini salah karena pertanyaan menanyakan rencana/keinginan liburan musim panas mendatang (何をしたいですか), sehingga wajib berakhiran 〜たいです (contoh: 旅行したいです / 北海道へ行きたいです).',
+      });
+    } else if (item.id === '1-3-s7-q1') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Verba tanpa nominalisasi (misal: アニメを見ます)',
+        reason: 'Digunakan untuk: kalimat pernyataan aksi sehari-hari. Pada pertanyaan hobi (趣味は何ですか), kata kerja wajib diubah menjadi nomina menggunakan pola [V-辞書形 + ことです] (contoh: アニメを見ることです) atau langsung kata benda (contoh: 料理です).',
+      });
+    } else if (item.id === '1-3-s7-q2') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Jawaban tanpa konfirmasi はい / いいえ',
+        reason: 'Untuk pertanyaan konfirmasi kebiasaan (〜ますか), sangat dianjurkan mengawali respon dengan はい (ya) atau いいえ (tidak) sebelum menyebutkan kalimat penjelasnya.',
+      });
+    } else if (item.id === '1-3-s7-q3') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Bentuk lampau 〜ました pada pertanyaan kebiasaan',
+        reason: 'Digunakan untuk: kegiatan yang sudah lewat. Pertanyaan 何をしますか menanyakan kebiasaan hari Minggu secara umum, sehingga gunakan bentuk 〜ます (contoh: 買い物をします).',
+      });
+    } else if (item.id === '4-6-s9-q1') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Menjawab bukan dengan nama/sebutan orang',
+        reason: 'Pertanyaan 誰ですか (siapa?) wajib dijawab dengan identitas subjek orang (contoh: 私の姉です / 私の友達です), bukan nama benda atau tempat.',
+      });
+    } else if (item.id === '4-6-s9-q2') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Menggabungkan sifat tanpa bentuk te (misal: やさしい、きれいです)',
+        reason: 'Untuk menggabungkan dua kata sifat berurutan, gunakan bentuk te: Sifat-i menjadi 〜くて (やさしくて、きれいです) dan Sifat-na menjadi 〜で (親切で、おもしろい人です).',
+      });
+    } else if (item.id === '13-15-s7-q1') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Menjawab tanpa pola pengalaman (misal: 食べます / 食べました)',
+        reason: 'Pertanyaan riwayat pengalaman [〜たことがありますか] (pernahkah?) wajib dijawab dengan menyatakan ada/tidaknya pengalaman: 「はい、あります」 atau 「いいえ、ありません」.',
+      });
+    } else if (item.id === '13-15-s7-q2') {
+      whyIncorrect.push({
+        optionId: 'Pola Keliru 1',
+        text: 'Tanpa akhiran opini 〜と思います',
+        reason: 'Pertanyaan どう思いますか menanyakan pendapat pribadi, sehingga kalimat penutup wajib menggunakan pola opini 「〜と思います」 (contoh: おいしいと思います).',
+      });
+    }
+
+    tips.push('Gunakan pola tata bahasa yang diminta pada pertanyaan (misalnya bentuk lampau 〜ました, keinginan 〜たいです, atau pengalaman 〜たことがあります).');
+    tips.push('Pilihlah kosakata aktivitas yang Anda kuasai dan pastikan menggunakan partikel yang tepat (seperti を untuk objek atau で untuk tempat aktivitas).');
   }
 
   const grammarPoint = item.grammarPoint || item.vocabularyPoint || (section ? `Pola Bagian ${section.section}: ${section.title}` : 'Pola Tata Bahasa Dasar');

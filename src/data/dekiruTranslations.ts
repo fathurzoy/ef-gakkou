@@ -235,3 +235,36 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   '13-15-s8-q2': 'Tiket ini bisa digunakan untuk bepergian 1 hari bersama 5 orang teman.',
   '13-15-s8-q3': 'Bisa naik kereta cepat Shinkansen untuk pergi ke tempat yang jauh.',
 };
+
+/**
+ * Translations for open-ended sample answers across all Dekiru exams
+ */
+export const SAMPLE_ANSWER_TRANSLATIONS: Record<string, string> = {
+  // Exam 1 Sec 7 (1-3-s7)
+  '料理です。': 'Hobi saya memasak.',
+  'アニメを見ることです。': 'Hobi saya menonton anime.',
+  'はい、毎日朝ご飯を食べます。': 'Ya, setiap hari saya sarapan (makan pagi).',
+  'いいえ、毎日は食べません。': 'Tidak, saya tidak makan sarapan setiap hari.',
+  '買い物をします。': '(Saya) berbelanja.',
+  '料理をします。': '(Saya) memasak.',
+  '4月4日です。': 'Tanggal 4 April.',
+
+  // Exam 2 Sec 9 (4-6-s9)
+  '私の姉です。': 'Ini adalah kakak perempuan saya.',
+  '私の友達です。': 'Ini adalah teman saya.',
+  'やさしくて、きれいです。': 'Orangnya baik hati dan cantik.',
+  '親切で、おもしろい人です。': 'Orangnya ramah dan menarik/lucu.',
+
+  // Exam 3 Sec 8 (7-9-s8)
+  '友達と買い物に行きました。': '(Saya) pergi berbelanja bersama teman.',
+  '家で料理をしました。': '(Saya) memasak di rumah.',
+  '旅行したいです。': 'Saya ingin liburan / bepergian (traveling).',
+  '北海道へ行きたいです。': 'Saya ingin pergi ke Hokkaido.',
+
+  // Exam 5 Sec 7 (13-15-s7)
+  'はい、何回もあります。': 'Ya, sudah berkali-kali pernah.',
+  'はい、あります。ラーメンや寿司を食べたことがあります。': 'Ya, pernah. Saya pernah makan ramen dan sushi.',
+  'インドネシア料理より味があまり濃くないですが、おいしいと思います。': 'Rasanya tidak terlalu kuat/pekat dibanding masakan Indonesia, tapi menurut saya enak.',
+  '日本の食べ物はヘルシーで、おいしいと思います。': 'Menurut saya makanan Jepang sehat dan lezat.',
+};
+

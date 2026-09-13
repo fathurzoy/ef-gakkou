@@ -2,6 +2,7 @@ import React from 'react';
 import { Lightbulb, CheckCircle2, XCircle, BookOpen, Globe, Sparkles } from 'lucide-react';
 import { SmartFurigana } from '../../utils/dekiruFurigana';
 import { RichExplanationData } from '../../data/dekiruRichExplanations';
+import { SAMPLE_ANSWER_TRANSLATIONS } from '../../data/dekiruTranslations';
 
 interface DekiruExplanationBoxProps {
   item: any;
@@ -81,75 +82,141 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
       </div>
 
       <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {/* 1. Official Answer Banner */}
-        <div
-          style={{
-            background: '#ecfdf5',
-            border: '1.5px solid #a7f3d0',
-            borderRadius: '12px',
-            padding: '0.85rem 1rem',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#065f46', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.4rem' }}>
-            <CheckCircle2 size={18} color="#10b981" />
-            <span>KUNCI JAWABAN RESMI:</span>
-          </div>
+        {/* 1. Official Answer / Sample Answers Banner */}
+        {('sampleAnswers' in item && Array.isArray(item.sampleAnswers) && item.sampleAnswers.length > 0) ? (
+          <div
+            style={{
+              background: '#ecfdf5',
+              border: '1.5px solid #a7f3d0',
+              borderRadius: '12px',
+              padding: '0.85rem 1rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#065f46', fontWeight: 700, fontSize: '0.88rem', marginBottom: '0.6rem' }}>
+              <CheckCircle2 size={18} color="#10b981" />
+              <span>CONTOH JAWABAN BENAR (PERTANYAAN BEBAS / TERBUKA):</span>
+            </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', fontSize: '1rem' }}>
-            {/* Array answers (particle-fill, matching, etc.) */}
-            {'answer' in item && Array.isArray(item.answer) && (
-              <div style={{ display: 'inline-flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                {item.answer.map((ans: any, aIdx: number) => (
-                  <span key={aIdx} className="badge badge-emerald" style={{ fontSize: '0.88rem', padding: '0.35rem 0.75rem' }}>
-                    Blank ({aIdx + 1}): <strong>{typeof ans === 'string' ? ans : ans.text || String(ans)}</strong>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Word bank answer */}
-            {'answer' in item && typeof item.answer === 'object' && item.answer !== null && 'value' in item.answer && 'content' in item.answer && (
-              <span className="badge badge-emerald" style={{ fontSize: '0.92rem', padding: '0.4rem 0.85rem' }}>
-                <strong>{item.answer.value}.</strong>{' '}
-                <SmartFurigana segments={item.answer.content.segments} showFurigana={showFurigana} />
-              </span>
-            )}
-
-            {/* Single string answer */}
-            {'answer' in item && typeof item.answer === 'string' && (
-              <span className="badge badge-emerald" style={{ fontSize: '0.95rem', padding: '0.35rem 0.85rem' }}>
-                {'answerRuby' in item && item.answerRuby ? (
-                  <SmartFurigana segments={item.answerRuby.segments} showFurigana={showFurigana} />
-                ) : (
-                  <SmartFurigana text={item.answer} showFurigana={showFurigana} />
-                )}
-              </span>
-            )}
-
-            {/* Object with segments */}
-            {'answer' in item && typeof item.answer === 'object' && item.answer !== null && 'segments' in item.answer && (
-              <span className="badge badge-emerald" style={{ fontSize: '0.95rem', padding: '0.35rem 0.85rem' }}>
-                <SmartFurigana segments={item.answer.segments} showFurigana={showFurigana} />
-              </span>
-            )}
-
-            {/* Multi-part dictionary answer */}
-            {'answer' in item && typeof item.answer === 'object' && item.answer !== null && !('segments' in item.answer) && !('value' in item.answer) && !Array.isArray(item.answer) && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                {Object.entries(item.answer).map(([k, ansObj]: any) => (
-                  <div key={k} style={{ fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <strong style={{ color: '#4f46e5' }}>({k}):</strong>
-                    {typeof ansObj === 'object' && ansObj !== null && 'segments' in ansObj ? (
-                      <SmartFurigana segments={ansObj.segments} showFurigana={showFurigana} />
-                    ) : (
-                      <span className="badge badge-emerald">{String(ansObj)}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+              {item.sampleAnswers.map((sAns: any, sIdx: number) => {
+                const sText = typeof sAns === 'string' ? sAns : sAns.text;
+                const sSegments = typeof sAns === 'object' && sAns.segments ? sAns.segments : null;
+                const sTrans = SAMPLE_ANSWER_TRANSLATIONS[sText] || '';
+                return (
+                  <div
+                    key={sIdx}
+                    style={{
+                      background: '#ffffff',
+                      border: '1.5px solid #86efac',
+                      borderRadius: '10px',
+                      padding: '0.65rem 0.95rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.3rem',
+                      boxShadow: '0 1px 3px rgba(16, 185, 129, 0.08)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap' }}>
+                      <span
+                        style={{
+                          background: '#10b981',
+                          color: '#ffffff',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '9999px',
+                        }}
+                      >
+                        Contoh {sIdx + 1}
+                      </span>
+                      <div style={{ fontSize: '1.08rem', fontWeight: 600, color: '#065f46', lineHeight: 1.8 }}>
+                        {sSegments ? (
+                          <SmartFurigana segments={sSegments} showFurigana={showFurigana} />
+                        ) : (
+                          <SmartFurigana text={sText} showFurigana={showFurigana} />
+                        )}
+                      </div>
+                    </div>
+                    {sTrans && (
+                      <div style={{ fontSize: '0.88rem', color: '#166534', fontWeight: 500, paddingLeft: '0.2rem' }}>
+                        🇮🇩 <strong>Arti:</strong> {sTrans}
+                      </div>
                     )}
                   </div>
-                ))}
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div
+            style={{
+              background: '#ecfdf5',
+              border: '1.5px solid #a7f3d0',
+              borderRadius: '12px',
+              padding: '0.85rem 1rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#065f46', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.4rem' }}>
+              <CheckCircle2 size={18} color="#10b981" />
+              <span>KUNCI JAWABAN RESMI:</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', fontSize: '1rem' }}>
+              {/* Array answers (particle-fill, matching, etc.) */}
+              {'answer' in item && Array.isArray(item.answer) && (
+                <div style={{ display: 'inline-flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  {item.answer.map((ans: any, aIdx: number) => (
+                    <span key={aIdx} className="badge badge-emerald" style={{ fontSize: '0.88rem', padding: '0.35rem 0.75rem' }}>
+                      Blank ({aIdx + 1}): <strong>{typeof ans === 'string' ? ans : ans.text || String(ans)}</strong>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Word bank answer */}
+              {'answer' in item && typeof item.answer === 'object' && item.answer !== null && 'value' in item.answer && 'content' in item.answer && (
+                <span className="badge badge-emerald" style={{ fontSize: '0.92rem', padding: '0.4rem 0.85rem' }}>
+                  <strong>{item.answer.value}.</strong>{' '}
+                  <SmartFurigana segments={item.answer.content.segments} showFurigana={showFurigana} />
+                </span>
+              )}
+
+              {/* Single string answer */}
+              {'answer' in item && typeof item.answer === 'string' && (
+                <span className="badge badge-emerald" style={{ fontSize: '0.95rem', padding: '0.35rem 0.85rem' }}>
+                  {'answerRuby' in item && item.answerRuby ? (
+                    <SmartFurigana segments={item.answerRuby.segments} showFurigana={showFurigana} />
+                  ) : (
+                    <SmartFurigana text={item.answer} showFurigana={showFurigana} />
+                  )}
+                </span>
+              )}
+
+              {/* Object with segments */}
+              {'answer' in item && typeof item.answer === 'object' && item.answer !== null && 'segments' in item.answer && (
+                <span className="badge badge-emerald" style={{ fontSize: '0.95rem', padding: '0.35rem 0.85rem' }}>
+                  <SmartFurigana segments={item.answer.segments} showFurigana={showFurigana} />
+                </span>
+              )}
+
+              {/* Multi-part dictionary answer */}
+              {'answer' in item && typeof item.answer === 'object' && item.answer !== null && !('segments' in item.answer) && !('value' in item.answer) && !Array.isArray(item.answer) && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  {Object.entries(item.answer).map(([k, ansObj]: any) => (
+                    <div key={k} style={{ fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <strong style={{ color: '#4f46e5' }}>({k}):</strong>
+                      {typeof ansObj === 'object' && ansObj !== null && 'segments' in ansObj ? (
+                        <SmartFurigana segments={ansObj.segments} showFurigana={showFurigana} />
+                      ) : (
+                        <span className="badge badge-emerald">{String(ansObj)}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* 2. Completed Full Sentence if available */}
         {item.completed && item.completed.segments && (
@@ -308,7 +375,7 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
         {richData.optionsBreakdown && richData.optionsBreakdown.length > 0 && (
           <div style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '0.85rem' }}>
             <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', display: 'block', marginBottom: '0.45rem' }}>
-              Daftar Arti Pilihan Jawaban:
+              {item.sampleAnswers ? 'Bedah Contoh Jawaban & Terjemahan:' : 'Daftar Arti Pilihan Jawaban:'}
             </span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.5rem' }}>
               {richData.optionsBreakdown.map((opt, idx) => (
