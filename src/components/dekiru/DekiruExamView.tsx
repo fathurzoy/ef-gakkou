@@ -56,6 +56,88 @@ export const loadDekiruProgress = (examId: string) => {
   }
 };
 
+// Helper to detect any representation of 'x' / batsu / cross / no particle
+export const isBatsuEquivalent = (val: string | undefined | null): boolean => {
+  if (!val) return false;
+  const s = String(val).trim().toLowerCase();
+  return (
+    s === "x" ||
+    s === "×" ||
+    s === "✕" ||
+    s === "✖" ||
+    s === "ｘ" || // fullwidth lowercase
+    s === "Ｘ" || // fullwidth uppercase
+    s === "❌" ||
+    s === "❎" ||
+    s === "batsu" ||
+    s === "ばつ" ||
+    s === "バツ" ||
+    s === "-" ||
+    s === "ー" ||
+    s === "none" ||
+    s === "kosong" ||
+    s === "tidak ada" ||
+    /^[xX×✕✖ｘＸ]$/.test(s)
+  );
+};
+
+// Map of Romaji to Hiragana particles
+export const ROMAJI_TO_HIRAGANA_PARTICLES: Record<string, string> = {
+  wa: "は",
+  ha: "は",
+  wo: "を",
+  o: "を",
+  e: "へ",
+  he: "へ",
+  ni: "に",
+  de: "で",
+  to: "と",
+  ga: "が",
+  no: "の",
+  mo: "も",
+  ka: "か",
+  ya: "や",
+  ne: "ね",
+  yo: "よ",
+  kara: "から",
+  made: "まで",
+  dake: "だけ",
+  shika: "しか",
+  demo: "でも",
+  nado: "など",
+  ba: "ば",
+  node: "ので",
+  noni: "のに",
+};
+
+export const checkParticleMatch = (
+  userVal: string | undefined | null,
+  correctAns: string | undefined | null
+): boolean => {
+  if (userVal === undefined || userVal === null) return false;
+  if (correctAns === undefined || correctAns === null) return false;
+
+  const u = String(userVal).trim().toLowerCase();
+  const c = String(correctAns).trim().toLowerCase();
+
+  if (!u) return false;
+
+  // 1. If correct answer is batsu / cross / no particle
+  if (isBatsuEquivalent(c)) {
+    return isBatsuEquivalent(u);
+  }
+
+  // 2. Direct string match
+  if (u === c) return true;
+
+  // 3. Romaji to Hiragana particle normalization
+  const mappedUser = ROMAJI_TO_HIRAGANA_PARTICLES[u] || u;
+  const mappedCorrect = ROMAJI_TO_HIRAGANA_PARTICLES[c] || c;
+  if (mappedUser === mappedCorrect) return true;
+
+  return false;
+};
+
 export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSelect }) => {
   // Exam selection state (null means show selection screen)
   const [selectedExamId, setSelectedExamId] = useState<string | null>(() => {
@@ -579,7 +661,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
                 {particleAnswers.map((correctAns: string, blankIdx: number) => {
                   const currentVal = (userAnswers[item.id] && userAnswers[item.id][blankIdx]) || "";
-                  const isCorrect = currentVal.trim() === correctAns;
+                  const isCorrect = checkParticleMatch(currentVal, correctAns);
                   let borderColor = "#cbd5e1";
                   let bg = "#ffffff";
                   if (isRevealed) {
@@ -597,7 +679,8 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         value={currentVal}
                         placeholder="—"
                         onChange={(e) => {
-                          const val = e.target.value;
+                          const rawVal = e.target.value;
+                          const val = isBatsuEquivalent(rawVal) ? "×" : rawVal;
                           const arr = Array.isArray(userAnswers[item.id])
                             ? [...userAnswers[item.id]]
                             : new Array(particleAnswers.length).fill("");
@@ -624,9 +707,45 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     </div>
                   );
                 })}
+
+                {/* Quick button to fill × if without particle */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const arr = Array.isArray(userAnswers[item.id])
+                      ? [...userAnswers[item.id]]
+                      : new Array(particleAnswers.length).fill("");
+                    const emptyIdx = arr.findIndex((v) => !v || String(v).trim() === "");
+                    const idxToFill = emptyIdx !== -1 ? emptyIdx : 0;
+                    arr[idxToFill] = "×";
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: arr }));
+                  }}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: "0.35rem 0.65rem",
+                    fontSize: "0.82rem",
+                    borderRadius: "8px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    height: "36px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    background: "#f8fafc",
+                    border: "1px solid #cbd5e1",
+                    color: "#334155",
+                  }}
+                  title="Klik untuk mengisi kotak kosong dengan × (tanpa partikel)"
+                >
+                  <span style={{ fontWeight: 800, fontSize: "1.05rem", color: "#4f46e5" }}>×</span>
+                  <span>Isi × (tanpa partikel)</span>
+                </button>
               </div>
-              <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
-                💡 Ketik partikel hiragana (e.g. に, で, を, へ, と, から, まで, が) atau × jika tanpa partikel. Tekan Enter atau klik tombol Lihat Jawaban di bawah untuk mengecek.
+              <div style={{ fontSize: "0.78rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.35rem", flexWrap: "wrap" }}>
+                <span>💡</span>
+                <span>
+                  Ketik partikel hiragana (atau romaji e.g. <em>ni, de, o, he, to, kara, made, ga</em>) atau huruf <strong>x</strong> / <strong>×</strong> jika tanpa partikel. Tekan Enter untuk mengecek.
+                </span>
               </div>
             </div>
           );
@@ -989,8 +1108,11 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             ? userAnswers[item.id]
             : { location: "", existence: "" };
           const correctLoc = item.answer?.location?.text || "";
+          const locReading = item.answer?.location?.segments?.map((s: any) => s.reading || s.text).join("") || "";
           const correctExist = item.answer?.existence || "";
-          const isLocCorrect = currentObj.location?.trim() === correctLoc;
+          const isLocCorrect =
+            currentObj.location?.trim().toLowerCase() === correctLoc.trim().toLowerCase() ||
+            (locReading && currentObj.location?.trim().toLowerCase() === locReading.trim().toLowerCase());
 
           return (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -1545,8 +1667,13 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         {sec.type === "reading-true-false" && (
           <div style={{ display: "flex", gap: "0.65rem" }}>
             {(["○", "×"] as const).map((opt) => {
-              const isSelected = userAnswer === opt;
-              const isCorrect = "answer" in item && item.answer === opt;
+              const isSelected =
+                userAnswer === opt ||
+                (opt === "×" && isBatsuEquivalent(userAnswer)) ||
+                (opt === "○" && (userAnswer === "o" || userAnswer === "O" || userAnswer === "maru"));
+              const isCorrect =
+                "answer" in item &&
+                (item.answer === opt || (opt === "×" && isBatsuEquivalent(item.answer)));
               let bg = "#ffffff";
               let border = "#cbd5e1";
               let color = "#334155";
