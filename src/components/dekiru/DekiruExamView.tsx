@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { DekiruSection, DekiruExamData } from "../../types/dekiru";
 import { SmartFurigana } from "../../utils/dekiruFurigana";
-import { getRichExplanation } from "../../data/dekiruRichExplanations";
+import { getRichExplanation, inferPositionMeaning } from "../../data/dekiruRichExplanations";
 import { DekiruExplanationBox } from "./DekiruExplanationBox";
 
 interface DekiruExamViewProps {
@@ -800,14 +800,31 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     background: bg,
                     color: color,
                     borderColor: isRevealed && isCorrect ? "#10b981" : "#cbd5e1",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    gap: "0.15rem",
                   }}
                 >
-                  <span style={{ fontWeight: 800 }}>{wb.id}.</span>{" "}
-                  <SmartFurigana
-                    text={wb.content.text}
-                    segments={wb.content.segments}
-                    showFurigana={showFurigana}
-                  />
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                    <span style={{ fontWeight: 800 }}>{wb.id}.</span>{" "}
+                    <SmartFurigana
+                      text={wb.content.text}
+                      segments={wb.content.segments}
+                      showFurigana={showFurigana}
+                    />
+                  </div>
+                  {isRevealed && wb.meaningId && (
+                    <span
+                      style={{
+                        fontSize: "0.74rem",
+                        fontWeight: 500,
+                        color: isCorrect ? "#047857" : isSelected ? "#991b1b" : "#64748b",
+                      }}
+                    >
+                      ({wb.meaningId})
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -916,7 +933,27 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         {sec.type === "dialogue-matching" && "choices" in sec && "answer" in item && Array.isArray(item.answer) && (() => {
           const matchingAnswers = item.answer as string[];
           return (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+              {/* Choice Bank Reference Box */}
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "0.6rem 0.85rem" }}>
+                <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.35rem" }}>
+                  📋 Daftar Pilihan Ungkapan Percakapan:
+                </span>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "0.45rem" }}>
+                  {sec.choices.map((ch) => (
+                    <div key={ch.id} style={{ fontSize: "0.83rem", color: "#334155" }}>
+                      <strong style={{ color: "#4f46e5", marginRight: "0.3rem" }}>{ch.id}.</strong>
+                      <SmartFurigana text={ch.content?.text || ""} showFurigana={showFurigana} />
+                      {isRevealed && ch.meaningId && (
+                        <div style={{ color: "#64748b", fontSize: "0.76rem", marginTop: "0.1rem" }}>
+                          ↳ {ch.meaningId}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                 {matchingAnswers.map((correctAns: string, blankIdx: number) => {
                   const currentChoice = (userAnswers[item.id] && userAnswers[item.id][blankIdx]) || "";
@@ -1282,31 +1319,75 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
                   ✍️ (1) Tulis posisi/lokasi dalam kanji/hiragana:
                 </label>
-                <input
-                  type="text"
-                  placeholder="Contoh: 上"
-                  value={currentObj.location || ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setUserAnswers((prev) => ({
-                      ...prev,
-                      [item.id]: { ...currentObj, location: val },
-                    }));
-                  }}
-                  style={{
-                    maxWidth: "240px",
-                    padding: "0.55rem 0.85rem",
-                    borderRadius: "10px",
-                    border: "1.5px solid " + (isRevealed && currentObj.location
-                      ? isLocCorrect ? "#10b981" : "#ef4444"
-                      : "#cbd5e1"),
-                    background: isRevealed && currentObj.location
-                      ? isLocCorrect ? "#ecfdf5" : "#fef2f2"
-                      : "#ffffff",
-                    fontSize: "0.95rem",
-                    fontWeight: 600,
-                  }}
-                />
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                  <input
+                    type="text"
+                    placeholder="Contoh: 上"
+                    value={currentObj.location || ""}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setUserAnswers((prev) => ({
+                        ...prev,
+                        [item.id]: { ...currentObj, location: val },
+                      }));
+                    }}
+                    style={{
+                      maxWidth: "240px",
+                      padding: "0.55rem 0.85rem",
+                      borderRadius: "10px",
+                      border: "1.5px solid " + (isRevealed && currentObj.location
+                        ? isLocCorrect ? "#10b981" : "#ef4444"
+                        : "#cbd5e1"),
+                      background: isRevealed && currentObj.location
+                        ? isLocCorrect ? "#ecfdf5" : "#fef2f2"
+                        : "#ffffff",
+                      fontSize: "0.95rem",
+                      fontWeight: 600,
+                    }}
+                  />
+                  {isRevealed && (
+                    <span style={{ fontSize: "0.82rem", fontWeight: 700, color: isLocCorrect ? "#16a34a" : "#dc2626" }}>
+                      {isLocCorrect ? "✅ Tepat!" : `Kunci: ${correctLoc} (${inferPositionMeaning(correctLoc)})`}
+                    </span>
+                  )}
+                </div>
+
+                {/* Helpful position vocabulary pills in study mode or when revealed */}
+                {isRevealed && (
+                  <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap", marginTop: "0.25rem" }}>
+                    {[
+                      { k: "上", id: "atas" },
+                      { k: "下", id: "bawah" },
+                      { k: "前", id: "depan" },
+                      { k: "後ろ", id: "belakang" },
+                      { k: "間", id: "antara" },
+                      { k: "隣", id: "sebelah" },
+                      { k: "近く", id: "dekat" },
+                    ].map((p) => (
+                      <button
+                        key={p.k}
+                        type="button"
+                        onClick={() => {
+                          setUserAnswers((prev) => ({
+                            ...prev,
+                            [item.id]: { ...currentObj, location: p.k },
+                          }));
+                        }}
+                        style={{
+                          fontSize: "0.76rem",
+                          padding: "0.2rem 0.5rem",
+                          borderRadius: "6px",
+                          background: currentObj.location === p.k ? "#e0e7ff" : "#f1f5f9",
+                          border: currentObj.location === p.k ? "1px solid #6366f1" : "1px solid #e2e8f0",
+                          color: currentObj.location === p.k ? "#4338ca" : "#475569",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <strong>{p.k}</strong> ({p.id})
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* 2. Pilihan います / あります */}
@@ -1314,7 +1395,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
                   👉 (2) Pilih keberadaan (［います・あります］):
                 </label>
-                <div style={{ display: "inline-flex", gap: "0.5rem" }}>
+                <div style={{ display: "inline-flex", gap: "0.65rem", flexWrap: "wrap" }}>
                   {["います", "あります"].map((opt) => {
                     const isSelected = currentObj.existence === opt;
                     const isCorrect = opt === correctExist;
@@ -1337,6 +1418,10 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       color = "#3730a3";
                     }
 
+                    const optMeaning = opt === "あります"
+                      ? "ada (benda mati / tempat / bangunan)"
+                      : "ada (manusia / hewan bernyawa)";
+
                     return (
                       <button
                         key={opt}
@@ -1350,16 +1435,37 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         }}
                         className="btn btn-secondary"
                         style={{
-                          padding: "0.45rem 1.1rem",
+                          padding: "0.55rem 1.1rem",
                           borderRadius: "10px",
                           background: bg,
                           borderColor: border,
                           color: color,
                           fontWeight: 700,
-                          fontSize: "0.92rem",
+                          fontSize: "0.95rem",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                          gap: "0.15rem",
+                          cursor: "pointer",
+                          minWidth: "160px",
                         }}
                       >
-                        {opt}
+                        <div style={{ display: "flex", alignItems: "center", width: "100%", justifyContent: "space-between" }}>
+                          <span>{opt}</span>
+                          {isRevealed && isCorrect && <CheckCircle2 size={16} color="#10b981" />}
+                          {isRevealed && isSelected && !isCorrect && <XCircle size={16} color="#ef4444" />}
+                        </div>
+                        {isRevealed && (
+                          <span
+                            style={{
+                              fontSize: "0.75rem",
+                              fontWeight: 500,
+                              color: isCorrect ? "#047857" : isSelected ? "#991b1b" : "#64748b",
+                            }}
+                          >
+                            {optMeaning}
+                          </span>
+                        )}
                       </button>
                     );
                   })}
@@ -1742,6 +1848,13 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     color = "#3730a3";
                   }
 
+                  const grammarMeanings: Record<string, string> = {
+                    a: "dilarang / tidak boleh (larangan keras)",
+                    b: "harus / wajib (keharusan mutlak)",
+                    c: "boleh tidak / tidak harus (izin/keringanan)",
+                    d: "saya pikir / berpendapat (opini lampau)",
+                  };
+
                   return (
                     <button
                       key={ch.id}
@@ -1749,7 +1862,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       onClick={() => handleSelectAnswer(item.id, ch.id)}
                       className="btn btn-secondary"
                       style={{
-                        padding: "0.5rem 0.95rem",
+                        padding: "0.55rem 0.95rem",
                         borderRadius: "10px",
                         background: bg,
                         borderColor: border,
@@ -1757,16 +1870,35 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         fontWeight: 700,
                         fontSize: "0.92rem",
                         display: "flex",
-                        alignItems: "center",
-                        gap: "0.4rem",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        gap: "0.2rem",
+                        minWidth: "170px",
                       }}
                     >
-                      <span style={{ color: isSelected || (isRevealed && isCorrect) ? "inherit" : "#4f46e5" }}>
-                        {ch.id}.
-                      </span>
-                      <span>
-                        <SmartFurigana text={ch.text} showFurigana={showFurigana} />
-                      </span>
+                      <div style={{ display: "flex", alignItems: "center", width: "100%", justifyContent: "space-between" }}>
+                        <div>
+                          <span style={{ color: isSelected || (isRevealed && isCorrect) ? "inherit" : "#4f46e5", marginRight: "0.25rem" }}>
+                            {ch.id}.
+                          </span>
+                          <span>
+                            <SmartFurigana text={ch.text} showFurigana={showFurigana} />
+                          </span>
+                        </div>
+                        {isRevealed && isCorrect && <CheckCircle2 size={16} color="#10b981" />}
+                        {isRevealed && isSelected && !isCorrect && <XCircle size={16} color="#ef4444" />}
+                      </div>
+                      {isRevealed && (
+                        <span
+                          style={{
+                            fontSize: "0.75rem",
+                            fontWeight: 500,
+                            color: isCorrect ? "#047857" : isSelected ? "#991b1b" : "#64748b",
+                          }}
+                        >
+                          ({grammarMeanings[ch.id] || ch.id})
+                        </span>
+                      )}
                     </button>
                   );
                 })}
