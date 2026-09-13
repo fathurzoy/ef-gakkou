@@ -196,15 +196,6 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
     setProgressRevision((prev) => prev + 1);
   };
 
-  const handleTabChange = (tab: "study" | "exam") => {
-    setActiveTab(tab);
-    try {
-      localStorage.setItem("dekiru_active_tab_v1", tab);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const toggleExpand = (qId: string) => {
     setExpandedExplanations((prev) => ({
       ...prev,
@@ -214,7 +205,25 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
   const handleSelectAnswer = (qId: string, answer: any) => {
     setUserAnswers((prev) => ({ ...prev, [qId]: answer }));
-    setRevealedQuestions((prev) => ({ ...prev, [qId]: true }));
+
+    // Check if the answer is complete before revealing:
+    let isComplete = true;
+    if (Array.isArray(answer)) {
+      isComplete =
+        answer.length > 0 &&
+        answer.every((val) => val !== undefined && val !== null && String(val).trim() !== "");
+    } else if (typeof answer === "object" && answer !== null) {
+      const vals = Object.values(answer);
+      isComplete =
+        vals.length > 0 &&
+        vals.every((val) => val !== undefined && val !== null && String(val).trim() !== "");
+    } else if (answer === undefined || answer === null || String(answer).trim() === "") {
+      isComplete = false;
+    }
+
+    if (isComplete) {
+      setRevealedQuestions((prev) => ({ ...prev, [qId]: true }));
+    }
   };
 
   const handleResetExam = (examIdToReset?: string) => {
@@ -1162,7 +1171,9 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                                 const updated = typeof currentAns === "object" ? { ...currentAns } : {};
                                 updated.particle = ch;
                                 setUserAnswers((prev) => ({ ...prev, [item.id]: updated }));
-                                setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                                if (updated.response && String(updated.response).trim() !== "") {
+                                  setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                                }
                               }}
                               className="btn btn-secondary"
                               style={{
@@ -1334,7 +1345,14 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                             const updated = typeof currentAns === "object" ? { ...currentAns } : {};
                             updated.choice = ch;
                             setUserAnswers((prev) => ({ ...prev, [item.id]: updated }));
-                            setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                            if (
+                              updated.A &&
+                              String(updated.A).trim() !== "" &&
+                              updated.B &&
+                              String(updated.B).trim() !== ""
+                            ) {
+                              setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                            }
                           }}
                           className="btn btn-secondary"
                           style={{
@@ -2136,40 +2154,40 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         <div className="header-inner">
           <div className="header-top-row">
             {/* Left: Back to Exam Selection & Exam Switcher */}
-            <div className="header-brand-group">
+            <div className="header-brand-group" style={{ display: "flex", alignItems: "center", gap: "0.4rem", minWidth: 0, flexShrink: 1 }}>
               <button
                 onClick={handleBackToExamSelection}
                 className="btn btn-ghost"
-                style={{ padding: "0.35rem 0.65rem", borderRadius: "10px", gap: "0.3rem" }}
-                title="Ganti Paket Ujian"
+                style={{ padding: "0.35rem 0.55rem", borderRadius: "8px", gap: "0.25rem", height: "34px", flexShrink: 0 }}
+                title="Kembali ke Pilihan Ujian"
               >
-                <ArrowLeft size={16} />
-                <span className="desktop-only" style={{ fontSize: "0.82rem" }}>Pilih Ujian</span>
+                <ArrowLeft size={15} />
+                <span className="desktop-only" style={{ fontSize: "0.78rem" }}>Pilih Ujian</span>
               </button>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", minWidth: 0 }}>
                 <div
                   style={{
-                    width: "34px",
-                    height: "34px",
+                    width: "32px",
+                    height: "32px",
                     borderRadius: "8px",
                     background: "linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)",
                     color: "#ffffff",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "1.1rem",
+                    fontSize: "1rem",
                     flexShrink: 0,
                   }}
                 >
                   ⛩️
                 </div>
-                <div>
-                  <div style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", lineHeight: 1.2 }}>
+                <div style={{ minWidth: 0, overflow: "hidden" }}>
+                  <div style={{ fontSize: "0.88rem", fontWeight: 800, color: "#0f172a", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {currentExamData.exam.title.replace(/『できる日本語初級』/g, "").trim()}
                   </div>
-                  <div style={{ fontSize: "0.72rem", color: "#4f46e5", fontWeight: 700 }}>
-                    {currentExamData.exam.id === 'dekiru-review-1-3'
+                  <div style={{ fontSize: "0.68rem", color: activeTab === "exam" ? "#4f46e5" : "#0891b2", fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {(currentExamData.exam.id === 'dekiru-review-1-3'
                       ? "Ujian 1 (Bab 1-3)"
                       : currentExamData.exam.id === 'dekiru-review-4-6'
                       ? "Ujian 2 (Bab 4-6)"
@@ -2177,55 +2195,14 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       ? "Ujian 3 (Bab 7-9)"
                       : currentExamData.exam.id === 'dekiru-review-10-12'
                       ? "Ujian 4 (Bab 10-12)"
-                      : "Ujian 5 (Bab 13-15)"}
+                      : "Ujian 5 (Bab 13-15)") + (activeTab === "exam" ? " • Mode Ujian" : " • Mode Belajar")}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Center: Mode Switcher */}
-            <div
-              className="desktop-only header-center-tabs"
-              style={{
-                background: "#f1f5f9",
-                padding: "0.25rem",
-                borderRadius: "9999px",
-                border: "1px solid #e2e8f0",
-              }}
-            >
-              <button
-                onClick={() => handleTabChange("study")}
-                className={"btn " + (activeTab === "study" ? "btn-primary" : "btn-ghost")}
-                style={{
-                  fontSize: "0.8rem",
-                  padding: "0.4rem 0.85rem",
-                  borderRadius: "9999px",
-                  height: "34px",
-                  gap: "0.35rem",
-                }}
-              >
-                <BookOpen size={15} />
-                <span>Mode Belajar</span>
-              </button>
-
-              <button
-                onClick={() => handleTabChange("exam")}
-                className={"btn " + (activeTab === "exam" ? "btn-primary" : "btn-ghost")}
-                style={{
-                  fontSize: "0.8rem",
-                  padding: "0.4rem 0.85rem",
-                  borderRadius: "9999px",
-                  height: "34px",
-                  gap: "0.35rem",
-                }}
-              >
-                <GraduationCap size={15} />
-                <span>Mode Ujian</span>
-              </button>
-            </div>
-
             {/* Right: Actions */}
-            <div className="header-actions-group">
+            <div className="header-actions-group" style={{ display: "flex", alignItems: "center", gap: "0.35rem", flexShrink: 0 }}>
               {/* Switch Exam Button */}
               <button
                 onClick={() => {
@@ -2235,17 +2212,17 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 }}
                 className="btn btn-secondary"
                 style={{
-                  fontSize: "0.78rem",
-                  padding: "0.35rem 0.65rem",
+                  fontSize: "0.75rem",
+                  padding: "0.35rem 0.55rem",
                   borderRadius: "8px",
-                  gap: "0.35rem",
+                  gap: "0.3rem",
+                  flexShrink: 0,
+                  height: "34px",
                 }}
                 title="Pindah ke paket ujian berikutnya"
               >
                 <Shuffle size={13} />
-                <span className="desktop-only">
-                  Ganti Ujian
-                </span>
+                <span className="desktop-only">Ganti Ujian</span>
               </button>
 
               {activeTab === "exam" ? (
@@ -2253,30 +2230,33 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   onClick={() => setIsAiModalOpen(true)}
                   className="btn btn-secondary"
                   style={{
-                    fontSize: "0.78rem",
-                    padding: "0.35rem 0.65rem",
+                    fontSize: "0.75rem",
+                    padding: "0.35rem 0.55rem",
                     borderRadius: "8px",
                     color: "#7c3aed",
                     border: "1.5px solid #c4b5fd",
                     background: "#f5f3ff",
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.35rem",
+                    gap: "0.3rem",
                     fontWeight: 700,
+                    flexShrink: 0,
+                    height: "34px",
                   }}
                   title="Buka Verifikasi Jawaban AI Terpadu"
                 >
                   <Sparkles size={14} color="#7c3aed" />
-                  <span>Verifikasi AI</span>
+                  <span className="desktop-only">Verifikasi AI</span>
+                  <span className="mobile-only">AI</span>
                 </button>
               ) : (
-                <span className="badge badge-indigo" style={{ fontSize: "0.75rem", textTransform: "none" }}>
+                <span className="badge badge-indigo desktop-only" style={{ fontSize: "0.75rem", textTransform: "none", height: "34px", display: "inline-flex", alignItems: "center" }}>
                   {currentExamData.sections.length} Seksi Soal
                 </span>
               )}
 
               {answeredCount > 0 && activeTab === "exam" && (
-                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", flexShrink: 0 }}>
                   <span
                     className="desktop-only"
                     style={{
@@ -2300,34 +2280,20 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       borderRadius: "8px",
                       height: "34px",
                       width: "34px",
+                      minWidth: "34px",
+                      maxWidth: "34px",
                       color: "#94a3b8",
+                      flexShrink: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                     title="Reset Jawaban Ujian Ini"
                   >
-                    <RotateCcw size={15} />
+                    <RotateCcw size={14} />
                   </button>
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Row 2 on Mobile/Tablet */}
-          <div className="mobile-only header-sub-row">
-            <div className="header-mode-switcher">
-              <button
-                onClick={() => handleTabChange("study")}
-                className={"btn " + (activeTab === "study" ? "btn-primary" : "btn-ghost")}
-              >
-                <BookOpen size={14} />
-                <span>Mode Belajar</span>
-              </button>
-              <button
-                onClick={() => handleTabChange("exam")}
-                className={"btn " + (activeTab === "exam" ? "btn-primary" : "btn-ghost")}
-              >
-                <GraduationCap size={14} />
-                <span>Mode Ujian</span>
-              </button>
             </div>
           </div>
         </div>
@@ -2746,41 +2712,14 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               {/* Interactive Controls for Current Question */}
               {renderQuestionControls(currentQ.section, currentQ.item)}
 
-              {/* Toggle Explanation Button if revealed */}
-              {revealedQuestions[currentQ.item.id] && (
-                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.5rem", marginBottom: "0.25rem" }}>
-                  <button
-                    onClick={() => toggleExpand(currentQ.item.id)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#4f46e5",
-                      fontSize: "0.82rem",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      textDecoration: "underline",
-                    }}
-                  >
-                    {expandedExplanations[currentQ.item.id] !== false
-                      ? "▲ Sembunyikan Pembahasan"
-                      : "▼ Buka Pembahasan & Kunci"}
-                  </button>
-                </div>
-              )}
-
-              {/* Explanation Box if revealed and expanded */}
-              {revealedQuestions[currentQ.item.id] && expandedExplanations[currentQ.item.id] !== false && (
-                renderExplanationBox(currentQ.item)
-              )}
-
-              {/* Navigation Footer Buttons */}
+              {/* Navigation Bar - PLACED ABOVE Sembunyikan Pembahasan as requested */}
               <div
                 className="nav-footer-mobile"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginTop: "1.5rem",
+                  marginTop: "1.25rem",
                   borderTop: "1px solid #f1f5f9",
                   paddingTop: "1rem",
                   gap: "0.5rem",
@@ -2845,6 +2784,80 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   </button>
                 )}
               </div>
+
+              {/* Toggle Explanation Button if revealed (placed directly below the Selanjutnya/Nav bar) */}
+              {revealedQuestions[currentQ.item.id] && (
+                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.75rem", marginBottom: "0.25rem" }}>
+                  <button
+                    onClick={() => toggleExpand(currentQ.item.id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#4f46e5",
+                      fontSize: "0.85rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      padding: "0.25rem 0.5rem",
+                    }}
+                  >
+                    {expandedExplanations[currentQ.item.id] !== false
+                      ? "▲ Sembunyikan Pembahasan"
+                      : "▼ Buka Pembahasan & Kunci"}
+                  </button>
+                </div>
+              )}
+
+              {/* Explanation Box if revealed and expanded */}
+              {revealedQuestions[currentQ.item.id] && expandedExplanations[currentQ.item.id] !== false && (
+                <>
+                  {renderExplanationBox(currentQ.item)}
+
+                  {/* Secondary Bottom Navigation if user scrolled to bottom of explanation */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginTop: "1rem",
+                      paddingTop: "0.75rem",
+                      borderTop: "1px dashed #e2e8f0",
+                    }}
+                  >
+                    <button
+                      onClick={() => setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))}
+                      disabled={currentQuestionIndex === 0}
+                      className="btn btn-secondary"
+                      style={{ fontSize: "0.82rem", padding: "0.4rem 0.8rem", opacity: currentQuestionIndex === 0 ? 0.4 : 1 }}
+                    >
+                      <ChevronLeft size={14} />
+                      <span>Sebelumnya</span>
+                    </button>
+
+                    {currentQuestionIndex < totalQuestions - 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => setCurrentQuestionIndex((prev) => Math.min(totalQuestions - 1, prev + 1))}
+                        className="btn btn-primary"
+                        style={{ fontSize: "0.82rem", padding: "0.4rem 0.8rem" }}
+                      >
+                        <span>Selanjutnya</span>
+                        <ChevronRight size={14} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setIsAiModalOpen(true)}
+                        className="btn btn-primary"
+                        style={{ background: "#7c3aed", borderColor: "#7c3aed", fontSize: "0.82rem", padding: "0.4rem 0.8rem" }}
+                      >
+                        <Sparkles size={14} />
+                        <span>Selesai</span>
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}

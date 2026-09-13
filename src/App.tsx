@@ -22,6 +22,7 @@ import { ScoreSummaryModal } from './components/ScoreSummaryModal';
 import { TipsModal } from './components/TipsModal';
 import { SourceSelection } from './components/SourceSelection';
 import { DekiruExamView } from './components/dekiru/DekiruExamView';
+import { SituasiStudyView } from './components/situasi/SituasiStudyView';
 
 export const App: React.FC = () => {
   // Source State: null means on main source selection screen
@@ -198,6 +199,11 @@ export const App: React.FC = () => {
   // If Dekiru Nihongo is selected, show Dekiru Exam View
   if (questionSource === 'dekiru') {
     return <DekiruExamView onBackToSourceSelect={handleBackToSourceSelect} />;
+  }
+
+  // If Belajar Situasi is selected, show Situasi Study View
+  if (questionSource === 'situasi') {
+    return <SituasiStudyView onBackToSourceSelect={handleBackToSourceSelect} />;
   }
 
   return (

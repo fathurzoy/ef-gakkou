@@ -47,6 +47,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   onResetSingleQuestion,
 }) => {
   const [showQuestionTranslation, setShowQuestionTranslation] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(true);
   const [textInput, setTextInput] = useState('');
   const [fillAInput, setFillAInput] = useState('');
   const [fillBInput, setFillBInput] = useState('');
@@ -56,6 +57,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   // Sync inputs when question changes or when user answers
   useEffect(() => {
+    setShowExplanation(true);
+
     if (userAnswer?.textAnswer !== undefined) {
       setTextInput(userAnswer.textAnswer);
     } else {
@@ -495,15 +498,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             marginBottom: '1.25rem',
-            flexWrap: 'wrap',
-            gap: '0.75rem',
+            gap: '0.65rem',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', minWidth: 0, flex: '1 1 180px' }}>
             {userAnswer.isCorrect ? (
               <>
                 <CheckCircle2 size={24} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <div>
+                <div style={{ minWidth: 0, wordBreak: 'break-word' }}>
                   <strong style={{ color: '#065f46', fontSize: '1rem', display: 'block' }}>
                     正解！ Jawaban Anda Benar!
                   </strong>
@@ -524,7 +528,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             ) : (
               <>
                 <XCircle size={24} color="#ef4444" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <div>
+                <div style={{ minWidth: 0, wordBreak: 'break-word' }}>
                   <strong style={{ color: '#991b1b', fontSize: '1rem', display: 'block' }}>
                     不正解！ Jawaban Anda Salah.
                   </strong>
@@ -549,7 +553,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             <button
               onClick={onResetSingleQuestion}
               className="btn btn-secondary"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', borderRadius: '8px' }}
+              style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem', flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '8px' }}
               title="Coba jawab ulang soal ini"
             >
               <RotateCcw size={14} /> Coba Lagi
@@ -558,24 +562,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
       )}
 
-      {/* Explanation Box - Automatically shown when answered */}
-      {isAnswered && (
-        <ExplanationBox
-          explanation={question.explanation}
-          correctAnswerDisplay={question.correctAnswerDisplay}
-          questionTranslation={question.questionTranslation}
-          options={question.options}
-        />
-      )}
-
-      {/* Navigation Footer */}
+      {/* Navigation Bar - PLACED ABOVE Sembunyikan Pembahasan as requested! */}
       <div
         className="nav-footer-mobile"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginTop: '1.5rem',
+          marginTop: '1.25rem',
           borderTop: '1px solid #f1f5f9',
           paddingTop: '1rem',
           gap: '0.5rem',
@@ -613,6 +607,72 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <ChevronRight size={16} />
         </button>
       </div>
+
+      {/* Toggle Explanation Button if answered (directly below Selanjutnya / nav bar) */}
+      {isAnswered && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.75rem', marginBottom: '0.25rem' }}>
+          <button
+            type="button"
+            onClick={() => setShowExplanation((prev) => !prev)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#4f46e5',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '0.25rem 0.5rem',
+            }}
+          >
+            {showExplanation ? '▲ Sembunyikan Pembahasan' : '▼ Buka Pembahasan & Kunci'}
+          </button>
+        </div>
+      )}
+
+      {/* Explanation Box - Shown when answered and expanded */}
+      {isAnswered && showExplanation && (
+        <>
+          <ExplanationBox
+            explanation={question.explanation}
+            correctAnswerDisplay={question.correctAnswerDisplay}
+            questionTranslation={question.questionTranslation}
+            options={question.options}
+          />
+
+          {/* Secondary Bottom Navigation if user scrolled to the bottom of the explanation */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: '1rem',
+              paddingTop: '0.75rem',
+              borderTop: '1px dashed #e2e8f0',
+            }}
+          >
+            <button
+              onClick={onPrevQuestion}
+              disabled={!hasPrev}
+              className="btn btn-secondary"
+              style={{ fontSize: '0.82rem', padding: '0.4rem 0.8rem', opacity: hasPrev ? 1 : 0.4 }}
+            >
+              <ChevronLeft size={14} />
+              <span>Sebelumnya</span>
+            </button>
+
+            <button
+              onClick={onNextQuestion}
+              disabled={!hasNext}
+              className="btn btn-primary"
+              style={{ fontSize: '0.82rem', padding: '0.4rem 0.8rem', opacity: hasNext ? 1 : 0.5 }}
+            >
+              <span>Selanjutnya</span>
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
