@@ -5,6 +5,7 @@ import {
   ArrowRight,
   Sparkles,
   BookMarked,
+  Compass,
 } from 'lucide-react';
 
 interface SourceSelectionProps {
@@ -48,7 +49,7 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
       </header>
 
       {/* Main Content Area */}
-      <main className="main-content" style={{ maxWidth: '960px', margin: '0 auto', padding: '2rem 1rem 3rem 1rem' }}>
+      <main className="main-content" style={{ maxWidth: '1120px', margin: '0 auto', padding: '2rem 1rem 3rem 1rem' }}>
         {/* Hero Section */}
         <div
           className="hero-card"
@@ -84,13 +85,13 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
                 lineHeight: 1.25,
               }}
             >
-              Pilih Sumber Soal Ujian
+              Pilih Sumber Pembelajaran & Soal Ujian
             </h1>
           </div>
         </div>
 
-        {/* 2 Main Choice Cards */}
-        <div className="mode-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.75rem' }}>
+        {/* 3 Main Choice Cards */}
+        <div className="mode-cards-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.75rem' }}>
           {/* Card 1: Latihan & Review Ujian E-F (Active & Clickable) */}
           <div
             className="card card-hover"
@@ -304,6 +305,117 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
               }}
             >
               <span>Mulai Belajar / Ujian Dekiru</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+
+          {/* Card 3: Belajar Situasi (場面で覚える日本語) */}
+          <div
+            className="card card-hover"
+            style={{
+              padding: '2.25rem 1.75rem',
+              border: '2px solid #059669',
+              borderRadius: '22px',
+              background: 'linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: '0 10px 25px -5px rgba(5, 150, 105, 0.12)',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Badge */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '1.25rem',
+                right: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                background: '#ecfdf5',
+                color: '#065f46',
+                border: '1px solid #a7f3d0',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                padding: '0.3rem 0.75rem',
+                borderRadius: '9999px',
+              }}
+            >
+              <span
+                style={{
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '50%',
+                  background: '#059669',
+                  display: 'inline-block',
+                }}
+              />
+              Baru: 2 Bagian (67 Situasi & Respons)
+            </div>
+
+            <div>
+              {/* Icon */}
+              <div
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #059669 0%, #0d9488 100%)',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1.35rem',
+                  boxShadow: '0 8px 18px rgba(5, 150, 105, 0.28)',
+                }}
+              >
+                <Compass size={30} />
+              </div>
+
+              {/* Sub-label */}
+              <div
+                style={{
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  color: '#059669',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  marginBottom: '0.35rem',
+                }}
+              >
+                場面で覚える日本語 ・ 状況と表現
+              </div>
+
+              {/* Title */}
+              <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.75rem', lineHeight: 1.3 }}>
+                Belajar Situasi & Pola Kalimat (場面で覚える)
+              </h2>
+            </div>
+
+            {/* Action Button */}
+            <button
+              onClick={() => onSelectSource('situasi')}
+              className="btn"
+              style={{
+                width: '100%',
+                padding: '0.9rem 1.25rem',
+                fontSize: '1rem',
+                fontWeight: 700,
+                borderRadius: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                background: 'linear-gradient(135deg, #059669 0%, #0d9488 100%)',
+                color: '#ffffff',
+                boxShadow: '0 4px 14px rgba(5, 150, 105, 0.3)',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <span>Mulai Belajar Situasi</span>
               <ArrowRight size={18} />
             </button>
           </div>

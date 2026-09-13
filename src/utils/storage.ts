@@ -92,7 +92,7 @@ export const saveActiveSection = (section: SectionId | 'ALL'): void => {
 export const getStoredQuestionSource = (): QuestionSource | null => {
   try {
     const src = localStorage.getItem(STORAGE_KEYS.QUESTION_SOURCE) as QuestionSource | null;
-    return src === 'ef' || src === 'dekiru' ? src : null;
+    return src === 'ef' || src === 'dekiru' || src === 'situasi' ? src : null;
   } catch {
     return null;
   }
