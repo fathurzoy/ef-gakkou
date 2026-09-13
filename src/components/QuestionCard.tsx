@@ -47,6 +47,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   onResetSingleQuestion,
 }) => {
   const [showQuestionTranslation, setShowQuestionTranslation] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(true);
   const [textInput, setTextInput] = useState('');
   const [fillAInput, setFillAInput] = useState('');
   const [fillBInput, setFillBInput] = useState('');
@@ -56,6 +57,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
   // Sync inputs when question changes or when user answers
   useEffect(() => {
+    setShowExplanation(true);
+
     if (userAnswer?.textAnswer !== undefined) {
       setTextInput(userAnswer.textAnswer);
     } else {
@@ -559,24 +562,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
       )}
 
-      {/* Explanation Box - Automatically shown when answered */}
-      {isAnswered && (
-        <ExplanationBox
-          explanation={question.explanation}
-          correctAnswerDisplay={question.correctAnswerDisplay}
-          questionTranslation={question.questionTranslation}
-          options={question.options}
-        />
-      )}
-
-      {/* Navigation Footer */}
+      {/* Navigation Bar - PLACED ABOVE Sembunyikan Pembahasan as requested! */}
       <div
         className="nav-footer-mobile"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginTop: '1.5rem',
+          marginTop: '1.25rem',
           borderTop: '1px solid #f1f5f9',
           paddingTop: '1rem',
           gap: '0.5rem',
@@ -614,6 +607,72 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <ChevronRight size={16} />
         </button>
       </div>
+
+      {/* Toggle Explanation Button if answered (directly below Selanjutnya / nav bar) */}
+      {isAnswered && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.75rem', marginBottom: '0.25rem' }}>
+          <button
+            type="button"
+            onClick={() => setShowExplanation((prev) => !prev)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#4f46e5',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '0.25rem 0.5rem',
+            }}
+          >
+            {showExplanation ? '▲ Sembunyikan Pembahasan' : '▼ Buka Pembahasan & Kunci'}
+          </button>
+        </div>
+      )}
+
+      {/* Explanation Box - Shown when answered and expanded */}
+      {isAnswered && showExplanation && (
+        <>
+          <ExplanationBox
+            explanation={question.explanation}
+            correctAnswerDisplay={question.correctAnswerDisplay}
+            questionTranslation={question.questionTranslation}
+            options={question.options}
+          />
+
+          {/* Secondary Bottom Navigation if user scrolled to the bottom of the explanation */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: '1rem',
+              paddingTop: '0.75rem',
+              borderTop: '1px dashed #e2e8f0',
+            }}
+          >
+            <button
+              onClick={onPrevQuestion}
+              disabled={!hasPrev}
+              className="btn btn-secondary"
+              style={{ fontSize: '0.82rem', padding: '0.4rem 0.8rem', opacity: hasPrev ? 1 : 0.4 }}
+            >
+              <ChevronLeft size={14} />
+              <span>Sebelumnya</span>
+            </button>
+
+            <button
+              onClick={onNextQuestion}
+              disabled={!hasNext}
+              className="btn btn-primary"
+              style={{ fontSize: '0.82rem', padding: '0.4rem 0.8rem', opacity: hasNext ? 1 : 0.5 }}
+            >
+              <span>Selanjutnya</span>
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
