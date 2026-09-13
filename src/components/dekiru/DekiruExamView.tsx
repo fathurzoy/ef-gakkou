@@ -13,15 +13,19 @@ import {
   Camera,
   PenTool,
   CheckCircle2,
-  Lightbulb,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   HelpCircle,
   X,
   Shuffle,
+  Globe,
+  XCircle,
 } from "lucide-react";
 import { DekiruSection, DekiruExamData } from "../../types/dekiru";
+import { SmartFurigana } from "../../utils/dekiruFurigana";
+import { getRichExplanation } from "../../data/dekiruRichExplanations";
+import { DekiruExplanationBox } from "./DekiruExplanationBox";
 
 interface DekiruExamViewProps {
   onBackToSourceSelect: () => void;
@@ -138,6 +142,85 @@ export const checkParticleMatch = (
   return false;
 };
 
+// Accurately compute whether user's answer is correct for evaluation banner & stats
+export const isQuestionCorrect = (item: any, sec: DekiruSection, uAns: any): boolean => {
+  if (uAns === undefined || uAns === null || uAns === "") return false;
+
+  // 1. Multiple choice
+  if ("choices" in item && Array.isArray(item.choices)) {
+    const correctAnsText =
+      "answer" in item
+        ? typeof item.answer === "string"
+          ? item.answer
+          : item.answer?.text || ""
+        : "";
+    return String(uAns).trim() === String(correctAnsText).trim();
+  }
+
+  // 1b. Grammar choice (Exam 4 Sec 4)
+  if (sec.type === "grammar-choice" && "choice" in item) {
+    return String(uAns).trim() === String(item.choice).trim();
+  }
+
+  // 2. Word bank
+  if (sec.type === "word-bank" && "answer" in item) {
+    if (typeof item.answer === "object" && item.answer !== null && "value" in item.answer) {
+      return String(uAns).trim().toLowerCase() === String(item.answer.value).trim().toLowerCase();
+    }
+  }
+
+  // 3. Particle fill
+  if (sec.type === "particle-fill" && "answer" in item && Array.isArray(item.answer)) {
+    if (!Array.isArray(uAns)) return false;
+    return item.answer.every((correctP: string, idx: number) =>
+      checkParticleMatch(uAns[idx], correctP)
+    );
+  }
+
+  // 4. Reading true/false
+  if (sec.type === "reading-true-false" && "answer" in item) {
+    const correct = item.answer;
+    if (correct === "○") {
+      return uAns === "○" || uAns === "o" || uAns === "O" || uAns === "maru";
+    }
+    if (correct === "×" || isBatsuEquivalent(correct)) {
+      return uAns === "×" || isBatsuEquivalent(uAns);
+    }
+    return String(uAns).trim() === String(correct).trim();
+  }
+
+  // 5. Dialogue matching (array of choices)
+  if (sec.type === "dialogue-matching" && "answer" in item && Array.isArray(item.answer)) {
+    if (!Array.isArray(uAns)) return false;
+    return item.answer.every((correctCh: string, idx: number) =>
+      String(uAns[idx]).trim().toLowerCase() === String(correctCh).trim().toLowerCase()
+    );
+  }
+
+  // 6. Location & Existence
+  if (sec.type === "location-existence" && "answer" in item) {
+    if (typeof uAns !== "object" || uAns === null) return false;
+    const correctLoc = item.answer?.location?.text || "";
+    const locReading = item.answer?.location?.segments?.map((s: any) => s.reading || s.text).join("") || "";
+    const correctExist = item.answer?.existence || "";
+    const isLocCorrect =
+      uAns.location?.trim().toLowerCase() === correctLoc.trim().toLowerCase() ||
+      (locReading && uAns.location?.trim().toLowerCase() === locReading.trim().toLowerCase());
+    const isExistCorrect = uAns.existence === correctExist;
+    return Boolean(isLocCorrect && isExistCorrect);
+  }
+
+  // 7. General text answer or segments match
+  if ("answer" in item && typeof item.answer === "string") {
+    return String(uAns).trim().toLowerCase() === String(item.answer).trim().toLowerCase();
+  }
+  if ("answer" in item && typeof item.answer === "object" && item.answer !== null && "text" in item.answer) {
+    return String(uAns).trim().toLowerCase() === String(item.answer.text).trim().toLowerCase();
+  }
+
+  return false;
+};
+
 export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSelect }) => {
   // Exam selection state (null means show selection screen)
   const [selectedExamId, setSelectedExamId] = useState<string | null>(() => {
@@ -193,6 +276,32 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
   const [copiedPromptSection, setCopiedPromptSection] = useState<string | null>(null);
   const [aiMode, setAiMode] = useState<"web" | "photo">("web");
 
+  // Furigana display toggle (persisted to localStorage)
+  const [showFurigana, setShowFurigana] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem("dekiru_show_furigana");
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("dekiru_show_furigana", JSON.stringify(showFurigana));
+    } catch {}
+  }, [showFurigana]);
+
+  // Question translation visibility state per question ID
+  const [showQuestionTranslation, setShowQuestionTranslation] = useState<Record<string, boolean>>({});
+
+  const toggleQuestionTranslation = (qId: string) => {
+    setShowQuestionTranslation((prev) => ({
+      ...prev,
+      [qId]: !prev[qId],
+    }));
+  };
+
   // Auto-save progress effect whenever answers, revealed, or question index changes
   useEffect(() => {
     if (!selectedExamId || currentLoadedExamRef.current !== selectedExamId) return;
@@ -238,6 +347,14 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
   const currentQ = allExamQuestions[currentQuestionIndex] || allExamQuestions[0];
   const totalQuestions = allExamQuestions.length;
+
+  const examQuestionsMap = useMemo(() => {
+    const map: Record<string, FlattenedExamQuestion> = {};
+    allExamQuestions.forEach((q) => {
+      map[q.item.id] = q;
+    });
+    return map;
+  }, [allExamQuestions]);
 
   const handleSelectExam = (examId: string, initialTab: "study" | "exam" = "exam") => {
     currentLoadedExamRef.current = examId;
@@ -475,68 +592,107 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               const showCorrect = isRevealed && isCorrect;
               const showWrong = isRevealed && isSelected && !isCorrect;
 
+              const rich = getRichExplanation(selectedExamId || "", item.id, item, sec);
+              const chBreakdown = rich.optionsBreakdown?.find(
+                (b) =>
+                  String(b.optionId) === String(cIdx + 1) ||
+                  b.text === chText ||
+                  b.text.includes(chText)
+              );
+
               return (
-                <button
-                  key={cIdx}
-                  type="button"
-                  onClick={() => handleSelectAnswer(item.id, chText)}
-                  style={{
-                    padding: "0.75rem 0.95rem",
-                    borderRadius: "10px",
-                    border: "2px solid " + (showCorrect
-                      ? "#10b981"
-                      : showWrong
-                      ? "#ef4444"
-                      : isSelected
-                      ? "#6366f1"
-                      : "#e2e8f0"),
-                    background: showCorrect
-                      ? "#ecfdf5"
-                      : showWrong
-                      ? "#fef2f2"
-                      : isSelected
-                      ? "#f0f4ff"
-                      : "#ffffff",
-                    color: showCorrect ? "#065f46" : showWrong ? "#991b1b" : "#1e293b",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.75rem",
-                    textAlign: "left",
-                    cursor: "pointer",
-                    transition: "all 0.15s ease",
-                    width: "100%",
-                  }}
-                >
-                  <span
+                <div key={cIdx} style={{ display: "flex", flexDirection: "column", gap: "0.3rem", width: "100%" }}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectAnswer(item.id, chText)}
                     style={{
-                      width: "26px",
-                      height: "26px",
-                      borderRadius: "50%",
-                      background: isSelected || showCorrect ? "#6366f1" : "#f1f5f9",
-                      color: isSelected || showCorrect ? "#ffffff" : "#64748b",
+                      padding: "0.75rem 0.95rem",
+                      borderRadius: "10px",
+                      border: "2px solid " + (showCorrect
+                        ? "#10b981"
+                        : showWrong
+                        ? "#ef4444"
+                        : isSelected
+                        ? "#6366f1"
+                        : "#e2e8f0"),
+                      background: showCorrect
+                        ? "#ecfdf5"
+                        : showWrong
+                        ? "#fef2f2"
+                        : isSelected
+                        ? "#f0f4ff"
+                        : "#ffffff",
+                      color: showCorrect ? "#065f46" : showWrong ? "#991b1b" : "#1e293b",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "0.85rem",
-                      fontWeight: 700,
-                      flexShrink: 0,
+                      gap: "0.75rem",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                      width: "100%",
                     }}
                   >
-                    {cIdx + 1}
-                  </span>
-                  <span style={{ fontSize: "1.05rem", fontWeight: isSelected || showCorrect ? 700 : 500 }}>
-                    {typeof rawCh === "object" && rawCh.segments ? (
-                      <SegmentFurigana segments={rawCh.segments} />
-                    ) : (
-                      chText
+                    <span
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "50%",
+                        background: isSelected || showCorrect ? "#6366f1" : "#f1f5f9",
+                        color: isSelected || showCorrect ? "#ffffff" : "#64748b",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "0.85rem",
+                        fontWeight: 700,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {cIdx + 1}
+                    </span>
+                    <span style={{ fontSize: "1.05rem", fontWeight: isSelected || showCorrect ? 700 : 500 }}>
+                      <SmartFurigana
+                        text={chText}
+                        segments={typeof rawCh === "object" && rawCh.segments ? rawCh.segments : undefined}
+                        showFurigana={showFurigana}
+                      />
+                    </span>
+                    {showCorrect && (
+                      <div style={{ marginLeft: "auto", flexShrink: 0 }}>
+                        <CheckCircle2 size={18} color="#10b981" />
+                      </div>
                     )}
-                  </span>
-                  {showCorrect && (
-                    <div style={{ marginLeft: "auto" }}>
-                      <CheckCircle2 size={18} color="#10b981" />
+                    {showWrong && (
+                      <div style={{ marginLeft: "auto", flexShrink: 0 }}>
+                        <XCircle size={18} color="#ef4444" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Option translation and reason breakdown when revealed */}
+                  {isRevealed && chBreakdown && (
+                    <div
+                      style={{
+                        fontSize: "0.82rem",
+                        background: showCorrect ? "#f0fdf4" : showWrong ? "#fef2f2" : "#f8fafc",
+                        border: "1px solid " + (showCorrect ? "#bbf7d0" : showWrong ? "#fecaca" : "#e2e8f0"),
+                        borderRadius: "8px",
+                        padding: "0.35rem 0.75rem",
+                        color: showCorrect ? "#166534" : showWrong ? "#991b1b" : "#475569",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "0.5rem",
+                      }}
+                    >
+                      <div>
+                        <strong>Arti:</strong> {chBreakdown.translation}
+                      </div>
+                      <div style={{ fontSize: "0.75rem", fontWeight: 700, opacity: 0.9 }}>
+                        {chBreakdown.isCorrect ? "✅ Benar" : "❌ Salah"}
+                      </div>
                     </div>
                   )}
-                </button>
+                </div>
               );
             })}
           </div>
@@ -598,7 +754,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                             fontSize: "0.95rem",
                           }}
                         >
-                          {ch}
+                          <SmartFurigana text={ch} showFurigana={showFurigana} />
                         </button>
                       );
                     })}
@@ -646,7 +802,12 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     borderColor: isRevealed && isCorrect ? "#10b981" : "#cbd5e1",
                   }}
                 >
-                  <span style={{ fontWeight: 800 }}>{wb.id}.</span> {wb.content.text}
+                  <span style={{ fontWeight: 800 }}>{wb.id}.</span>{" "}
+                  <SmartFurigana
+                    text={wb.content.text}
+                    segments={wb.content.segments}
+                    showFurigana={showFurigana}
+                  />
                 </button>
               );
             })}
@@ -1603,7 +1764,9 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       <span style={{ color: isSelected || (isRevealed && isCorrect) ? "inherit" : "#4f46e5" }}>
                         {ch.id}.
                       </span>
-                      <span>{ch.text}</span>
+                      <span>
+                        <SmartFurigana text={ch.text} showFurigana={showFurigana} />
+                      </span>
                     </button>
                   );
                 })}
@@ -1704,7 +1867,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     color: color,
                   }}
                 >
-                  {opt} {opt === "○" ? "(Benar)" : "(Salah)"}
+                  {opt} {opt === "○" ? "(Benar / Sesuai)" : "(Salah / Tidak Sesuai)"}
                 </button>
               );
             })}
@@ -1714,294 +1877,17 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
     );
   };
 
-  // Helper renderer for explanation box
-  const renderExplanationBox = (item: any) => {
+  // Helper renderer for rich explanation box
+  const renderExplanationBox = (item: any, section?: any) => {
+    const currentSection = section || examQuestionsMap[item.id]?.section || currentQ?.section;
+    const rich = getRichExplanation(selectedExamId || "", item?.id || "", item, currentSection);
     return (
-      <div
-        className="animate-fade-in"
-        style={{
-          marginTop: "0.85rem",
-          borderRadius: "14px",
-          border: "1px solid #c7d2fe",
-          background: "#ffffff",
-          overflow: "hidden",
-          boxShadow: "0 4px 16px -2px rgba(79, 70, 229, 0.08)",
-        }}
-      >
-        {/* Header bar */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
-            color: "#ffffff",
-            padding: "0.85rem 1.25rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "0.5rem",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700, fontSize: "0.95rem" }}>
-            <Lightbulb size={18} />
-            <span>Pembahasan & Kunci Jawaban</span>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
-            {"grammarPoint" in item && item.grammarPoint && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.2)",
-                  padding: "0.2rem 0.65rem",
-                  borderRadius: "9999px",
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                }}
-              >
-                Pola: {item.grammarPoint}
-              </div>
-            )}
-            {"vocabularyPoint" in item && item.vocabularyPoint && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.2)",
-                  padding: "0.2rem 0.65rem",
-                  borderRadius: "9999px",
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                }}
-              >
-                Poin: {item.vocabularyPoint}
-              </div>
-            )}
-            {"choice" in item && item.choice && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.2)",
-                  padding: "0.2rem 0.65rem",
-                  borderRadius: "9999px",
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                }}
-              >
-                Pilihan: ({item.choice})
-              </div>
-            )}
-            {"answer" in item && typeof item.answer === "string" && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.2)",
-                  padding: "0.2rem 0.65rem",
-                  borderRadius: "9999px",
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                }}
-              >
-                Kunci: {item.answer}
-              </div>
-            )}
-            {"answer" in item && typeof item.answer === "object" && item.answer !== null && "text" in item.answer && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.2)",
-                  padding: "0.2rem 0.65rem",
-                  borderRadius: "9999px",
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                }}
-              >
-                Kunci: {item.answer.text}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-          {/* Official Answer Box */}
-          <div
-            style={{
-              background: "#ecfdf5",
-              border: "1px solid #a7f3d0",
-              borderRadius: "10px",
-              padding: "0.85rem 1rem",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#065f46", fontWeight: 700, fontSize: "0.85rem", marginBottom: "0.35rem" }}>
-              <CheckCircle2 size={16} color="#10b981" />
-              <span>KUNCI JAWABAN RESMI:</span>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-              {/* Choice if grammar-choice */}
-              {"choice" in item && item.choice && (
-                <span className="badge badge-indigo" style={{ fontSize: "0.88rem", fontWeight: 700 }}>
-                  Pilihan: ({item.choice})
-                </span>
-              )}
-
-              {/* Word Bank answer */}
-              {"answer" in item && typeof item.answer === "object" && "value" in item.answer && "content" in item.answer && (
-                <span className="badge badge-emerald" style={{ fontSize: "0.88rem" }}>
-                  <strong>{item.answer.value}.</strong>{" "}
-                  <SegmentFurigana segments={item.answer.content.segments} />
-                </span>
-              )}
-
-              {/* Particle array answer or multi-blank SegmentContent[] */}
-              {"answer" in item && Array.isArray(item.answer) && (
-                <div style={{ display: "inline-flex", gap: "0.35rem", flexWrap: "wrap" }}>
-                  {item.answer.map((ans: any, aIdx: number) => (
-                    <span key={aIdx} className="badge badge-emerald" style={{ fontSize: "0.85rem" }}>
-                      Blank {aIdx + 1}:{" "}
-                      {typeof ans === "string" ? (
-                        <strong>{ans}</strong>
-                      ) : ans && typeof ans === "object" && "segments" in ans ? (
-                        <SegmentFurigana segments={ans.segments} />
-                      ) : (
-                        <strong>{String(ans)}</strong>
-                      )}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Single string choice or true/false answer */}
-              {"answer" in item && typeof item.answer === "string" && (
-                <span className="badge badge-emerald" style={{ fontSize: "0.9rem" }}>
-                  {"answerRuby" in item && item.answerRuby ? (
-                    <SegmentFurigana segments={item.answerRuby.segments} />
-                  ) : (
-                    item.answer
-                  )}
-                </span>
-              )}
-
-              {/* Object with segments */}
-              {"answer" in item && typeof item.answer === "object" && "segments" in item.answer && (
-                <span className="badge badge-emerald" style={{ fontSize: "0.9rem" }}>
-                  <SegmentFurigana segments={item.answer.segments} />
-                  {"meaningId" in item && item.meaningId && (
-                    <span style={{ marginLeft: "0.4rem", fontSize: "0.8rem", opacity: 0.85 }}>({item.meaningId})</span>
-                  )}
-                </span>
-              )}
-
-              {/* Multi-part or object answer (Exam 2 Sec 8, Exam 3 Sec 4, Sec 7) */}
-              {"answer" in item && typeof item.answer === "object" && item.answer !== null && !("segments" in item.answer) && !("value" in item.answer) && !Array.isArray(item.answer) && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-                  {Object.entries(item.answer).map(([k, ansObj]: any) => {
-                    const label = k === "location" ? "Posisi / Lokasi" : k === "existence" ? "Keberadaan" : k === "particle" ? "Partikel" : k === "response" ? "Respon" : k === "choice" ? "Pilihan Kata" : `(${k})`;
-                    return (
-                      <div key={k} style={{ fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                        <strong style={{ color: "#4f46e5" }}>{label}:</strong>
-                        {typeof ansObj === "object" && ansObj !== null && "segments" in ansObj ? (
-                          <SegmentFurigana segments={ansObj.segments} />
-                        ) : (
-                          <span className="badge badge-emerald" style={{ fontSize: "0.85rem" }}>{String(ansObj)}</span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Antonym target answer */}
-              {"targetAnswer" in item && item.targetAnswer && (
-                <span className="badge badge-indigo" style={{ fontSize: "0.85rem" }}>
-                  Target: <SegmentFurigana segments={item.targetAnswer.segments} />
-                </span>
-              )}
-
-              {/* Counter Canonical Kanji */}
-              {"canonical" in item && item.canonical && (
-                <span className="badge badge-indigo" style={{ fontSize: "0.85rem" }}>
-                  Kanji: <SegmentFurigana segments={item.canonical.segments} />
-                </span>
-              )}
-
-              {/* Open answer paperAnswer */}
-              {"paperAnswer" in item && item.paperAnswer && (
-                <span className="badge badge-emerald" style={{ fontSize: "0.85rem" }}>
-                  Lembar Ujian: <SegmentFurigana segments={item.paperAnswer.segments} />
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Sample Answers if present */}
-          {"sampleAnswers" in item && item.sampleAnswers && (
-            <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "0.75rem 1rem" }}>
-              <strong style={{ fontSize: "0.82rem", color: "#475569" }}>Variasi Jawaban Lain:</strong>
-              <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", marginTop: "0.35rem" }}>
-                {item.sampleAnswers.map((sa: any, sIdx: number) => (
-                  <span key={sIdx} className="badge badge-ghost" style={{ fontSize: "0.82rem" }}>
-                    <SegmentFurigana segments={sa.segments} />
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Accepted Variants if present */}
-          {"acceptedVariants" in item && item.acceptedVariants && (
-            <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "0.75rem 1rem" }}>
-              <strong style={{ fontSize: "0.82rem", color: "#475569" }}>Variasi Jawaban yang Diterima:</strong>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginTop: "0.35rem" }}>
-                {Array.isArray(item.acceptedVariants) ? (
-                  item.acceptedVariants.map((av: any, avIdx: number) => (
-                    <div key={avIdx} style={{ fontSize: "0.85rem" }}>
-                      • <SegmentFurigana segments={av.segments} />
-                    </div>
-                  ))
-                ) : (
-                  Object.entries(item.acceptedVariants).map(([k, list]: any) => (
-                    <div key={k} style={{ fontSize: "0.85rem" }}>
-                      <strong>({k})</strong>{" "}
-                      {list.map((v: any, vIdx: number) => (
-                        <span key={vIdx} style={{ marginRight: "0.5rem" }}>
-                          • <SegmentFurigana segments={v.segments} />
-                        </span>
-                      ))}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Completed Sentence if present */}
-          {"completed" in item && item.completed && (
-            <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "10px", padding: "0.75rem 1rem" }}>
-              <strong style={{ fontSize: "0.82rem", color: "#166534" }}>Kalimat Lengkap:</strong>
-              <div style={{ fontSize: "1.05rem", marginTop: "0.35rem", color: "#14532d", lineHeight: 1.8 }}>
-                <SegmentFurigana segments={item.completed.segments} />
-              </div>
-            </div>
-          )}
-
-          {/* Explanation Text */}
-          {"explanationId" in item && item.explanationId && (
-            <div style={{ fontSize: "0.9rem", color: "#334155", lineHeight: 1.65 }}>
-              <p style={{ margin: 0 }}>
-                <strong>Penjelasan:</strong> {item.explanationId}
-              </p>
-            </div>
-          )}
-
-          {/* Solving Steps */}
-          {"solvingSteps" in item && item.solvingSteps && Array.isArray(item.solvingSteps) && (
-            <div style={{ background: "#f8fafc", borderRadius: "10px", padding: "0.75rem 1rem", border: "1px solid #e2e8f0" }}>
-              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569", marginBottom: "0.35rem" }}>
-                Langkah Analisis / Cara Mengerjakan:
-              </div>
-              <ol style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
-                {item.solvingSteps.map((step: string, sIdx: number) => (
-                  <li key={sIdx}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          )}
-        </div>
-      </div>
+      <DekiruExplanationBox
+        item={item}
+        section={currentSection}
+        richData={rich}
+        showFurigana={showFurigana}
+      />
     );
   };
 
@@ -2638,8 +2524,29 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 )}
               </div>
 
-              {/* Right: Drawer Opener Pill */}
+              {/* Right: Furigana Toggle + Drawer Opener Pill */}
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowFurigana((prev) => !prev)}
+                  className="btn btn-secondary"
+                  style={{
+                    fontSize: "0.78rem",
+                    padding: "0.35rem 0.65rem",
+                    borderRadius: "9999px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    border: showFurigana ? "1.5px solid #818cf8" : "1px solid #cbd5e1",
+                    background: showFurigana ? "#eef2ff" : "#ffffff",
+                    color: showFurigana ? "#4338ca" : "#64748b",
+                    fontWeight: 700,
+                  }}
+                  title="Tampilkan / Sembunyikan Furigana di seluruh soal dan pilihan"
+                >
+                  <span>ふりがな: {showFurigana ? "ON" : "OFF"}</span>
+                </button>
+
                 <button
                   onClick={() => setIsDrawerOpen(true)}
                   className="btn btn-secondary"
@@ -2805,25 +2712,25 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     Bentuk Dasar Kata Kerja:
                   </div>
                   <div style={{ fontSize: "1.35rem", fontWeight: 700, color: "#4f46e5" }}>
-                    <SegmentFurigana segments={currentQ.item.base.segments} />
+                    <SmartFurigana segments={currentQ.item.base.segments} showFurigana={showFurigana} />
                   </div>
                 </div>
               )}
 
               {/* Question Text if present */}
               {"question" in currentQ.item && currentQ.item.question && (
-                <div className="question-text-mobile" style={{ fontSize: "1.25rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "1rem" }}>
-                  <SegmentFurigana segments={currentQ.item.question.segments} />
+                <div className="question-text-mobile" style={{ fontSize: "1.25rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "0.75rem" }}>
+                  <SmartFurigana segments={currentQ.item.question.segments} showFurigana={showFurigana} />
                 </div>
               )}
 
               {/* Dialogue items */}
               {"dialogue" in currentQ.item && currentQ.item.dialogue && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem", marginBottom: "1rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem", marginBottom: "0.75rem" }}>
                   {currentQ.item.dialogue.map((turn: any, tIdx: number) => (
                     <div key={tIdx} style={{ fontSize: "1.1rem", lineHeight: 2, color: turn.speaker === "客" || turn.speaker === "A" ? "#0369a1" : "#1e293b" }}>
                       <strong style={{ marginRight: "0.4rem" }}>{turn.speaker}:</strong>
-                      <SegmentFurigana segments={turn.content.segments} />
+                      <SmartFurigana segments={turn.content.segments} showFurigana={showFurigana} />
                     </div>
                   ))}
                 </div>
@@ -2831,13 +2738,167 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
               {/* Reading statement */}
               {"statement" in currentQ.item && currentQ.item.statement && (
-                <div className="question-text-mobile" style={{ fontSize: "1.25rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "1rem" }}>
-                  <SegmentFurigana segments={currentQ.item.statement.segments} />
+                <div className="question-text-mobile" style={{ fontSize: "1.25rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "0.75rem" }}>
+                  <SmartFurigana segments={currentQ.item.statement.segments} showFurigana={showFurigana} />
                 </div>
               )}
 
+              {/* Question Translation Toggle in Mode Ujian */}
+              {(() => {
+                const currentRich = getRichExplanation(selectedExamId || "", currentQ.item.id, currentQ.item, currentQ.section);
+                if (!currentRich.questionTranslation) return null;
+                return (
+                  <div style={{ marginBottom: "0.85rem" }}>
+                    <button
+                      type="button"
+                      onClick={() => toggleQuestionTranslation(currentQ.item.id)}
+                      style={{
+                        background: showQuestionTranslation[currentQ.item.id] ? "#e0e7ff" : "#f1f5f9",
+                        border: "1px solid " + (showQuestionTranslation[currentQ.item.id] ? "#818cf8" : "#e2e8f0"),
+                        color: showQuestionTranslation[currentQ.item.id] ? "#3730a3" : "#475569",
+                        padding: "0.3rem 0.65rem",
+                        borderRadius: "8px",
+                        fontSize: "0.8rem",
+                        fontWeight: 600,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Globe size={14} color={showQuestionTranslation[currentQ.item.id] ? "#4f46e5" : "#64748b"} />
+                      <span>{showQuestionTranslation[currentQ.item.id] ? "Sembunyikan Terjemahan Soal" : "Lihat Terjemahan Soal"}</span>
+                    </button>
+
+                    {showQuestionTranslation[currentQ.item.id] && (
+                      <div
+                        className="animate-fade-in"
+                        style={{
+                          marginTop: "0.4rem",
+                          padding: "0.6rem 0.9rem",
+                          background: "#f0fdf4",
+                          border: "1px solid #bbf7d0",
+                          borderRadius: "8px",
+                          fontSize: "0.88rem",
+                          color: "#166534",
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        <strong style={{ color: "#15803d", marginRight: "0.35rem" }}>🇮🇩 Arti:</strong>
+                        {currentRich.questionTranslation}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* Interactive Controls for Current Question */}
               {renderQuestionControls(currentQ.section, currentQ.item)}
+
+              {/* Instant Answer Feedback Banner (E-F Style: 正解 / 不正解 with Coba Lagi) */}
+              {revealedQuestions[currentQ.item.id] && (() => {
+                const uAns = userAnswers[currentQ.item.id];
+                const isAnswered =
+                  uAns !== undefined &&
+                  uAns !== null &&
+                  uAns !== "" &&
+                  (!Array.isArray(uAns) || uAns.some((v) => v && String(v).trim() !== "")) &&
+                  (typeof uAns !== "object" || Object.values(uAns).some((v) => v && String(v).trim() !== ""));
+
+                if (!isAnswered) return null;
+
+                const isCorrect = isQuestionCorrect(currentQ.item, currentQ.section, uAns);
+
+                if (isCorrect) {
+                  return (
+                    <div
+                      className="animate-fade-in"
+                      style={{
+                        background: "#ecfdf5",
+                        border: "1.5px solid #10b981",
+                        borderRadius: "12px",
+                        padding: "0.85rem 1.25rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "0.75rem",
+                        marginTop: "1rem",
+                        marginBottom: "0.75rem",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                        <CheckCircle2 size={24} color="#10b981" />
+                        <div>
+                          <div style={{ fontWeight: 800, color: "#065f46", fontSize: "0.98rem" }}>
+                            正解！ Jawaban Anda Benar!
+                          </div>
+                          <div style={{ fontSize: "0.82rem", color: "#047857" }}>
+                            Bagus sekali! Pemahaman Anda terhadap soal ini sudah tepat.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div
+                    className="animate-fade-in"
+                    style={{
+                      background: "#fef2f2",
+                      border: "1.5px solid #ef4444",
+                      borderRadius: "12px",
+                      padding: "0.85rem 1.25rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "0.75rem",
+                      marginTop: "1rem",
+                      marginBottom: "0.75rem",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                      <XCircle size={24} color="#ef4444" />
+                      <div>
+                        <div style={{ fontWeight: 800, color: "#991b1b", fontSize: "0.98rem" }}>
+                          不正解！ Jawaban Anda Belum Tepat
+                        </div>
+                        <div style={{ fontSize: "0.82rem", color: "#b91c1c" }}>
+                          Pelajari pembahasan di bawah atau coba jawab kembali.
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserAnswers((prev) => {
+                          const next = { ...prev };
+                          delete next[currentQ.item.id];
+                          return next;
+                        });
+                        setRevealedQuestions((prev) => ({ ...prev, [currentQ.item.id]: false }));
+                      }}
+                      className="btn btn-secondary"
+                      style={{
+                        fontSize: "0.82rem",
+                        padding: "0.4rem 0.85rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.35rem",
+                        borderRadius: "8px",
+                        borderColor: "#fca5a5",
+                        color: "#991b1b",
+                        background: "#ffffff",
+                        fontWeight: 700,
+                      }}
+                    >
+                      <RotateCcw size={14} />
+                      <span>Coba Lagi</span>
+                    </button>
+                  </div>
+                );
+              })()}
 
               {/* Navigation Bar - PLACED ABOVE Sembunyikan Pembahasan as requested */}
               <div
@@ -2995,8 +3056,8 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         {activeTab === "study" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             {/* Section Filter Pills */}
-            <div className="card shadow-sm" style={{ padding: "0.85rem 1.25rem", borderRadius: "14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.25rem" }}>
+            <div className="card shadow-sm" style={{ padding: "0.85rem 1.25rem", borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.25rem", flex: 1 }}>
                 <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#64748b", whiteSpace: "nowrap" }}>
                   Filter Seksi:
                 </span>
@@ -3018,6 +3079,29 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   </button>
                 ))}
               </div>
+
+              {/* Furigana toggle button in Mode Belajar */}
+              <button
+                type="button"
+                onClick={() => setShowFurigana((prev) => !prev)}
+                className="btn btn-secondary"
+                style={{
+                  fontSize: "0.78rem",
+                  padding: "0.35rem 0.75rem",
+                  borderRadius: "9999px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  border: showFurigana ? "1.5px solid #818cf8" : "1px solid #cbd5e1",
+                  background: showFurigana ? "#eef2ff" : "#ffffff",
+                  color: showFurigana ? "#4338ca" : "#64748b",
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                }}
+                title="Tampilkan / Sembunyikan Furigana di seluruh soal dan pilihan"
+              >
+                <span>ふりがな: {showFurigana ? "ON" : "OFF"}</span>
+              </button>
             </div>
 
             {/* Sections Accordion / Cards List */}
@@ -3218,25 +3302,25 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                                 Bentuk Dasar Kata Kerja:
                               </div>
                               <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "#4f46e5" }}>
-                                <SegmentFurigana segments={item.base.segments} />
+                                <SmartFurigana segments={item.base.segments} showFurigana={showFurigana} />
                               </div>
                             </div>
                           )}
 
                           {/* Question Sentence */}
                           {"question" in item && item.question && (
-                            <div className="question-text-mobile" style={{ fontSize: "1.2rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "0.85rem" }}>
-                              <SegmentFurigana segments={item.question.segments} />
+                            <div className="question-text-mobile" style={{ fontSize: "1.2rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "0.5rem" }}>
+                              <SmartFurigana segments={item.question.segments} showFurigana={showFurigana} />
                             </div>
                           )}
 
                           {/* Dialogue items */}
                           {"dialogue" in item && item.dialogue && (
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "0.85rem" }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "0.5rem" }}>
                               {item.dialogue.map((turn: any, tIdx: number) => (
                                 <div key={tIdx} style={{ fontSize: "1.08rem", lineHeight: 2, color: turn.speaker === "客" || turn.speaker === "A" ? "#0369a1" : "#1e293b" }}>
                                   <strong style={{ marginRight: "0.4rem" }}>{turn.speaker}:</strong>
-                                  <SegmentFurigana segments={turn.content.segments} />
+                                  <SmartFurigana segments={turn.content.segments} showFurigana={showFurigana} />
                                 </div>
                               ))}
                             </div>
@@ -3244,10 +3328,62 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
                           {/* Reading statement */}
                           {"statement" in item && item.statement && (
-                            <div className="question-text-mobile" style={{ fontSize: "1.2rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "0.85rem" }}>
-                              <SegmentFurigana segments={item.statement.segments} />
+                            <div className="question-text-mobile" style={{ fontSize: "1.2rem", fontWeight: 600, lineHeight: 2.1, color: "#0f172a", marginBottom: "0.5rem" }}>
+                              <SmartFurigana segments={item.statement.segments} showFurigana={showFurigana} />
                             </div>
                           )}
+
+                          {/* Question Translation Toggle in Mode Belajar */}
+                          {(() => {
+                            const itemRich = getRichExplanation(selectedExamId || "", item.id, item, sec);
+                            if (!itemRich.questionTranslation) return null;
+                            return (
+                              <div style={{ marginBottom: "0.85rem" }}>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleQuestionTranslation(item.id)}
+                                  style={{
+                                    background: showQuestionTranslation[item.id] ? "#e0e7ff" : "#f1f5f9",
+                                    border: "1px solid " + (showQuestionTranslation[item.id] ? "#818cf8" : "#e2e8f0"),
+                                    color: showQuestionTranslation[item.id] ? "#3730a3" : "#475569",
+                                    padding: "0.3rem 0.65rem",
+                                    borderRadius: "8px",
+                                    fontSize: "0.8rem",
+                                    fontWeight: 600,
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.4rem",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <Globe size={14} color={showQuestionTranslation[item.id] ? "#4f46e5" : "#64748b"} />
+                                  <span>{showQuestionTranslation[item.id] ? "Sembunyikan Terjemahan Soal" : "Lihat Terjemahan Soal"}</span>
+                                </button>
+
+                                {showQuestionTranslation[item.id] && (
+                                  <div
+                                    className="animate-fade-in"
+                                    style={{
+                                      marginTop: "0.4rem",
+                                      padding: "0.6rem 0.9rem",
+                                      background: "#f0fdf4",
+                                      border: "1px solid #bbf7d0",
+                                      borderRadius: "8px",
+                                      fontSize: "0.88rem",
+                                      color: "#166534",
+                                      lineHeight: 1.5,
+                                    }}
+                                  >
+                                    <strong style={{ color: "#15803d", marginRight: "0.35rem" }}>🇮🇩 Arti:</strong>
+                                    {itemRich.questionTranslation}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
+
+                          {/* Interactive Controls / Options in Mode Belajar */}
+                          {renderQuestionControls(sec, item)}
 
                           {/* Toggle Explanation Button */}
                           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0.5rem", marginBottom: "0.25rem" }}>
@@ -3270,7 +3406,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                           </div>
 
                           {/* Explanation Box */}
-                          {expandedExplanations[item.id] !== false && renderExplanationBox(item)}
+                          {expandedExplanations[item.id] !== false && renderExplanationBox(item, sec)}
                         </div>
                       );
                     })}
