@@ -17,22 +17,28 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
   richData,
   showFurigana = true,
 }) => {
+  const sampleAnswersList: any[] = (item?.sampleAnswers && Array.isArray(item.sampleAnswers) && item.sampleAnswers.length > 0)
+    ? item.sampleAnswers
+    : (section?.sampleAnswers && Array.isArray(section.sampleAnswers) && section.sampleAnswers.length > 0)
+    ? section.sampleAnswers
+    : [];
+  const isSampleAnswerQuestion = sampleAnswersList.length > 0;
+
   return (
     <div
-      className="animate-fade-in"
+      className="card shadow-md animate-fade-in"
       style={{
-        marginTop: '1rem',
+        marginTop: '1.25rem',
+        border: '2px solid #6366f1',
         borderRadius: '16px',
-        border: '1px solid #c7d2fe',
-        background: '#ffffff',
         overflow: 'hidden',
-        boxShadow: '0 4px 20px -2px rgba(79, 70, 229, 0.1)',
+        background: '#ffffff',
       }}
     >
-      {/* Header bar */}
+      {/* Header Banner */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #4338ca 0%, #6366f1 100%)',
+          background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
           color: '#ffffff',
           padding: '0.85rem 1.25rem',
           display: 'flex',
@@ -42,9 +48,11 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
           gap: '0.5rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.98rem' }}>
-          <Lightbulb size={20} color="#fef08a" />
-          <span>Pembahasan & Kunci Jawaban</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <Lightbulb size={20} color="#fbbf24" />
+          <span style={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '0.02em' }}>
+            Pembahasan & Kunci Jawaban
+          </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -83,7 +91,7 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
 
       <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {/* 1. Official Answer / Sample Answers Banner */}
-        {('sampleAnswers' in item && Array.isArray(item.sampleAnswers) && item.sampleAnswers.length > 0) ? (
+        {isSampleAnswerQuestion ? (
           <div
             style={{
               background: '#ecfdf5',
@@ -98,7 +106,7 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-              {item.sampleAnswers.map((sAns: any, sIdx: number) => {
+              {sampleAnswersList.map((sAns: any, sIdx: number) => {
                 const sText = typeof sAns === 'string' ? sAns : sAns.text;
                 const sSegments = typeof sAns === 'object' && sAns.segments ? sAns.segments : null;
                 const sTrans = SAMPLE_ANSWER_TRANSLATIONS[sText] || '';
@@ -212,6 +220,13 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
                       )}
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Safeguard fallback: if question lacks answer property */}
+              {!('answer' in item && item.answer) && (
+                <div style={{ fontSize: '0.92rem', color: '#166534', fontWeight: 500, lineHeight: 1.5 }}>
+                  {richData?.whyCorrect || 'Pertanyaan terbuka / ikuti pola kalimat sesuai instruksi.'}
                 </div>
               )}
             </div>

@@ -1831,26 +1831,29 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             </div>
 
             {/* If revealed or in Mode Belajar, display clear sample answers */}
-            {isRevealed && item.sampleAnswers && item.sampleAnswers.length > 0 && (
-              <div
-                className="animate-fade-in"
-                style={{
-                  background: "#f0fdf4",
-                  border: "1.5px solid #86efac",
-                  borderRadius: "10px",
-                  padding: "0.75rem 0.9rem",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                  marginTop: "0.2rem",
-                }}
-              >
-                <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#166534", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <CheckCircle2 size={16} color="#16a34a" />
-                  <span>Contoh Jawaban yang Benar (Bisa Ditiru / Digunakan):</span>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
-                  {item.sampleAnswers.map((sAns: any, sIdx: number) => {
+            {(() => {
+              const sampleList = (item.sampleAnswers && item.sampleAnswers.length > 0) ? item.sampleAnswers : ((sec as any).sampleAnswers || []);
+              if (!isRevealed || sampleList.length === 0) return null;
+              return (
+                <div
+                  className="animate-fade-in"
+                  style={{
+                    background: "#f0fdf4",
+                    border: "1.5px solid #86efac",
+                    borderRadius: "10px",
+                    padding: "0.75rem 0.9rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                    marginTop: "0.2rem",
+                  }}
+                >
+                  <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#166534", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                    <CheckCircle2 size={16} color="#16a34a" />
+                    <span>Contoh Jawaban yang Benar (Bisa Ditiru / Digunakan):</span>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                    {sampleList.map((sAns: any, sIdx: number) => {
                     const sText = typeof sAns === "string" ? sAns : sAns.text;
                     const sSegments = typeof sAns === "object" && sAns.segments ? sAns.segments : null;
                     const sTrans = SAMPLE_ANSWER_TRANSLATIONS[sText] || "";
@@ -1918,9 +1921,10 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       </div>
                     );
                   })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         )}
 

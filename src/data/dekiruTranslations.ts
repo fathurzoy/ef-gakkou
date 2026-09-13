@@ -30,9 +30,9 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   '1-3-s4-q8': 'A: B-san, hari Minggu pergi ke mana?\nB: Tidak pergi ke mana-mana.',
   '1-3-s4-q9': 'A: "Tonkatsu" itu masakan apa?\nB: Masakan olahan daging babi.',
 
-  '1-3-s5-q1': 'Pelayan: Selamat datang.\nPelanggan: Berapa harganya?\nPelayan: 4.000 yen.\nPelanggan: Oh, begitu ya.',
-  '1-3-s5-q2': 'Pelanggan: Tolong yang ini.\nPelayan: 3.000 yen.',
-  '1-3-s5-q3': 'Pelanggan: Ini (uangnya).\nPelayan: Terima kasih banyak.',
+  '1-3-s5-q1': 'Pelayan: Selamat datang.\nPelanggan: Ini harganya berapa?\nPelayan: 4.000 yen.\nPelanggan: Oh, begitu ya.',
+  '1-3-s5-q2': 'Pelanggan: Berapa harga yang di sebelah sana itu?\nPelayan: 3.000 yen.',
+  '1-3-s5-q3': 'Pelanggan: Kalau begitu, tolong berikan yang di sebelah sana itu (saya beli yang itu).\nPelayan: Terima kasih banyak.',
 
   '1-3-s6-q1': 'A: Permisi, nama Anda siapa? Saya Wang. Senang berkenalan dengan Anda.\nB: Saya Park. Sama-sama, senang berkenalan dengan Anda.',
   '1-3-s6-q2': 'Pelanggan: Permisi (memanggil pelayan).\nPelayan: Ya, silakan.\nPelanggan: Tolong kopi 2 cangkir.',
@@ -77,8 +77,8 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   '4-6-s5-q4': 'A: Dari rumah B-san sampai sekolah butuh berapa lama?\nB: Sekitar 40 menit.',
 
   '4-6-s6-q1': 'Bulan lalu, saya membaca 3 buku/jilid bahasa Jepang.',
-  '4-6-s6-q2': 'Kemarin, saya minum 2 cangkir kopi.',
-  '4-6-s6-q3': 'Membeli 1 botol anggur (wine) di supermarket.',
+  '4-6-s6-q2': 'Kemarin, saya minum 3 cangkir kopi.',
+  '4-6-s6-q3': 'Membeli 5 botol anggur (wine) di supermarket.',
 
   '4-6-s7-q1': 'Tolong ajari saya cara membaca kanji ini.',
   '4-6-s7-q2': 'A: Lin-san, tolong buka jendelanya.\nLin: Baik.',
@@ -88,8 +88,8 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   '4-6-s7-q6': 'Yamada-san adalah orang yang baik hati dan menyenangkan/menarik.',
   '4-6-s7-q7': 'Lin-san orangnya rajin/sungguh-sungguh dan ramah.',
 
-  '4-6-s8-q1': 'A: Mau saya bantu bawakan tasnya?\nB: Ah, terima kasih banyak. Tolong ya.',
-  '4-6-s8-q2': 'A: Pada akhir pekan, Anda melakukan apa?\nB: Saya bermain tenis bersama teman.',
+  '4-6-s8-q1': 'A: Mau saya bantu ambilkan foto?\nB: Ah, terima kasih banyak. Tolong ya.',
+  '4-6-s8-q2': 'A: Pada akhir pekan, Anda melakukan apa?\nB: Saya berbelanja di supermarket, memasak, lalu makan bersama.',
   '4-6-s8-q3': 'A: Akhir pekan kemarin Anda melakukan apa?\nB: Saya pergi ke konser Smile.\nA: Wah bagus ya, saya juga ingin pergi ke konser Smile, tapi tidak tahu cara beli tiketnya. Tolong ajari saya cara membelinya.\nB: Baik, boleh.\nA: Wah begitu ya, terima kasih banyak.',
 
   '4-6-s9-q1': 'A: Orang ini siapa?',
@@ -104,7 +104,7 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   // === EXAM 3: 7〜9課 復習テスト (31 Questions) ===
   // ==========================================
   '7-9-s2-q1': 'Saya ingin kamera baru.',
-  '7-9-s2-q2': 'Permisi, tolong ambilkan garam itu.',
+  '7-9-s2-q2': 'Permisi, tolong ambilkan cangkir / gelas itu.',
   '7-9-s2-q3': 'Saya pergi untuk membeli hadiah ulang tahun teman.',
 
   '7-9-s3-q1': 'Tolong potong daging ini dengan pisau.',
@@ -132,7 +132,7 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   '7-9-s7-q2': 'A: Begitu ya. Apakah B-san sudah pernah makan okonomiyaki?\nB: Belum, belum pernah makan.',
   '7-9-s7-q3': 'A: Di Okaya ada restoran yang enak lho!\nB: Wah, asyik ya. Ayo kita pergi ke sana.',
   '7-9-s7-q4': 'B: Hmm, hari Minggu kita bertemu jam berapa dan di mana?\nA: Bagaimana kalau jam 6 di Stasiun Kami-Suwa?\nB: Baik, jam 6 di Stasiun Kami-Suwa ya. Mengerti.',
-  '7-9-s7-q5': 'A: Malam ini, maukah pergi minum bersama?\nB: Maaf, kalau malam ini saya agak kurang bisa (berhalangan).\nA: Ah begitu ya, sayang sekali. Kalau begitu, lain kali saja ya.',
+  '7-9-s7-q5': 'A: Malam ini, maukah pergi menonton film bersama?\nB: Maaf, kalau malam ini saya agak kurang bisa (ada janji lain).\nA: Ah begitu ya, sayang sekali. Kalau begitu, lain kali saja ya.',
 
   '7-9-s8-q1': 'Pada akhir pekan lalu, apa yang telah Anda lakukan?',
   '7-9-s8-q2': 'Pada liburan musim panas nanti, apa yang ingin Anda lakukan?',
@@ -163,7 +163,7 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   '10-12-s3-q5': 'Saat lelah, tidur lebih awal.',
   '10-12-s3-q6': 'Saya ingin menjadi mahir / pintar bahasa Jepang.',
 
-  '10-12-s4-q1': 'Tolong jangan meletakkan barang bawaan di sini.',
+  '10-12-s4-q1': 'Bolehkah saya meletakkan barang bawaan di sini?',
   '10-12-s4-q2': 'Sebaiknya pergi ke rumah sakit.',
   '10-12-s4-q3': 'Saat kondisi tubuh sedang tidak fit, sebaiknya tidak memaksakan diri.',
   '10-12-s4-q4': 'Saat masih menjadi murid SMP, saya mulai belajar bermain gitar.',
@@ -177,7 +177,7 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
 
   '10-12-s6-q1': 'A: Ada apa? / Kenapa kamu?\nB: Tenggorokan saya sakit.',
   '10-12-s6-q2': 'A: Saya demam.\nB: Kalau begitu, hari ini sebaiknya istirahat ya.',
-  '10-12-s6-q3': 'A: Kapan obatnya diminum?\nB: Tolong diminum 30 menit setelah makan.',
+  '10-12-s6-q3': 'A: Kapan obatnya diminum?\nB: Tolong diminum 30 menit sebelum makan.',
   '10-12-s6-q4': 'A: Kemarin kamu melakukan apa saja?\nB: Pergi berbelanja, pergi makan bersama teman, dan lain-lain.',
 
   '10-12-s7-q1': 'Saat pertama kali datang ke Jepang, bahasa Jepang saya sudah mahir.',
@@ -216,16 +216,16 @@ export const DEKIRU_SENTENCE_TRANSLATIONS: Record<string, string> = {
   '13-15-s4-q3': 'Karena berbahaya, dilarang memasak makanan di dalam kamar sendiri.',
   '13-15-s4-q4': 'Awalnya saya berpikir aturannya agak aneh, tetapi sekarang sudah terbiasa.',
 
-  '13-15-s5-q1': 'A: Permisi, tolong ambilkan saus itu.\nPelayan: Ah, maaf (ini sausnya).',
-  '13-15-s5-q2': 'A: Ah, dompetnya jatuh lho!\nB: Benar, gawat!',
-  '13-15-s5-q3': 'A: Lho? Kuncinya tidak ada.\nB: Benar (tidak ada).',
+  '13-15-s5-q1': 'A: Permisi, gelasnya pecah / rusak.\nPelayan: Ah, mohon maaf.',
+  '13-15-s5-q2': 'A: Ah, ada orang yang jatuh (tergeletak/pingsan) lho!\nB: Benar. Gawat!',
+  '13-15-s5-q3': 'A: Lho? Pintunya terbuka.\nB: Benar (terbuka).',
   '13-15-s5-q4': 'A: Ah, tokonya tutup.\nB: Benar. Maukah kita pergi ke toko lain?',
-  '13-15-s5-q5': 'A: Ah, antreannya panjang ya.\nB: Benar ya. Bagaimana baiknya?\nA: Ayo kita tunggu saja.',
-  '13-15-s5-q6': 'A: Ah, keretanya sudah datang.\nB: Benar (sudah tiba).',
+  '13-15-s5-q5': 'A: Ah, banyak orang yang mengantre / berbaris ya.\nB: Benar ya. Bagaimana baiknya?\nA: Ayo kita tunggu saja.',
+  '13-15-s5-q6': 'A: Ah, ada dompet terjatuh (di lantai).\nB: Benar.',
 
   '13-15-s6-q1': 'A: Lho? Lampunya tidak menyala...\nB: Ah, coba tekan tombol yang itu.\nA: Terima kasih banyak.',
-  '13-15-s6-q2a': 'A: Sedang apa kamu?\nB: Sedang mencari informasi tempat wisata di internet.',
-  '13-15-s6-q2b': 'B: A-san, tahu taman yang bagus tidak?\nA: Hmm, bagaimana kalau Taman Midori? Di sana bunganya sangat indah lho.\nB: Wah, asyik ya.',
+  '13-15-s6-q2a': 'A: Sedang apa kamu?\nB: Saya sedang mencari taman yang bisa dipakai untuk barbekyu (BBQ).',
+  '13-15-s6-q2b': 'B: A-san, tahu taman yang bagus tidak?\nA: Hmm, bagaimana kalau Taman Midori? Dari stasiun jalan kaki sekitar 5 menit.\nB: Wah, bagus ya.',
 
   '13-15-s7-q1': 'Apakah Anda pernah makan makanan Jepang?',
   '13-15-s7-q2': 'Bagaimana pendapat Anda tentang makanan Jepang?',
