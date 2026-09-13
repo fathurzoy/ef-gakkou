@@ -126,6 +126,30 @@ function getNormalizedVariants(text: string): string[] {
   return Array.from(variants);
 }
 
+export const isBatsuEquivalent = (val: string | undefined | null): boolean => {
+  if (!val) return false;
+  const s = String(val).trim().toLowerCase();
+  return (
+    s === 'x' ||
+    s === '×' ||
+    s === '✕' ||
+    s === '✖' ||
+    s === 'ｘ' ||
+    s === 'Ｘ' ||
+    s === '❌' ||
+    s === '❎' ||
+    s === 'batsu' ||
+    s === 'ばつ' ||
+    s === 'バツ' ||
+    s === '-' ||
+    s === 'ー' ||
+    s === 'none' ||
+    s === 'kosong' ||
+    s === 'tidak ada' ||
+    /^[xX×✕✖ｘＸ]$/.test(s)
+  );
+};
+
 /**
  * Check whether a user's single text answer matches any of the accepted variations.
  * Tolerant to:
@@ -133,9 +157,17 @@ function getNormalizedVariants(text: string): string[] {
  * - Punctuation differences (. vs 。)
  * - Spacing differences
  * - Case insensitivity
+ * - Any representation of 'x' / batsu
  */
 export function checkSingleAnswer(userInput: string, acceptedList: string[]): boolean {
   if (!userInput || !acceptedList || acceptedList.length === 0) return false;
+
+  // Universal check: If target expects batsu / x and user typed any batsu variant
+  for (const accepted of acceptedList) {
+    if (isBatsuEquivalent(accepted) && isBatsuEquivalent(userInput)) {
+      return true;
+    }
+  }
 
   const userVariants = getNormalizedVariants(userInput);
   const userHira = romajiToHiragana(userInput);
