@@ -314,7 +314,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               disabled={isAnswered}
-              placeholder="Contoh: でんしゃ atau densha atau 電車"
+              placeholder="Ketik cara baca di sini (Hiragana / Romaji / Kanji)..."
               className="written-input-field"
               autoComplete="off"
               autoCapitalize="none"
@@ -366,7 +366,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 value={fillAInput}
                 onChange={(e) => setFillAInput(e.target.value)}
                 disabled={isAnswered}
-                placeholder="Contoh: 中 / naka / 映画"
+                placeholder="Ketik kata untuk bagian (A)..."
                 className="written-input-field"
                 autoComplete="off"
                 autoCapitalize="none"
@@ -383,7 +383,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 value={fillBInput}
                 onChange={(e) => setFillBInput(e.target.value)}
                 disabled={isAnswered}
-                placeholder="Contoh: さいふ / saifu / 見に"
+                placeholder="Ketik kata untuk bagian (B)..."
                 className="written-input-field"
                 autoComplete="off"
                 autoCapitalize="none"
@@ -445,7 +445,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
             disabled={isAnswered}
-            placeholder="Tuliskan respon kalimat lengkap di sini... Boleh menggunakan Hiragana, Kanji, atau Romaji (huruf biasa)"
+            placeholder="Tuliskan respon kalimat lengkap di sini (gunakan ketiga kata kunci berurutan)..."
             className="written-textarea"
             autoComplete="off"
             autoCapitalize="none"
@@ -477,7 +477,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.65rem', fontSize: '0.8rem', color: '#64748b' }}>
             <Sparkles size={14} color="#6366f1" />
-            <span>Bebas menulis dengan Hiragana, Kanji, atau Romaji (contoh: kono fuku yori ano fuku no hou ga ii to omoimasu). Tanda baca dan spasi bersifat fleksibel!</span>
+            <span>Bebas menulis dengan Hiragana, Kanji, maupun Romaji. Huruf besar/kecil, spasi, dan tanda baca bersifat fleksibel!</span>
           </div>
         </form>
       )}
