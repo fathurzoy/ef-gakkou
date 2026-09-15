@@ -76,3 +76,27 @@ export const dekiruExamsMap: Record<string, DekiruExamData> = {
   'dekiru-review-10-12': dekiruExam4Data,
   'dekiru-review-13-15': dekiruExam5Data,
 };
+
+export const resolveDekiruExamId = (param?: string | null): string | null => {
+  if (!param) return null;
+  const clean = param.trim().toLowerCase();
+  if (dekiruExamsMap[clean]) return clean;
+  if (clean === '1' || clean === 'exam1' || clean === 'ujian1' || clean === 'ujian-1' || clean === 'bab-1-3') return 'dekiru-review-1-3';
+  if (clean === '2' || clean === 'exam2' || clean === 'ujian2' || clean === 'ujian-2' || clean === 'bab-4-6') return 'dekiru-review-4-6';
+  if (clean === '3' || clean === 'exam3' || clean === 'ujian3' || clean === 'ujian-3' || clean === 'bab-7-9') return 'dekiru-review-7-9';
+  if (clean === '4' || clean === 'exam4' || clean === 'ujian4' || clean === 'ujian-4' || clean === 'bab-10-12') return 'dekiru-review-10-12';
+  if (clean === '5' || clean === 'exam5' || clean === 'ujian5' || clean === 'ujian-5' || clean === 'bab-13-15') return 'dekiru-review-13-15';
+  return null;
+};
+
+export const getDekiruSlug = (examId: string): string => {
+  const map: Record<string, string> = {
+    'dekiru-review-1-3': 'exam1',
+    'dekiru-review-4-6': 'exam2',
+    'dekiru-review-7-9': 'exam3',
+    'dekiru-review-10-12': 'exam4',
+    'dekiru-review-13-15': 'exam5',
+  };
+  return map[examId] || examId;
+};
+

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppMode, SectionId } from '../types/quiz';
 import { examSections } from '../data/examData';
 import {
@@ -35,34 +36,40 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
   onOpenTips,
   onBackToSourceSelect,
 }) => {
+  const navigate = useNavigate();
   const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+
+  const handleBack = () => {
+    if (onBackToSourceSelect) {
+      onBackToSourceSelect();
+    }
+    navigate('/');
+  };
 
   return (
     <div className="mode-selection animate-fade-in" style={{ maxWidth: '840px', margin: '0 auto' }}>
       {/* Back to Source Selection */}
-      {onBackToSourceSelect && (
-        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-start' }}>
-          <button
-            onClick={onBackToSourceSelect}
-            className="btn btn-secondary"
-            style={{
-              padding: '0.45rem 0.9rem',
-              fontSize: '0.82rem',
-              borderRadius: '9999px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              color: '#475569',
-              border: '1px solid #cbd5e1',
-              background: '#ffffff',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-            }}
-          >
-            <ArrowLeft size={14} />
-            <span>Kembali ke Pilihan Sumber Soal</span>
-          </button>
-        </div>
-      )}
+      <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-start' }}>
+        <button
+          onClick={handleBack}
+          className="btn btn-secondary"
+          style={{
+            padding: '0.45rem 0.9rem',
+            fontSize: '0.82rem',
+            borderRadius: '9999px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            color: '#475569',
+            border: '1px solid #cbd5e1',
+            background: '#ffffff',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+          }}
+        >
+          <ArrowLeft size={14} />
+          <span>Kembali ke Pilihan Sumber Soal</span>
+        </button>
+      </div>
 
       {/* Hero Header */}
       <div
@@ -264,7 +271,10 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           </div>
 
           <button
-            onClick={() => onSelectMode('exam')}
+            onClick={() => {
+              onSelectMode('exam');
+              navigate('/ef/exam');
+            }}
             className="btn btn-primary"
             style={{ width: '100%', padding: '0.85rem', fontSize: '1rem', borderRadius: '12px' }}
           >
@@ -329,7 +339,10 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           </div>
 
           <button
-            onClick={() => onSelectMode('review')}
+            onClick={() => {
+              onSelectMode('review');
+              navigate('/ef/review');
+            }}
             className="btn btn-secondary"
             style={{ width: '100%', padding: '0.85rem', fontSize: '1rem', borderRadius: '12px', border: '1px solid #cbd5e1' }}
           >

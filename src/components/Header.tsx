@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppMode } from '../types/quiz';
 import {
   LayoutGrid,
@@ -32,6 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenTips,
   onBackToSourceSelect,
 }) => {
+  const navigate = useNavigate();
   const totalIncorrect = totalAnswered - totalCorrect;
   const progressPercent = Math.round((totalAnswered / totalQuestions) * 100);
 
@@ -46,8 +48,11 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => {
                 if (mode !== 'select') {
                   onSwitchMode('select');
+                  navigate('/ef');
                 } else if (onBackToSourceSelect) {
                   onBackToSourceSelect();
+                } else {
+                  navigate('/');
                 }
               }}
               className="btn btn-ghost"
@@ -74,7 +79,10 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button
-              onClick={() => onSwitchMode('select')}
+              onClick={() => {
+                onSwitchMode('select');
+                navigate('/ef');
+              }}
               style={{
                 background: 'none',
                 border: 'none',

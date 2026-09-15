@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { QuestionSource } from '../types/quiz';
 import {
   GraduationCap,
@@ -9,10 +10,18 @@ import {
 } from 'lucide-react';
 
 interface SourceSelectionProps {
-  onSelectSource: (source: QuestionSource) => void;
+  onSelectSource?: (source: QuestionSource) => void;
 }
 
 export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource }) => {
+  const navigate = useNavigate();
+
+  const handleSelect = (source: QuestionSource, path: string) => {
+    if (onSelectSource) {
+      onSelectSource(source);
+    }
+    navigate(path);
+  };
   return (
     <div className="source-selection-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Portal Navbar Header */}
@@ -179,7 +188,7 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
 
             {/* Action Button */}
             <button
-              onClick={() => onSelectSource('ef')}
+              onClick={() => handleSelect('ef', '/ef')}
               className="btn btn-primary"
               style={{
                 width: '100%',
@@ -285,7 +294,7 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
 
             {/* Action Button */}
             <button
-              onClick={() => onSelectSource('dekiru')}
+              onClick={() => handleSelect('dekiru', '/dekiru')}
               className="btn"
               style={{
                 width: '100%',
@@ -396,7 +405,7 @@ export const SourceSelection: React.FC<SourceSelectionProps> = ({ onSelectSource
 
             {/* Action Button */}
             <button
-              onClick={() => onSelectSource('situasi')}
+              onClick={() => handleSelect('situasi', '/situasi')}
               className="btn"
               style={{
                 width: '100%',

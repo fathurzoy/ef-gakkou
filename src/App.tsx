@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { AppMode, SectionId, UserAnswerRecord, QuestionSource } from './types/quiz';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { AppMode, SectionId, UserAnswerRecord } from './types/quiz';
 import { allQuestions, getQuestionById } from './data/examData';
 import {
   getStoredAnswers,
   saveUserAnswer,
   clearAllAnswers,
-  getStoredAppMode,
   saveAppMode,
   getStoredQuestionId,
   saveCurrentQuestionId,
-  getStoredQuestionSource,
-  saveQuestionSource,
 } from './utils/storage';
 import { checkSingleAnswer, checkFillBlankAnswer } from './utils/answerChecker';
 import { Header } from './components/Header';
@@ -24,39 +22,74 @@ import { SourceSelection } from './components/SourceSelection';
 import { DekiruExamView } from './components/dekiru/DekiruExamView';
 import { SituasiStudyView } from './components/situasi/SituasiStudyView';
 
-export const App: React.FC = () => {
-  // Source State: null means on main source selection screen
-  const [questionSource, setQuestionSource] = useState<QuestionSource | null>(() => getStoredQuestionSource());
+interface EFExamAppProps {
+  mode: AppMode;
+}
 
-  // Application State
-  const [appMode, setAppMode] = useState<AppMode>(() => getStoredAppMode());
-  const [currentQuestionId, setCurrentQuestionId] = useState<number>(() => getStoredQuestionId(1));
+const EFExamApp: React.FC<EFExamAppProps> = ({ mode }) => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Load initial question from URL ?q= if valid, or localStorage
+  const [currentQuestionId, setCurrentQuestionId] = useState<number>(() => {
+    const qParam = searchParams.get('q');
+    if (qParam) {
+      const parsed = parseInt(qParam, 10);
+      if (!isNaN(parsed) && parsed >= 1 && parsed <= allQuestions.length) {
+        return parsed;
+      }
+    }
+    return getStoredQuestionId(1);
+  });
+
   const [userAnswers, setUserAnswers] = useState<Record<number, UserAnswerRecord>>(() => getStoredAnswers());
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState<boolean>(false);
   const [isTipsOpen, setIsTipsOpen] = useState<boolean>(false);
 
-  // Source selection handlers
-  const handleSelectSource = (source: QuestionSource) => {
-    setQuestionSource(source);
-    saveQuestionSource(source);
-  };
-
-  const handleBackToSourceSelect = () => {
-    setQuestionSource(null);
-    saveQuestionSource(null);
-  };
-
-  // Sync mode changes to storage
-  const handleSwitchMode = (mode: AppMode) => {
-    setAppMode(mode);
+  // Sync mode with localStorage
+  useEffect(() => {
     saveAppMode(mode);
+  }, [mode]);
+
+  // When in exam mode, sync URL search param ?q= with currentQuestionId
+  useEffect(() => {
+    if (mode === 'exam') {
+      const qParam = searchParams.get('q');
+      if (qParam) {
+        const parsed = parseInt(qParam, 10);
+        if (!isNaN(parsed) && parsed >= 1 && parsed <= allQuestions.length) {
+          if (parsed !== currentQuestionId) {
+            setCurrentQuestionId(parsed);
+            saveCurrentQuestionId(parsed);
+          }
+          return;
+        }
+      }
+      // If no valid ?q= param in exam mode, set it to current question ID
+      setSearchParams({ q: String(currentQuestionId) }, { replace: true });
+    }
+  }, [mode, searchParams]);
+
+  // Mode switcher handler
+  const handleSwitchMode = (newMode: AppMode) => {
+    saveAppMode(newMode);
+    if (newMode === 'select') {
+      navigate('/ef');
+    } else if (newMode === 'exam') {
+      navigate(`/ef/exam?q=${currentQuestionId}`);
+    } else if (newMode === 'review') {
+      navigate('/ef/review');
+    }
   };
 
-  // Sync question ID changes to storage
+  // Sync question ID changes to storage & URL search params
   const handleSelectQuestion = (id: number) => {
     setCurrentQuestionId(id);
     saveCurrentQuestionId(id);
+    if (mode === 'exam') {
+      setSearchParams({ q: String(id) }, { replace: true });
+    }
   };
 
   // Navigation handlers
@@ -80,7 +113,6 @@ export const App: React.FC = () => {
     const currentQ = getQuestionById(currentQuestionId);
     if (!currentQ) return;
 
-    // Check correctness:
     const isCorrect = currentQ.correctAnswer === optionId;
 
     const record: UserAnswerRecord = {
@@ -147,7 +179,6 @@ export const App: React.FC = () => {
     setUserAnswers((prev) => {
       const next = { ...prev };
       delete next[currentQuestionId];
-      // Update local storage
       const stored = getStoredAnswers();
       delete stored[currentQuestionId];
       localStorage.setItem('ef_exam_user_answers_v1', JSON.stringify(stored));
@@ -176,14 +207,19 @@ export const App: React.FC = () => {
       III: 33,
       IV: 53,
     };
-    handleSelectQuestion(sectionStartQuestions[sectionId] || 1);
-    handleSwitchMode('exam');
+    const startQ = sectionStartQuestions[sectionId] || 1;
+    handleSelectQuestion(startQ);
+    navigate(`/ef/exam?q=${startQ}`);
   };
 
   // Start exam on a specific question from review view
   const handleStartExamAt = (questionId: number) => {
     handleSelectQuestion(questionId);
-    handleSwitchMode('exam');
+    navigate(`/ef/exam?q=${questionId}`);
+  };
+
+  const handleBackToSourceSelect = () => {
+    navigate('/');
   };
 
   // Current active question
@@ -191,26 +227,11 @@ export const App: React.FC = () => {
   const totalAnswered = Object.keys(userAnswers).length;
   const totalCorrect = Object.values(userAnswers).filter((a) => a.isCorrect).length;
 
-  // If no source is selected yet, show the 2 choices landing page
-  if (!questionSource) {
-    return <SourceSelection onSelectSource={handleSelectSource} />;
-  }
-
-  // If Dekiru Nihongo is selected, show Dekiru Exam View
-  if (questionSource === 'dekiru') {
-    return <DekiruExamView onBackToSourceSelect={handleBackToSourceSelect} />;
-  }
-
-  // If Belajar Situasi is selected, show Situasi Study View
-  if (questionSource === 'situasi') {
-    return <SituasiStudyView onBackToSourceSelect={handleBackToSourceSelect} />;
-  }
-
   return (
     <div className="app-container">
       {/* Top Header */}
       <Header
-        mode={appMode}
+        mode={mode}
         onSwitchMode={handleSwitchMode}
         totalAnswered={totalAnswered}
         totalCorrect={totalCorrect}
@@ -223,8 +244,8 @@ export const App: React.FC = () => {
 
       {/* Main App Body */}
       <main className="main-content">
-        {/* View 1: Mode Selection (Landing screen) */}
-        {appMode === 'select' && (
+        {/* View 1: Mode Selection (Landing screen at /ef) */}
+        {mode === 'select' && (
           <ModeSelection
             onSelectMode={handleSwitchMode}
             answeredCount={totalAnswered}
@@ -237,8 +258,8 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* View 2: Mode Ujian (Exam Mode ala Migii JLPT) */}
-        {appMode === 'exam' && (
+        {/* View 2: Mode Ujian (Exam Mode at /ef/exam) */}
+        {mode === 'exam' && (
           <div className="exam-mode animate-fade-in">
             <QuestionCard
               question={currentQuestion}
@@ -257,8 +278,8 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* View 3: Mode Belajar & Review (Study Mode) */}
-        {appMode === 'review' && (
+        {/* View 3: Mode Belajar & Review (Study Mode at /ef/review) */}
+        {mode === 'review' && (
           <ReviewListView
             questions={allQuestions}
             onStartExamAt={handleStartExamAt}
@@ -294,6 +315,34 @@ export const App: React.FC = () => {
         onClose={() => setIsTipsOpen(false)}
       />
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <Routes>
+      {/* 1. Portal Utama (Pilihan Sumber Belajar) */}
+      <Route path="/" element={<SourceSelection />} />
+
+      {/* 2. Ujian Akhir Bahasa Jepang E-F */}
+      <Route path="/ef" element={<EFExamApp mode="select" />} />
+      <Route path="/ef/exam" element={<EFExamApp mode="exam" />} />
+      <Route path="/ef/review" element={<EFExamApp mode="review" />} />
+      <Route path="/ef-exam/*" element={<Navigate to="/ef" replace />} />
+
+      {/* 3. Ujian Dekiru Nihongo */}
+      <Route path="/dekiru" element={<DekiruExamView />} />
+      <Route path="/dekiru/:examId" element={<DekiruExamView />} />
+      <Route path="/dekiru/:examId/:tab" element={<DekiruExamView />} />
+      <Route path="/dekiru-nihongo/*" element={<Navigate to="/dekiru" replace />} />
+
+      {/* 4. Belajar Situasi & Respons (場面で覚える日本語) */}
+      <Route path="/situasi" element={<SituasiStudyView />} />
+      <Route path="/situasi/quick-ref" element={<SituasiStudyView />} />
+
+      {/* 5. Fallback ke Halaman Utama */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 };
 

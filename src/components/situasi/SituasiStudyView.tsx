@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { situasiPages } from '../../data/situasiData';
 import {
   ArrowLeft,
@@ -22,15 +23,72 @@ import {
 } from 'lucide-react';
 
 interface SituasiStudyViewProps {
-  onBackToSourceSelect: () => void;
+  onBackToSourceSelect?: () => void;
 }
 
 export const SituasiStudyView: React.FC<SituasiStudyViewProps> = ({ onBackToSourceSelect }) => {
-  // Page selector: 'ALL' | 1 | 2
-  const [selectedPage, setSelectedPage] = useState<'ALL' | 1 | 2>('ALL');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Tab view: 'situations' | 'quickRef'
-  const [activeTab, setActiveTab] = useState<'situations' | 'quickRef'>('situations');
+  // Page selector: 'ALL' | 1 | 2 (synced with URL ?page=)
+  const [selectedPage, setSelectedPage] = useState<'ALL' | 1 | 2>(() => {
+    const pageParam = searchParams.get('page');
+    if (pageParam === '1') return 1;
+    if (pageParam === '2') return 2;
+    return 'ALL';
+  });
+
+  // Tab view: 'situations' | 'quickRef' (synced with URL pathname)
+  const isQuickRefRoute = location.pathname.endsWith('/quick-ref');
+  const [activeTab, setActiveTab] = useState<'situations' | 'quickRef'>(
+    isQuickRefRoute ? 'quickRef' : 'situations'
+  );
+
+  // Keep activeTab synced if location changes
+  useEffect(() => {
+    if (location.pathname.endsWith('/quick-ref')) {
+      setActiveTab('quickRef');
+    } else {
+      setActiveTab('situations');
+    }
+  }, [location.pathname]);
+
+  // Keep selectedPage synced if URL search params change
+  useEffect(() => {
+    const pageParam = searchParams.get('page');
+    if (pageParam === '1') setSelectedPage(1);
+    else if (pageParam === '2') setSelectedPage(2);
+    else setSelectedPage('ALL');
+  }, [searchParams]);
+
+  const handleBack = () => {
+    if (onBackToSourceSelect) {
+      onBackToSourceSelect();
+    }
+    navigate('/');
+  };
+
+  const handleSelectTab = (tab: 'situations' | 'quickRef') => {
+    setActiveTab(tab);
+    const search = location.search;
+    if (tab === 'quickRef') {
+      navigate('/situasi/quick-ref' + search);
+    } else {
+      navigate('/situasi' + search);
+    }
+  };
+
+  const handleSelectPage = (page: 'ALL' | 1 | 2) => {
+    setSelectedPage(page);
+    const newParams = new URLSearchParams(searchParams);
+    if (page === 'ALL') {
+      newParams.delete('page');
+    } else {
+      newParams.set('page', String(page));
+    }
+    setSearchParams(newParams, { replace: true });
+  };
   
   // Category filter ('ALL' or category name)
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -226,7 +284,7 @@ export const SituasiStudyView: React.FC<SituasiStudyViewProps> = ({ onBackToSour
         >
           {/* Back Button */}
           <button
-            onClick={onBackToSourceSelect}
+            onClick={handleBack}
             className="btn"
             style={{
               background: '#f1f5f9',
@@ -282,7 +340,7 @@ export const SituasiStudyView: React.FC<SituasiStudyViewProps> = ({ onBackToSour
             }}
           >
             <button
-              onClick={() => setActiveTab('situations')}
+              onClick={() => handleSelectTab('situations')}
               style={{
                 background: activeTab === 'situations' ? '#ffffff' : 'transparent',
                 color: activeTab === 'situations' ? '#065f46' : '#64748b',
@@ -303,7 +361,7 @@ export const SituasiStudyView: React.FC<SituasiStudyViewProps> = ({ onBackToSour
               <span>Situasi</span>
             </button>
             <button
-              onClick={() => setActiveTab('quickRef')}
+              onClick={() => handleSelectTab('quickRef')}
               style={{
                 background: activeTab === 'quickRef' ? '#ffffff' : 'transparent',
                 color: activeTab === 'quickRef' ? '#065f46' : '#64748b',
@@ -404,7 +462,7 @@ export const SituasiStudyView: React.FC<SituasiStudyViewProps> = ({ onBackToSour
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.75rem' }}>
               <button
                 onClick={() => {
-                  setSelectedPage('ALL');
+                  handleSelectPage('ALL');
                   setSelectedCategory('ALL');
                 }}
                 style={{
@@ -428,7 +486,7 @@ export const SituasiStudyView: React.FC<SituasiStudyViewProps> = ({ onBackToSour
 
               <button
                 onClick={() => {
-                  setSelectedPage(1);
+                  handleSelectPage(1);
                   setSelectedCategory('ALL');
                 }}
                 style={{
@@ -452,7 +510,7 @@ export const SituasiStudyView: React.FC<SituasiStudyViewProps> = ({ onBackToSour
 
               <button
                 onClick={() => {
-                  setSelectedPage(2);
+                  handleSelectPage(2);
                   setSelectedCategory('ALL');
                 }}
                 style={{

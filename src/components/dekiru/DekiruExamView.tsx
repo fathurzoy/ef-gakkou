@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { dekiruExamsList, dekiruExamsMap } from "../../data/dekiruExams";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { dekiruExamsList, dekiruExamsMap, resolveDekiruExamId, getDekiruSlug } from "../../data/dekiruExams";
 import { SegmentFurigana } from "../SegmentFurigana";
 import {
   BookOpen,
@@ -29,7 +30,7 @@ import { SAMPLE_ANSWER_TRANSLATIONS } from "../../data/dekiruTranslations";
 import { DekiruExplanationBox } from "./DekiruExplanationBox";
 
 interface DekiruExamViewProps {
-  onBackToSourceSelect: () => void;
+  onBackToSourceSelect?: () => void;
 }
 
 interface FlattenedExamQuestion {
@@ -236,25 +237,25 @@ export const isQuestionCorrect = (item: any, sec: DekiruSection, uAns: any): boo
 };
 
 export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSelect }) => {
+  const { examId: routeExamId, tab: routeTab } = useParams<{ examId?: string; tab?: string }>();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const resolvedExamId = useMemo(() => {
+    return resolveDekiruExamId(routeExamId);
+  }, [routeExamId]);
+
   // Exam selection state (null means show selection screen)
   const [selectedExamId, setSelectedExamId] = useState<string | null>(() => {
-    try {
-      const saved = localStorage.getItem("dekiru_active_exam_id_v1");
-      if (saved && dekiruExamsMap[saved]) {
-        return saved;
-      }
-      return null;
-    } catch {
-      return null;
+    if (routeExamId) {
+      return resolveDekiruExamId(routeExamId);
     }
+    return null;
   });
 
   const [activeTab, setActiveTab] = useState<"study" | "exam">(() => {
-    try {
-      return (localStorage.getItem("dekiru_active_tab_v1") as "study" | "exam") || "exam";
-    } catch {
-      return "exam";
-    }
+    if (routeTab === "study") return "study";
+    return "exam";
   });
   const [selectedSection, setSelectedSection] = useState<number | "ALL">("ALL");
   const [progressRevision, setProgressRevision] = useState<number>(0);
@@ -264,13 +265,19 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
   // Initial progress on mount for previously selected exam
   const initialProgress = useMemo(() => {
-    if (!selectedExamId) return null;
-    return loadDekiruProgress(selectedExamId);
+    const targetId = resolvedExamId || selectedExamId;
+    if (!targetId) return null;
+    return loadDekiruProgress(targetId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Single question navigation in exam mode
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(() => {
+    const qParam = searchParams.get('q');
+    if (qParam) {
+      const parsed = parseInt(qParam, 10);
+      if (!isNaN(parsed) && parsed >= 1) return parsed - 1;
+    }
     return typeof initialProgress?.currentQuestionIndex === "number" ? initialProgress.currentQuestionIndex : 0;
   });
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -316,6 +323,53 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
     }));
   };
 
+  // Redirect if routeExamId is given but invalid
+  useEffect(() => {
+    if (routeExamId && !resolvedExamId) {
+      navigate('/dekiru', { replace: true });
+    }
+  }, [routeExamId, resolvedExamId, navigate]);
+
+  // Sync routeExamId with selectedExamId & load progress
+  useEffect(() => {
+    if (resolvedExamId) {
+      if (selectedExamId !== resolvedExamId) {
+        setSelectedExamId(resolvedExamId);
+        currentLoadedExamRef.current = resolvedExamId;
+        const saved = loadDekiruProgress(resolvedExamId);
+        if (saved) {
+          setUserAnswers(saved.userAnswers || {});
+          setRevealedQuestions(saved.revealedQuestions || {});
+          setExpandedExplanations(saved.expandedExplanations || {});
+          const qParam = searchParams.get('q');
+          const qIdx = qParam ? Math.max(0, parseInt(qParam, 10) - 1) : (typeof saved.currentQuestionIndex === 'number' ? saved.currentQuestionIndex : 0);
+          setCurrentQuestionIndex(qIdx);
+        } else {
+          setUserAnswers({});
+          setRevealedQuestions({});
+          setExpandedExplanations({});
+          const qParam = searchParams.get('q');
+          const qIdx = qParam ? Math.max(0, parseInt(qParam, 10) - 1) : 0;
+          setCurrentQuestionIndex(qIdx);
+        }
+      }
+    } else {
+      setSelectedExamId(null);
+      currentLoadedExamRef.current = null;
+    }
+  }, [resolvedExamId]);
+
+  // Sync routeTab with activeTab
+  useEffect(() => {
+    if (routeTab === 'study') {
+      setActiveTab('study');
+    } else if (routeTab === 'exam') {
+      setActiveTab('exam');
+    } else if (resolvedExamId && !routeTab) {
+      navigate(`/dekiru/${getDekiruSlug(resolvedExamId)}/exam`, { replace: true });
+    }
+  }, [routeTab, resolvedExamId, navigate]);
+
   // Auto-save progress effect whenever answers, revealed, or question index changes
   useEffect(() => {
     if (!selectedExamId || currentLoadedExamRef.current !== selectedExamId) return;
@@ -333,6 +387,17 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
       console.error("Failed to auto-save dekiru progress", e);
     }
   }, [selectedExamId, userAnswers, revealedQuestions, expandedExplanations, currentQuestionIndex]);
+
+  // Sync question index to URL search params in exam mode
+  useEffect(() => {
+    if (activeTab === 'exam' && selectedExamId) {
+      const qParam = searchParams.get('q');
+      const expected = String(currentQuestionIndex + 1);
+      if (qParam !== expected) {
+        setSearchParams({ q: expected }, { replace: true });
+      }
+    }
+  }, [currentQuestionIndex, activeTab, selectedExamId]);
 
   // Active exam data
   const currentExamData: DekiruExamData = useMemo(() => {
@@ -371,42 +436,19 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
   }, [allExamQuestions]);
 
   const handleSelectExam = (examId: string, initialTab: "study" | "exam" = "exam") => {
-    currentLoadedExamRef.current = examId;
-    setSelectedExamId(examId);
-    setActiveTab(initialTab);
-    try {
-      localStorage.setItem("dekiru_active_exam_id_v1", examId);
-      localStorage.setItem("dekiru_active_tab_v1", initialTab);
-      const saved = loadDekiruProgress(examId);
-      if (saved) {
-        setUserAnswers(saved.userAnswers || {});
-        setRevealedQuestions(saved.revealedQuestions || {});
-        setExpandedExplanations(saved.expandedExplanations || {});
-        setCurrentQuestionIndex(
-          typeof saved.currentQuestionIndex === "number" ? Math.max(0, saved.currentQuestionIndex) : 0
-        );
-      } else {
-        setUserAnswers({});
-        setRevealedQuestions({});
-        setExpandedExplanations({});
-        setCurrentQuestionIndex(0);
-      }
-    } catch (e) {
-      console.error("Failed to switch exam progress", e);
-    }
+    navigate(`/dekiru/${getDekiruSlug(examId)}/${initialTab}`);
     setSelectedSection("ALL");
-    setProgressRevision((prev) => prev + 1);
   };
 
   const handleBackToExamSelection = () => {
-    currentLoadedExamRef.current = null;
-    setSelectedExamId(null);
-    try {
-      localStorage.removeItem("dekiru_active_exam_id_v1");
-    } catch (e) {
-      console.error(e);
+    navigate('/dekiru');
+  };
+
+  const handleBackToPortal = () => {
+    if (onBackToSourceSelect) {
+      onBackToSourceSelect();
     }
-    setProgressRevision((prev) => prev + 1);
+    navigate('/');
   };
 
   const toggleExpand = (qId: string) => {
@@ -2144,7 +2186,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
           <div className="header-inner">
             <div className="header-top-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
               <button
-                onClick={onBackToSourceSelect}
+                onClick={handleBackToPortal}
                 className="btn btn-ghost"
                 style={{
                   padding: "0.35rem 0.65rem",
@@ -2458,6 +2500,62 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
 
             {/* Right: Actions */}
             <div className="header-actions-group" style={{ display: "flex", alignItems: "center", gap: "0.35rem", flexShrink: 0 }}>
+              {/* Tab Selector Pill (Ujian vs Belajar) */}
+              <div
+                style={{
+                  display: "flex",
+                  background: "#e2e8f0",
+                  padding: "3px",
+                  borderRadius: "10px",
+                  flexShrink: 0,
+                }}
+              >
+                <button
+                  onClick={() => {
+                    navigate(`/dekiru/${getDekiruSlug(selectedExamId || 'dekiru-review-1-3')}/exam`);
+                  }}
+                  style={{
+                    background: activeTab === "exam" ? "#ffffff" : "transparent",
+                    color: activeTab === "exam" ? "#4f46e5" : "#64748b",
+                    fontWeight: activeTab === "exam" ? 800 : 600,
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "0.35rem 0.65rem",
+                    fontSize: "0.75rem",
+                    cursor: "pointer",
+                    boxShadow: activeTab === "exam" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.3rem",
+                  }}
+                >
+                  <GraduationCap size={13} />
+                  <span>Ujian</span>
+                </button>
+                <button
+                  onClick={() => {
+                    navigate(`/dekiru/${getDekiruSlug(selectedExamId || 'dekiru-review-1-3')}/study`);
+                  }}
+                  style={{
+                    background: activeTab === "study" ? "#ffffff" : "transparent",
+                    color: activeTab === "study" ? "#0891b2" : "#64748b",
+                    fontWeight: activeTab === "study" ? 800 : 600,
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "0.35rem 0.65rem",
+                    fontSize: "0.75rem",
+                    cursor: "pointer",
+                    boxShadow: activeTab === "study" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.3rem",
+                  }}
+                >
+                  <BookOpen size={13} />
+                  <span>Belajar</span>
+                </button>
+              </div>
+
               {/* Switch Exam Button */}
               <button
                 onClick={() => {
