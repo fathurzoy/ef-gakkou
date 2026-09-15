@@ -329,7 +329,7 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
                     <strong style={{ color: '#881337', marginRight: '0.35rem' }}>
                       <SmartFurigana text={item.text} showFurigana={showFurigana} />
                     </strong>
-                    {item.translation && (
+                    {item.translation && item.translation !== item.text && (
                       <span style={{ color: '#9f1239', fontSize: '0.82rem', marginRight: '0.4rem' }}>
                         ({item.translation}) —
                       </span>
@@ -409,7 +409,7 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
                     {opt.optionId ? `${opt.optionId}. ` : ''}
                     <SmartFurigana text={opt.text} showFurigana={showFurigana} />
                   </strong>
-                  : {opt.translation}
+                  {opt.translation && opt.translation !== opt.text ? `: ${opt.translation}` : ''}
                 </div>
               ))}
             </div>

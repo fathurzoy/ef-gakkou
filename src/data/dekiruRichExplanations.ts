@@ -1,5 +1,5 @@
 import { DEKIRU_KANJI_DICT } from '../utils/dekiruFurigana';
-import { DEKIRU_SENTENCE_TRANSLATIONS, SAMPLE_ANSWER_TRANSLATIONS } from './dekiruTranslations';
+import { DEKIRU_SENTENCE_TRANSLATIONS, SAMPLE_ANSWER_TRANSLATIONS, DEKIRU_CHOICE_TRANSLATIONS } from './dekiruTranslations';
 
 export interface OptionDetail {
   optionId?: string | number;
@@ -868,9 +868,14 @@ export const WORD_MEANING_DICT: Record<string, string> = {
 export function inferWordMeaning(word: string): string {
   if (!word) return '';
   const trimmed = word.trim();
+  if (DEKIRU_CHOICE_TRANSLATIONS[trimmed]) return DEKIRU_CHOICE_TRANSLATIONS[trimmed];
   if (WORD_USAGE_GUIDE[trimmed]) return WORD_USAGE_GUIDE[trimmed].meaning;
   if (WORD_MEANING_DICT[trimmed]) return WORD_MEANING_DICT[trimmed];
   if (DEKIRU_KANJI_DICT[trimmed]) return `bacaan: ${DEKIRU_KANJI_DICT[trimmed]}`;
+  const hasJapanese = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf]/.test(trimmed);
+  if (hasJapanese) {
+    return '';
+  }
   return trimmed;
 }
 

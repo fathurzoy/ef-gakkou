@@ -741,7 +741,13 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       }}
                     >
                       <div>
-                        <strong>Arti:</strong> {chBreakdown.translation}
+                        {chBreakdown.translation && chBreakdown.translation !== chText ? (
+                          <>
+                            <strong>Arti:</strong> {chBreakdown.translation}
+                          </>
+                        ) : (
+                          <span style={{ fontWeight: 600 }}>{chBreakdown.isCorrect ? "Jawaban Benar" : "Pilihan Kurang Tepat"}</span>
+                        )}
                       </div>
                       <div style={{ fontSize: "0.75rem", fontWeight: 700, opacity: 0.9 }}>
                         {chBreakdown.isCorrect ? "✅ Benar" : "❌ Salah"}
