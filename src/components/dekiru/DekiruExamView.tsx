@@ -2290,14 +2290,18 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   const answeredProgCount = countAnswered(savedProg?.userAnswers);
                   const hasProgress = answeredProgCount > 0;
 
+                  const isYellow = examMeta.id.includes('kuning') || examMeta.id.includes('yellow');
                   const cardThemes = [
                     { accent: "#4f46e5", light: "#f5f3ff", border: "#818cf8", shadow: "rgba(79, 70, 229, 0.3)" },
                     { accent: "#0284c7", light: "#f0f9ff", border: "#38bdf8", shadow: "rgba(2, 132, 199, 0.3)" },
                     { accent: "#059669", light: "#ecfdf5", border: "#34d399", shadow: "rgba(5, 150, 105, 0.3)" },
                     { accent: "#d97706", light: "#fffbeb", border: "#fbbf24", shadow: "rgba(217, 119, 6, 0.3)" },
                     { accent: "#8b5cf6", light: "#faf5ff", border: "#a78bfa", shadow: "rgba(139, 92, 246, 0.3)" },
+                    { accent: "#b45309", light: "#fefce8", border: "#f59e0b", shadow: "rgba(217, 119, 6, 0.35)" },
                   ];
-                  const theme = cardThemes[idx % cardThemes.length];
+                  const theme = isYellow
+                    ? { accent: "#b45309", light: "#fefce8", border: "#f59e0b", shadow: "rgba(217, 119, 6, 0.35)" }
+                    : cardThemes[idx % cardThemes.length];
                   const accentColor = theme.accent;
                   const lightBg = theme.light;
 
@@ -2307,13 +2311,15 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                       className="card card-hover"
                       style={{
                         padding: "2.25rem 1.75rem",
-                        border: `2px solid ${theme.border}`,
+                        border: isYellow ? "2.5px solid #f59e0b" : `2px solid ${theme.border}`,
                         borderRadius: "22px",
-                        background: "linear-gradient(180deg, #ffffff 0%, " + lightBg + " 100%)",
+                        background: isYellow
+                          ? "linear-gradient(180deg, #ffffff 0%, #fefce8 60%, #fef3c7 100%)"
+                          : "linear-gradient(180deg, #ffffff 0%, " + lightBg + " 100%)",
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.06)",
+                        boxShadow: isYellow ? "0 12px 28px -5px rgba(217, 119, 6, 0.18)" : "0 10px 25px -5px rgba(0, 0, 0, 0.06)",
                         position: "relative",
                       }}
                     >
@@ -2322,20 +2328,29 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
                           <span
                             style={{
-                              background: accentColor,
+                              background: isYellow ? "linear-gradient(135deg, #d97706 0%, #b45309 100%)" : accentColor,
                               color: "#ffffff",
                               fontSize: "0.8rem",
                               fontWeight: 800,
                               padding: "0.35rem 0.75rem",
                               borderRadius: "9999px",
+                              boxShadow: isYellow ? "0 2px 8px rgba(217, 119, 6, 0.35)" : undefined,
                             }}
                           >
-                            {examMeta.title}
+                            {isYellow ? "⭐ " + examMeta.title : examMeta.title}
                           </span>
-                          <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 700 }}>
+                          <span style={{ fontSize: "0.78rem", color: isYellow ? "#b45309" : "#64748b", fontWeight: 800 }}>
                             {examMeta.totalQuestions} Soal
                           </span>
                         </div>
+
+                        {/* Special Level Tag for Yellow Book */}
+                        {isYellow && (
+                          <div style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", marginBottom: "0.85rem", background: "#fef3c7", color: "#92400e", fontSize: "0.76rem", fontWeight: 800, padding: "0.25rem 0.65rem", borderRadius: "8px", border: "1px solid #fde68a" }}>
+                            <span>📖</span>
+                            <span>Buku Kuning (初級2 / 中級への橋渡し)</span>
+                          </div>
+                        )}
 
                         {/* Japanese Title */}
                         <h2 style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", marginBottom: "1rem", lineHeight: 1.35 }}>
@@ -2484,15 +2499,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     {currentExamData.exam.title.replace(/『できる日本語初級』/g, "").trim()}
                   </div>
                   <div style={{ fontSize: "0.68rem", color: activeTab === "exam" ? "#4f46e5" : "#0891b2", fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {(currentExamData.exam.id === 'dekiru-review-1-3'
-                      ? "Ujian 1 (Bab 1-3)"
-                      : currentExamData.exam.id === 'dekiru-review-4-6'
-                      ? "Ujian 2 (Bab 4-6)"
-                      : currentExamData.exam.id === 'dekiru-review-7-9'
-                      ? "Ujian 3 (Bab 7-9)"
-                      : currentExamData.exam.id === 'dekiru-review-10-12'
-                      ? "Ujian 4 (Bab 10-12)"
-                      : "Ujian 5 (Bab 13-15)") + (activeTab === "exam" ? " • Mode Ujian" : " • Mode Belajar")}
+                    {((dekiruExamsList.find((e) => e.id === currentExamData.exam.id)?.title) || "Ujian Dekiru") + (activeTab === "exam" ? " • Mode Ujian" : " • Mode Belajar")}
                   </div>
                 </div>
               </div>

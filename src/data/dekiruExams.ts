@@ -3,6 +3,7 @@ import { dekiruExam2Data } from './dekiruExam2Data';
 import { dekiruExam3Data } from './dekiruExam3Data';
 import { dekiruExam4Data } from './dekiruExam4Data';
 import { dekiruExam5Data } from './dekiruExam5Data';
+import { dekiruExamYellow1Data } from './dekiruExamYellow1Data';
 import { DekiruExamData } from '../types/dekiru';
 
 export interface DekiruExamMeta {
@@ -67,6 +68,16 @@ export const dekiruExamsList: DekiruExamMeta[] = [
     totalSections: dekiruExam5Data.sections.length,
     data: dekiruExam5Data,
   },
+  {
+    id: 'dekiru-kuning-1-3',
+    title: 'Ujian Buku Kuning (Bab 1〜3)',
+    subtitle: '初級2（黄色） 1〜3課 総合復習テスト',
+    lessonRange: [1, 3],
+    badgeText: 'Buku Kuning • Bab 1-3 • 84 Soal',
+    totalQuestions: 84,
+    totalSections: dekiruExamYellow1Data.sections.length,
+    data: dekiruExamYellow1Data,
+  },
 ];
 
 export const dekiruExamsMap: Record<string, DekiruExamData> = {
@@ -75,6 +86,7 @@ export const dekiruExamsMap: Record<string, DekiruExamData> = {
   'dekiru-review-7-9': dekiruExam3Data,
   'dekiru-review-10-12': dekiruExam4Data,
   'dekiru-review-13-15': dekiruExam5Data,
+  'dekiru-kuning-1-3': dekiruExamYellow1Data,
 };
 
 export const resolveDekiruExamId = (param?: string | null): string | null => {
@@ -86,6 +98,18 @@ export const resolveDekiruExamId = (param?: string | null): string | null => {
   if (clean === '3' || clean === 'exam3' || clean === 'ujian3' || clean === 'ujian-3' || clean === 'bab-7-9') return 'dekiru-review-7-9';
   if (clean === '4' || clean === 'exam4' || clean === 'ujian4' || clean === 'ujian-4' || clean === 'bab-10-12') return 'dekiru-review-10-12';
   if (clean === '5' || clean === 'exam5' || clean === 'ujian5' || clean === 'ujian-5' || clean === 'bab-13-15') return 'dekiru-review-13-15';
+  if (
+    clean === 'kuning' ||
+    clean === 'kuning1' ||
+    clean === 'kuning-1' ||
+    clean === 'yellow' ||
+    clean === 'yellow1' ||
+    clean === 'yellow-1' ||
+    clean === 'exam-kuning-1' ||
+    clean === 'bab-kuning-1-3' ||
+    clean === 'buku-kuning' ||
+    clean === 'dekiru-kuning-1-3'
+  ) return 'dekiru-kuning-1-3';
   return null;
 };
 
@@ -96,7 +120,9 @@ export const getDekiruSlug = (examId: string): string => {
     'dekiru-review-7-9': 'exam3',
     'dekiru-review-10-12': 'exam4',
     'dekiru-review-13-15': 'exam5',
+    'dekiru-kuning-1-3': 'kuning1',
   };
   return map[examId] || examId;
 };
+
 
