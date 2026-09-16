@@ -1,7 +1,8 @@
 // Utility for checking written Japanese exam answers with high flexibility
 // Accepts: Kanji, Hiragana, Katakana, Romaji, with or without punctuation, case-insensitive, flexible spacing
 
-const ROMAJI_TO_HIRAGANA_MAP: [string, string][] = [
+// Sort descending by length so multi-letter romaji (e.g. tsu, shi, chi, kya) are replaced before shorter ones (e.g. su, hi, ta)
+const RAW_ROMAJI_MAP: [string, string][] = [
   ['kya', 'きゃ'], ['kyu', 'きゅ'], ['kyo', 'きょ'],
   ['sha', 'しゃ'], ['shu', 'しゅ'], ['sho', 'しょ'],
   ['cha', 'ちゃ'], ['chu', 'ちゅ'], ['cho', 'ちょ'],
@@ -10,12 +11,12 @@ const ROMAJI_TO_HIRAGANA_MAP: [string, string][] = [
   ['mya', 'みゃ'], ['myu', 'みゅ'], ['myo', 'みょ'],
   ['rya', 'りゃ'], ['ryu', 'りゅ'], ['ryo', 'りょ'],
   ['gya', 'ぎゃ'], ['gyu', 'ぎゅ'], ['gyo', 'ぎょ'],
-  ['ja', 'じゃ'], ['ju', 'じゅ'], ['jo', 'じょ'],
   ['bya', 'びゃ'], ['byu', 'びゅ'], ['byo', 'びょ'],
   ['pya', 'ぴゃ'], ['pyu', 'ぴゅ'], ['pyo', 'ぴょ'],
+  ['tsu', 'つ'], ['shi', 'し'], ['chi', 'ち'],
   ['ka', 'か'], ['ki', 'き'], ['ku', 'く'], ['ke', 'け'], ['ko', 'こ'],
-  ['sa', 'さ'], ['shi', 'し'], ['si', 'し'], ['su', 'す'], ['se', 'せ'], ['so', 'そ'],
-  ['ta', 'た'], ['chi', 'ち'], ['ti', 'ち'], ['tsu', 'つ'], ['tu', 'つ'], ['te', 'て'], ['to', 'と'],
+  ['sa', 'さ'], ['si', 'し'], ['su', 'す'], ['se', 'せ'], ['so', 'そ'],
+  ['ta', 'た'], ['ti', 'ち'], ['tu', 'つ'], ['te', 'て'], ['to', 'と'],
   ['na', 'な'], ['ni', 'に'], ['nu', 'ぬ'], ['ne', 'ね'], ['no', 'の'],
   ['ha', 'は'], ['hi', 'ひ'], ['fu', 'ふ'], ['hu', 'ふ'], ['he', 'へ'], ['ho', 'ほ'],
   ['ma', 'ま'], ['mi', 'み'], ['mu', 'む'], ['me', 'め'], ['mo', 'も'],
@@ -27,8 +28,13 @@ const ROMAJI_TO_HIRAGANA_MAP: [string, string][] = [
   ['da', 'だ'], ['di', 'ぢ'], ['du', 'づ'], ['de', 'で'], ['do', 'ど'],
   ['ba', 'ば'], ['bi', 'び'], ['bu', 'ぶ'], ['be', 'べ'], ['bo', 'ぼ'],
   ['pa', 'ぱ'], ['pi', 'ぴ'], ['pu', 'ぷ'], ['pe', 'ぺ'], ['po', 'ぽ'],
+  ['ja', 'じゃ'], ['ju', 'じゅ'], ['jo', 'じょ'],
   ['a', 'あ'], ['i', 'い'], ['u', 'う'], ['e', 'え'], ['o', 'お'],
 ];
+
+const ROMAJI_TO_HIRAGANA_MAP: [string, string][] = [...RAW_ROMAJI_MAP].sort(
+  (a, b) => b[0].length - a[0].length
+) as [string, string][];
 
 export function romajiToHiragana(text: string): string {
   if (!text) return '';

@@ -229,6 +229,34 @@ export const DekiruExplanationBox: React.FC<DekiruExplanationBoxProps> = ({
                   {richData?.whyCorrect || 'Pertanyaan terbuka / ikuti pola kalimat sesuai instruksi.'}
                 </div>
               )}
+
+              {/* Accepted variants info (Kanji / Hiragana / etc.) */}
+              {item.acceptedVariants && (
+                <div style={{ marginTop: '0.65rem', paddingTop: '0.5rem', borderTop: '1px dashed #a7f3d0', width: '100%', fontSize: '0.82rem', color: '#047857', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <span style={{ fontWeight: 700 }}>💡 Variasi yang juga diterima (Kanji / Hiragana):</span>
+                  {Array.isArray(item.acceptedVariants) ? (
+                    item.acceptedVariants.map((v: any, vIdx: number) => {
+                      const vText = typeof v === 'string' ? v : v.text;
+                      return (
+                        <span key={vIdx} style={{ background: '#d1fae5', color: '#065f46', padding: '0.15rem 0.5rem', borderRadius: '6px', fontWeight: 600, border: '1px solid #6ee7b7' }}>
+                          {vText}
+                        </span>
+                      );
+                    })
+                  ) : typeof item.acceptedVariants === 'object' ? (
+                    Object.entries(item.acceptedVariants).map(([k, arr]: any) => (
+                      <div key={k} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <span>({k}):</span>
+                        {Array.isArray(arr) && arr.map((subV: any, subIdx: number) => (
+                          <span key={subIdx} style={{ background: '#d1fae5', color: '#065f46', padding: '0.15rem 0.45rem', borderRadius: '6px', fontWeight: 600, border: '1px solid #6ee7b7' }}>
+                            {typeof subV === 'string' ? subV : subV.text}
+                          </span>
+                        ))}
+                      </div>
+                    ))
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
         )}

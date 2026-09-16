@@ -24,7 +24,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { DekiruSection, DekiruExamData } from "../../types/dekiru";
-import { SmartFurigana } from "../../utils/dekiruFurigana";
+import { SmartFurigana, annotateTextWithFurigana } from "../../utils/dekiruFurigana";
+import { cleanText, stripSpaces, checkSingleAnswer, romajiToHiragana } from "../../utils/answerChecker";
 import { getRichExplanation, inferPositionMeaning } from "../../data/dekiruRichExplanations";
 import { SAMPLE_ANSWER_TRANSLATIONS } from "../../data/dekiruTranslations";
 import { DekiruExplanationBox } from "./DekiruExplanationBox";
@@ -144,6 +145,214 @@ export const checkParticleMatch = (
   return false;
 };
 
+// Katakana to Hiragana conversion helper
+export const katakanaToHiragana = (str: string): string => {
+  if (!str) return "";
+  return str.replace(/[\u30a1-\u30f6]/g, (ch) =>
+    String.fromCharCode(ch.charCodeAt(0) - 0x60)
+  );
+};
+
+// Extract kana reading from TextSegment array
+export const extractKanaFromSegments = (segments?: any[]): string => {
+  if (!segments || !Array.isArray(segments)) return "";
+  return segments.map((s) => s.reading || s.text || "").join("");
+};
+
+// Extract surface text from TextSegment array
+export const extractSurfaceFromSegments = (segments?: any[]): string => {
+  if (!segments || !Array.isArray(segments)) return "";
+  return segments.map((s) => s.text || "").join("");
+};
+
+/**
+ * Universal accepted variant collector for Dekiru questions.
+ * Collects:
+ * - Direct Kanji text
+ * - Hiragana readings from segments
+ * - All acceptedVariants (text & reading)
+ * - Dictionary-based furigana readings
+ * - Verb stems and auxiliary endings (e.g. 作れ <-> 作れます, つくれ <-> つくれます)
+ * - Katakana & Romaji equivalents
+ */
+export const collectAcceptedVariants = (
+  target: any,
+  acceptedVariants?: any,
+  completed?: any,
+  questionText?: string
+): string[] => {
+  const pool = new Set<string>();
+
+  const addCandidate = (val: any) => {
+    if (!val) return;
+    if (typeof val === "string") {
+      const clean = val.trim();
+      if (clean) pool.add(clean);
+    } else if (typeof val === "object") {
+      if (val.text && typeof val.text === "string") {
+        const clean = val.text.trim();
+        if (clean) pool.add(clean);
+      }
+      if (val.value && typeof val.value === "string") {
+        const clean = val.value.trim();
+        if (clean) pool.add(clean);
+      }
+      if (val.segments && Array.isArray(val.segments)) {
+        const kana = extractKanaFromSegments(val.segments).trim();
+        if (kana) pool.add(kana);
+        const surface = extractSurfaceFromSegments(val.segments).trim();
+        if (surface) pool.add(surface);
+      }
+    }
+  };
+
+  // 1. Add primary target
+  addCandidate(target);
+
+  // 2. Add acceptedVariants
+  if (Array.isArray(acceptedVariants)) {
+    acceptedVariants.forEach((v) => addCandidate(v));
+  } else if (acceptedVariants && typeof acceptedVariants === "object") {
+    Object.values(acceptedVariants).forEach((v) => {
+      if (Array.isArray(v)) {
+        v.forEach((subV) => addCandidate(subV));
+      } else {
+        addCandidate(v);
+      }
+    });
+  }
+
+  // 3. From completed sentence if present
+  if (completed) {
+    addCandidate(completed);
+  }
+
+  // 4. Furigana reading expansion via dictionary
+  const baseList = Array.from(pool);
+  for (const item of baseList) {
+    if (/[\u4e00-\u9faf]/.test(item)) {
+      try {
+        const annotated = annotateTextWithFurigana(item);
+        const hira = annotated.map((s) => s.reading || s.text).join("").trim();
+        if (hira) pool.add(hira);
+      } catch {
+        // fallback
+      }
+    }
+  }
+
+  // 5. Expand endings (e.g. ます / ません / です / と思っています)
+  const qStr = questionText || "";
+  const hasMasu = /）\s*ます|）ます/i.test(qStr);
+  const hasMasen = /）\s*ません|）ません/i.test(qStr);
+  const hasDesu = /）\s*です|）です/i.test(qStr);
+  const hasToOmou = /）\s*と\s*思/i.test(qStr);
+
+  const expandedList = Array.from(pool);
+  for (const cand of expandedList) {
+    // If ends in ます
+    if (cand.endsWith("ます")) {
+      pool.add(cand.slice(0, -2));
+    } else if (hasMasu) {
+      pool.add(cand + "ます");
+    }
+
+    // If ends in ません
+    if (cand.endsWith("ません")) {
+      pool.add(cand.slice(0, -3));
+    } else if (hasMasen) {
+      pool.add(cand + "ません");
+    }
+
+    // If ends in です
+    if (cand.endsWith("です")) {
+      pool.add(cand.slice(0, -2));
+    } else if (hasDesu) {
+      pool.add(cand + "です");
+    }
+
+    // If ends in と思っています
+    if (cand.endsWith("と思っています")) {
+      pool.add(cand.replace(/と思っています$/, ""));
+      pool.add(cand.replace(/と思っています$/, "と思う"));
+    } else if (hasToOmou) {
+      pool.add(cand + "と思っています");
+      pool.add(cand + "とおもっています");
+      pool.add(cand + "と思う");
+      pool.add(cand + "とおもう");
+    }
+  }
+
+  // 6. Convert any Katakana to Hiragana in pool
+  for (const cand of Array.from(pool)) {
+    const hira = katakanaToHiragana(cand);
+    if (hira !== cand) {
+      pool.add(hira);
+    }
+  }
+
+  return Array.from(pool);
+};
+
+/**
+ * Universal text answer matcher:
+ * Returns true if user's input matches target in:
+ * - Kanji
+ * - Hiragana
+ * - Katakana
+ * - Romaji
+ * - With or without polite endings (ます / ません / です)
+ * - Flexible whitespace and punctuation
+ */
+export const checkDekiruAnswerMatch = (
+  userVal: any,
+  target: any,
+  acceptedVariants?: any,
+  completed?: any,
+  questionText?: string
+): boolean => {
+  if (userVal === undefined || userVal === null) return false;
+  const uStr = String(userVal).trim();
+  if (!uStr) return false;
+
+  const candidateList = collectAcceptedVariants(target, acceptedVariants, completed, questionText);
+  if (candidateList.length === 0) return false;
+
+  // Direct normalized check
+  const cleanU = cleanText(uStr);
+  const strippedU = stripSpaces(cleanU);
+  const hiraU = katakanaToHiragana(romajiToHiragana(cleanU));
+  const strippedHiraU = stripSpaces(hiraU);
+
+  for (const cand of candidateList) {
+    const cleanC = cleanText(cand);
+    const strippedC = stripSpaces(cleanC);
+    const hiraC = katakanaToHiragana(romajiToHiragana(cleanC));
+    const strippedHiraC = stripSpaces(hiraC);
+
+    if (
+      cleanU === cleanC ||
+      strippedU === strippedC ||
+      strippedHiraU === strippedHiraC ||
+      strippedHiraU === strippedC ||
+      strippedU === strippedHiraC
+    ) {
+      return true;
+    }
+  }
+
+  // Use answerChecker for particle/romaji normalization
+  if (checkSingleAnswer(uStr, candidateList)) {
+    return true;
+  }
+
+  if (checkSingleAnswer(hiraU, candidateList)) {
+    return true;
+  }
+
+  return false;
+};
+
 // Accurately compute whether user's answer is correct for evaluation banner & stats
 export const isQuestionCorrect = (item: any, sec: DekiruSection, uAns: any): boolean => {
   if (uAns === undefined || uAns === null || uAns === "") return false;
@@ -212,12 +421,65 @@ export const isQuestionCorrect = (item: any, sec: DekiruSection, uAns: any): boo
     return Boolean(isLocCorrect && isExistCorrect);
   }
 
-  // 7. General text answer or segments match
-  if ("answer" in item && typeof item.answer === "string") {
-    return String(uAns).trim().toLowerCase() === String(item.answer).trim().toLowerCase();
+  // 7. Conjugation questions (accepts Kanji, Hiragana, Katakana, Romaji, with/without polite endings)
+  if (sec.type === "conjugation" && "answer" in item) {
+    if (Array.isArray(item.answer)) {
+      if (!Array.isArray(uAns)) return false;
+      return item.answer.every((ansItem: any, idx: number) => {
+        const variants = Array.isArray(item.acceptedVariants)
+          ? item.acceptedVariants
+          : item.acceptedVariants?.[String(idx + 1)] || item.acceptedVariants?.[idx];
+        return checkDekiruAnswerMatch(uAns[idx], ansItem, variants, undefined, item.question?.text);
+      });
+    }
+    return checkDekiruAnswerMatch(uAns, item.answer, item.acceptedVariants, item.completed, item.question?.text);
   }
-  if ("answer" in item && typeof item.answer === "object" && item.answer !== null && "text" in item.answer) {
-    return String(uAns).trim().toLowerCase() === String(item.answer.text).trim().toLowerCase();
+
+  // 7b. Time vocabulary, Antonym, Counter fill, Picture writing, Picture dialogue, Casual form
+  if (
+    (sec.type === "time-vocabulary" ||
+      sec.type === "antonym" ||
+      sec.type === "counter-fill" ||
+      sec.type === "picture-vocabulary" ||
+      sec.type === "picture-dialogue" ||
+      sec.type === "casual-form" ||
+      sec.type === "dialogue-completion") &&
+    "answer" in item
+  ) {
+    if (Array.isArray(item.answer)) {
+      if (!Array.isArray(uAns)) return false;
+      return item.answer.every((ansItem: any, idx: number) => {
+        const variants = Array.isArray(item.acceptedVariants)
+          ? item.acceptedVariants
+          : item.acceptedVariants?.[String(idx + 1)] || item.acceptedVariants?.[idx];
+        return checkDekiruAnswerMatch(uAns[idx], ansItem, variants, undefined, item.question?.text);
+      });
+    }
+    return checkDekiruAnswerMatch(uAns, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+  }
+
+  // 7c. Picture Writing with subparts (1, 2, 3)
+  if (sec.type === "picture-writing" && "answer" in item) {
+    if (typeof item.answer === "object" && item.answer !== null && !("text" in item.answer) && !Array.isArray(item.answer)) {
+      if (typeof uAns !== "object" || uAns === null) return false;
+      return Object.entries(item.answer).every(([key, expectedVal]: any) => {
+        const uVal = uAns[key];
+        const variants = item.acceptedVariants?.[key];
+        return checkDekiruAnswerMatch(uVal, expectedVal, variants, undefined, item.question?.text);
+      });
+    }
+    return checkDekiruAnswerMatch(uAns, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+  }
+
+  // 7d. General fallback for any question with 'answer'
+  if ("answer" in item && item.answer !== undefined && item.answer !== null) {
+    if (Array.isArray(item.answer)) {
+      if (!Array.isArray(uAns)) return false;
+      return item.answer.every((ansItem: any, idx: number) =>
+        checkDekiruAnswerMatch(uAns[idx], ansItem, item.acceptedVariants?.[idx], undefined, item.question?.text)
+      );
+    }
+    return checkDekiruAnswerMatch(uAns, item.answer, item.acceptedVariants, item.completed, item.question?.text);
   }
 
   // 8. Open Answer with sampleAnswers
@@ -227,7 +489,14 @@ export const isQuestionCorrect = (item: any, sec: DekiruSection, uAns: any): boo
     const matchSample = item.sampleAnswers.some((s: any) => {
       const sText = typeof s === "string" ? s : s.text;
       const cleanS = sText.trim().toLowerCase().replace(/[。、！？\s]/g, "");
-      return cleanUser === cleanS || cleanUser.includes(cleanS) || cleanS.includes(cleanUser);
+      const sKana = s.segments ? extractKanaFromSegments(s.segments) : "";
+      const cleanSKana = sKana.trim().toLowerCase().replace(/[。、！？\s]/g, "");
+      return (
+        cleanUser === cleanS ||
+        cleanUser.includes(cleanS) ||
+        cleanS.includes(cleanUser) ||
+        (cleanSKana && (cleanUser === cleanSKana || cleanUser.includes(cleanSKana) || cleanSKana.includes(cleanUser)))
+      );
     });
     if (matchSample) return true;
     if (sec.type === "open-answer" && cleanUser.length >= 2) return true;
@@ -1082,120 +1351,193 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         })()}
 
         {/* 5. Time Vocabulary (Exam 2 Sec 2) */}
-        {sec.type === "time-vocabulary" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-              ✍️ Tulis kata waktu dalam hiragana:
-            </label>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input
-                type="text"
-                placeholder="Contoh: きのう"
-                value={userAnswers[item.id] || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
-                    setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
-                  }
-                }}
-                style={{
-                  maxWidth: "320px",
-                  padding: "0.55rem 0.85rem",
-                  borderRadius: "10px",
-                  border: "1.5px solid #cbd5e1",
-                  fontSize: "0.95rem",
-                  fontWeight: 600,
-                }}
-              />
+        {sec.type === "time-vocabulary" && (() => {
+          const currentVal = userAnswers[item.id] || "";
+          const isCorrect = checkDekiruAnswerMatch(currentVal, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+          const showCorrect = isRevealed && isCorrect;
+          const showWrong = isRevealed && !isCorrect && currentVal.trim() !== "";
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis kata waktu (Hiragana atau Kanji):
+                </label>
+                <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                  💡 Bisa ketik Kanji atau Hiragana
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Contoh: きのう / 昨日"
+                  value={currentVal}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                      setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                    }
+                  }}
+                  style={{
+                    maxWidth: "320px",
+                    width: "100%",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: showCorrect
+                      ? "2px solid #10b981"
+                      : showWrong
+                      ? "2px solid #ef4444"
+                      : "1.5px solid #cbd5e1",
+                    background: showCorrect ? "#ecfdf5" : showWrong ? "#fef2f2" : "#ffffff",
+                    fontSize: "0.95rem",
+                    fontWeight: 600,
+                  }}
+                />
+                {showCorrect && <CheckCircle2 size={22} color="#10b981" />}
+                {showWrong && <XCircle size={22} color="#ef4444" />}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* 6. Antonym / Lawan Kata (Exam 2 Sec 3) */}
-        {sec.type === "antonym" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-              ✍️ Tulis lawan kata (atau kalimat lengkap berlawanan):
-            </label>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input
-                type="text"
-                placeholder="Contoh: 少ない"
-                value={userAnswers[item.id] || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
-                    setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
-                  }
-                }}
-                style={{
-                  flex: 1,
-                  maxWidth: "400px",
-                  padding: "0.55rem 0.85rem",
-                  borderRadius: "10px",
-                  border: "1.5px solid #cbd5e1",
-                  fontSize: "0.95rem",
-                }}
-              />
+        {sec.type === "antonym" && (() => {
+          const currentVal = userAnswers[item.id] || "";
+          const isCorrect = checkDekiruAnswerMatch(currentVal, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+          const showCorrect = isRevealed && isCorrect;
+          const showWrong = isRevealed && !isCorrect && currentVal.trim() !== "";
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis lawan kata (atau kalimat lengkap berlawanan):
+                </label>
+                <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                  💡 Bisa ketik Kanji atau Hiragana
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Contoh: 少ない / すくない"
+                  value={currentVal}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                      setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                    }
+                  }}
+                  style={{
+                    flex: 1,
+                    maxWidth: "400px",
+                    width: "100%",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: showCorrect
+                      ? "2px solid #10b981"
+                      : showWrong
+                      ? "2px solid #ef4444"
+                      : "1.5px solid #cbd5e1",
+                    background: showCorrect ? "#ecfdf5" : showWrong ? "#fef2f2" : "#ffffff",
+                    fontSize: "0.95rem",
+                    fontWeight: 600,
+                  }}
+                />
+                {showCorrect && <CheckCircle2 size={22} color="#10b981" />}
+                {showWrong && <XCircle size={22} color="#ef4444" />}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* 7. Counter Fill (Exam 2 Sec 6) */}
-        {sec.type === "counter-fill" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-              ✍️ Tulis hitungan dalam hiragana:
-            </label>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input
-                type="text"
-                placeholder="Contoh: さんさつ"
-                value={userAnswers[item.id] || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
-                    setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
-                  }
-                }}
-                style={{
-                  maxWidth: "320px",
-                  padding: "0.55rem 0.85rem",
-                  borderRadius: "10px",
-                  border: "1.5px solid #cbd5e1",
-                  fontSize: "0.95rem",
-                  fontWeight: 600,
-                }}
-              />
-            </div>
-          </div>
-        )}
+        {sec.type === "counter-fill" && (() => {
+          const currentVal = userAnswers[item.id] || "";
+          const isCorrect = checkDekiruAnswerMatch(currentVal, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+          const showCorrect = isRevealed && isCorrect;
+          const showWrong = isRevealed && !isCorrect && currentVal.trim() !== "";
 
-        {/* 8. Conjugation / Perubahan Bentuk (Exam 2 Sec 7, Exam 4 Sec 3) */}
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis hitungan (Hiragana atau Kanji):
+                </label>
+                <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                  💡 Bisa ketik Kanji, Hiragana, atau angka
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Contoh: さんさつ / 三冊 / 3冊"
+                  value={currentVal}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                      setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                    }
+                  }}
+                  style={{
+                    maxWidth: "320px",
+                    width: "100%",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: showCorrect
+                      ? "2px solid #10b981"
+                      : showWrong
+                      ? "2px solid #ef4444"
+                      : "1.5px solid #cbd5e1",
+                    background: showCorrect ? "#ecfdf5" : showWrong ? "#fef2f2" : "#ffffff",
+                    fontSize: "0.95rem",
+                    fontWeight: 600,
+                  }}
+                />
+                {showCorrect && <CheckCircle2 size={22} color="#10b981" />}
+                {showWrong && <XCircle size={22} color="#ef4444" />}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 8. Conjugation / Perubahan Bentuk (Exam 2 Sec 7, Exam 4 Sec 3, Yellow Exam Sec 2) */}
         {sec.type === "conjugation" && (() => {
           const isMulti = Array.isArray(item.answer);
           if (isMulti) {
             const arrAnswers = item.answer as any[];
             return (
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-                  ✍️ Tulis perubahan bentuk kata untuk masing-masing bagian (1, 2):
-                </label>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                  <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                    ✍️ Tulis perubahan bentuk kata untuk masing-masing bagian (1, 2):
+                  </label>
+                  <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                    💡 Bisa ketik Kanji atau Hiragana
+                  </span>
+                </div>
                 <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-                  {arrAnswers.map((_, bIdx) => {
+                  {arrAnswers.map((ansItem, bIdx) => {
                     const currentVal = (Array.isArray(userAnswers[item.id]) && userAnswers[item.id][bIdx]) || "";
+                    const variants = Array.isArray(item.acceptedVariants)
+                      ? item.acceptedVariants
+                      : item.acceptedVariants?.[String(bIdx + 1)] || item.acceptedVariants?.[bIdx];
+                    const isPartCorrect = checkDekiruAnswerMatch(currentVal, ansItem, variants, undefined, item.question?.text);
+                    const showPartCorrect = isRevealed && isPartCorrect;
+                    const showPartWrong = isRevealed && !isPartCorrect && currentVal.trim() !== "";
+
                     return (
                       <div key={bIdx} style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
                         <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#4f46e5" }}>
@@ -1203,7 +1545,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         </span>
                         <input
                           type="text"
-                          placeholder="Contoh: 読み"
+                          placeholder="Kanji / Hiragana..."
                           value={currentVal}
                           onChange={(e) => {
                             const val = e.target.value;
@@ -1223,11 +1565,18 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                             maxWidth: "200px",
                             padding: "0.55rem 0.85rem",
                             borderRadius: "10px",
-                            border: "1.5px solid #cbd5e1",
+                            border: showPartCorrect
+                              ? "2px solid #10b981"
+                              : showPartWrong
+                              ? "2px solid #ef4444"
+                              : "1.5px solid #cbd5e1",
+                            background: showPartCorrect ? "#ecfdf5" : showPartWrong ? "#fef2f2" : "#ffffff",
                             fontSize: "0.95rem",
                             fontWeight: 600,
                           }}
                         />
+                        {showPartCorrect && <CheckCircle2 size={18} color="#10b981" />}
+                        {showPartWrong && <XCircle size={18} color="#ef4444" />}
                       </div>
                     );
                   })}
@@ -1235,16 +1584,27 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
               </div>
             );
           }
+
+          const currentVal = userAnswers[item.id] || "";
+          const isCorrect = checkDekiruAnswerMatch(currentVal, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+          const showCorrect = isRevealed && isCorrect;
+          const showWrong = isRevealed && !isCorrect && currentVal.trim() !== "";
+
           return (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-                ✍️ Tulis perubahan bentuk kata:
-              </label>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis perubahan bentuk kata:
+                </label>
+                <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                  💡 Bisa ketik Kanji atau Hiragana
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <input
                   type="text"
-                  placeholder="Contoh: 読み"
-                  value={userAnswers[item.id] || ""}
+                  placeholder="Ketik jawaban (Kanji / Hiragana)..."
+                  value={currentVal}
                   onChange={(e) => {
                     const val = e.target.value;
                     setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
@@ -1257,13 +1617,21 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   }}
                   style={{
                     maxWidth: "320px",
+                    width: "100%",
                     padding: "0.55rem 0.85rem",
                     borderRadius: "10px",
-                    border: "1.5px solid #cbd5e1",
+                    border: showCorrect
+                      ? "2px solid #10b981"
+                      : showWrong
+                      ? "2px solid #ef4444"
+                      : "1.5px solid #cbd5e1",
+                    background: showCorrect ? "#ecfdf5" : showWrong ? "#fef2f2" : "#ffffff",
                     fontSize: "0.95rem",
                     fontWeight: 600,
                   }}
                 />
+                {showCorrect && <CheckCircle2 size={22} color="#10b981" />}
+                {showWrong && <XCircle size={22} color="#ef4444" />}
               </div>
             </div>
           );
@@ -1335,32 +1703,58 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         })()}
 
         {/* 9b. Picture Vocabulary (Exam 3 Sec 2) */}
-        {sec.type === "picture-vocabulary" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-              ✍️ Tulis kata sesuai gambar:
-            </label>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input
-                type="text"
-                placeholder="Contoh: カメラ"
-                value={userAnswers[item.id] || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
-                }}
-                style={{
-                  maxWidth: "320px",
-                  padding: "0.55rem 0.85rem",
-                  borderRadius: "10px",
-                  border: "1.5px solid #cbd5e1",
-                  fontSize: "0.95rem",
-                  fontWeight: 600,
-                }}
-              />
+        {sec.type === "picture-vocabulary" && (() => {
+          const currentVal = userAnswers[item.id] || "";
+          const isCorrect = checkDekiruAnswerMatch(currentVal, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+          const showCorrect = isRevealed && isCorrect;
+          const showWrong = isRevealed && !isCorrect && currentVal.trim() !== "";
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis kata sesuai gambar:
+                </label>
+                <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                  💡 Bisa ketik Kanji, Hiragana, atau Katakana
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Contoh: カメラ"
+                  value={currentVal}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                      setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                    }
+                  }}
+                  style={{
+                    maxWidth: "320px",
+                    width: "100%",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: showCorrect
+                      ? "2px solid #10b981"
+                      : showWrong
+                      ? "2px solid #ef4444"
+                      : "1.5px solid #cbd5e1",
+                    background: showCorrect ? "#ecfdf5" : showWrong ? "#fef2f2" : "#ffffff",
+                    fontSize: "0.95rem",
+                    fontWeight: 600,
+                  }}
+                />
+                {showCorrect && <CheckCircle2 size={22} color="#10b981" />}
+                {showWrong && <XCircle size={22} color="#ef4444" />}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* 9c. Location & Existence (Exam 3 Sec 4) */}
         {sec.type === "location-existence" && (() => {
@@ -2066,55 +2460,109 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         })()}
 
         {/* 11c. Picture Dialogue (Exam 5 Sec 6) */}
-        {sec.type === "picture-dialogue" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-              ✍️ Tulis kalimat respon untuk melengkapi percakapan:
-            </label>
-            <input
-              type="text"
-              placeholder="Ketik kalimat bahasa Jepang di sini..."
-              value={userAnswers[item.id] || ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
-              }}
-              style={{
-                width: "100%",
-                padding: "0.55rem 0.85rem",
-                borderRadius: "10px",
-                border: "1.5px solid #cbd5e1",
-                fontSize: "0.95rem",
-              }}
-            />
-          </div>
-        )}
+        {sec.type === "picture-dialogue" && (() => {
+          const currentVal = userAnswers[item.id] || "";
+          const isCorrect = checkDekiruAnswerMatch(currentVal, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+          const showCorrect = isRevealed && isCorrect;
+          const showWrong = isRevealed && !isCorrect && currentVal.trim() !== "";
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis kalimat respon untuk melengkapi percakapan:
+                </label>
+                <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                  💡 Bisa ketik Kanji atau Hiragana
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Ketik kalimat bahasa Jepang di sini..."
+                  value={currentVal}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                      setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: showCorrect
+                      ? "2px solid #10b981"
+                      : showWrong
+                      ? "2px solid #ef4444"
+                      : "1.5px solid #cbd5e1",
+                    background: showCorrect ? "#ecfdf5" : showWrong ? "#fef2f2" : "#ffffff",
+                    fontSize: "0.95rem",
+                  }}
+                />
+                {showCorrect && <CheckCircle2 size={22} color="#10b981" />}
+                {showWrong && <XCircle size={22} color="#ef4444" />}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* 11d. Casual Form Text Input (Exam 4 Sec 5) */}
-        {sec.type === "casual-form" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
-              ✍️ Tulis bentuk kasual (フツウ形・カジュアル) yang tepat:
-            </label>
-            <input
-              type="text"
-              placeholder="Contoh: よく見る？"
-              value={userAnswers[item.id] || ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
-              }}
-              style={{
-                width: "100%",
-                maxWidth: "420px",
-                padding: "0.55rem 0.85rem",
-                borderRadius: "10px",
-                border: "1.5px solid #cbd5e1",
-                fontSize: "0.95rem",
-              }}
-            />
-          </div>
-        )}
+        {sec.type === "casual-form" && (() => {
+          const currentVal = userAnswers[item.id] || "";
+          const isCorrect = checkDekiruAnswerMatch(currentVal, item.answer, item.acceptedVariants, item.completed, item.question?.text);
+          const showCorrect = isRevealed && isCorrect;
+          const showWrong = isRevealed && !isCorrect && currentVal.trim() !== "";
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                <label style={{ fontSize: "0.82rem", fontWeight: 700, color: "#475569" }}>
+                  ✍️ Tulis bentuk kasual (フツウ形・カジュアル) yang tepat:
+                </label>
+                <span style={{ fontSize: "0.75rem", color: "#6366f1", fontWeight: 600 }}>
+                  💡 Bisa ketik Kanji atau Hiragana
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Contoh: よく見る？"
+                  value={currentVal}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setUserAnswers((prev) => ({ ...prev, [item.id]: val }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setRevealedQuestions((prev) => ({ ...prev, [item.id]: true }));
+                      setExpandedExplanations((prev) => ({ ...prev, [item.id]: true }));
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    maxWidth: "420px",
+                    padding: "0.55rem 0.85rem",
+                    borderRadius: "10px",
+                    border: showCorrect
+                      ? "2px solid #10b981"
+                      : showWrong
+                      ? "2px solid #ef4444"
+                      : "1.5px solid #cbd5e1",
+                    background: showCorrect ? "#ecfdf5" : showWrong ? "#fef2f2" : "#ffffff",
+                    fontSize: "0.95rem",
+                  }}
+                />
+                {showCorrect && <CheckCircle2 size={22} color="#10b981" />}
+                {showWrong && <XCircle size={22} color="#ef4444" />}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* 12. True / False buttons (Exam 1 Sec 8, Exam 2 Sec 10) */}
         {sec.type === "reading-true-false" && (
