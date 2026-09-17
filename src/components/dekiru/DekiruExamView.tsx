@@ -24,7 +24,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { DekiruSection, DekiruExamData } from "../../types/dekiru";
-import { SmartFurigana, annotateTextWithFurigana } from "../../utils/dekiruFurigana";
+import { SmartFurigana, annotateTextWithFurigana, toRomaji } from "../../utils/dekiruFurigana";
 import { cleanText, stripSpaces, checkSingleAnswer, romajiToHiragana } from "../../utils/answerChecker";
 import { getRichExplanation, inferPositionMeaning } from "../../data/dekiruRichExplanations";
 import { SAMPLE_ANSWER_TRANSLATIONS } from "../../data/dekiruTranslations";
@@ -582,6 +582,22 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
     } catch {}
   }, [showFurigana]);
 
+  // Romaji (Latin) display toggle (persisted to localStorage)
+  const [showRomaji, setShowRomaji] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem("dekiru_show_romaji");
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("dekiru_show_romaji", JSON.stringify(showRomaji));
+    } catch {}
+  }, [showRomaji]);
+
   // Question translation visibility state per question ID
   const [showQuestionTranslation, setShowQuestionTranslation] = useState<Record<string, boolean>>({});
 
@@ -1001,25 +1017,32 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                         background: showCorrect ? "#f0fdf4" : showWrong ? "#fef2f2" : "#f8fafc",
                         border: "1px solid " + (showCorrect ? "#bbf7d0" : showWrong ? "#fecaca" : "#e2e8f0"),
                         borderRadius: "8px",
-                        padding: "0.35rem 0.75rem",
+                        padding: "0.45rem 0.75rem",
                         color: showCorrect ? "#166534" : showWrong ? "#991b1b" : "#475569",
                         display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: "0.5rem",
+                        flexDirection: "column",
+                        gap: "0.25rem",
                       }}
                     >
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
+                        {showRomaji && (
+                          <div style={{ fontSize: "0.82rem", color: showCorrect ? "#047857" : "#4338ca", fontWeight: 600, fontStyle: "italic" }}>
+                            🔤 {chBreakdown.romaji || toRomaji(typeof rawCh === "object" && rawCh.segments ? rawCh.segments : chText)}
+                          </div>
+                        )}
+                        <div style={{ fontSize: "0.75rem", fontWeight: 700, marginLeft: "auto", flexShrink: 0 }}>
+                          {chBreakdown.isCorrect ? "✅ Benar" : "❌ Salah"}
+                        </div>
+                      </div>
+
                       <div>
                         {chBreakdown.translation && chBreakdown.translation !== chText ? (
                           <>
-                            <strong>Arti:</strong> {chBreakdown.translation}
+                            <strong>🇮🇩 Arti:</strong> {chBreakdown.translation}
                           </>
                         ) : (
-                          <span style={{ fontWeight: 600 }}>{chBreakdown.isCorrect ? "Jawaban Benar" : "Pilihan Kurang Tepat"}</span>
+                          <span style={{ fontWeight: 600 }}>{chBreakdown.isCorrect ? "✓ Jawaban Benar" : "Pilihan Kurang Tepat"}</span>
                         )}
-                      </div>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 700, opacity: 0.9 }}>
-                        {chBreakdown.isCorrect ? "✅ Benar" : "❌ Salah"}
                       </div>
                     </div>
                   )}
@@ -2625,6 +2648,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
         section={currentSection}
         richData={rich}
         showFurigana={showFurigana}
+        showRomaji={showRomaji}
       />
     );
   };
@@ -3349,6 +3373,27 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 </button>
 
                 <button
+                  type="button"
+                  onClick={() => setShowRomaji((prev) => !prev)}
+                  className="btn btn-secondary"
+                  style={{
+                    fontSize: "0.78rem",
+                    padding: "0.35rem 0.65rem",
+                    borderRadius: "9999px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    border: showRomaji ? "1.5px solid #818cf8" : "1px solid #cbd5e1",
+                    background: showRomaji ? "#eef2ff" : "#ffffff",
+                    color: showRomaji ? "#4338ca" : "#64748b",
+                    fontWeight: 700,
+                  }}
+                  title="Tampilkan / Sembunyikan Huruf Latin (Romaji) pada pembahasan dan opsi"
+                >
+                  <span>🔤 Latin: {showRomaji ? "ON" : "OFF"}</span>
+                </button>
+
+                <button
                   onClick={() => setIsDrawerOpen(true)}
                   className="btn btn-secondary"
                   style={{ fontSize: "0.78rem", padding: "0.35rem 0.75rem", borderRadius: "9999px", display: "flex", alignItems: "center", gap: "0.35rem" }}
@@ -3902,6 +3947,28 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                 title="Tampilkan / Sembunyikan Furigana di seluruh soal dan pilihan"
               >
                 <span>ふりがな: {showFurigana ? "ON" : "OFF"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowRomaji((prev) => !prev)}
+                className="btn btn-secondary"
+                style={{
+                  fontSize: "0.78rem",
+                  padding: "0.35rem 0.75rem",
+                  borderRadius: "9999px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  border: showRomaji ? "1.5px solid #818cf8" : "1px solid #cbd5e1",
+                  background: showRomaji ? "#eef2ff" : "#ffffff",
+                  color: showRomaji ? "#4338ca" : "#64748b",
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                }}
+                title="Tampilkan / Sembunyikan Huruf Latin (Romaji) pada pembahasan dan opsi"
+              >
+                <span>🔤 Latin: {showRomaji ? "ON" : "OFF"}</span>
               </button>
             </div>
 

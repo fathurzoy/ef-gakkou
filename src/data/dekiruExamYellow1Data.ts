@@ -77,10 +77,60 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "今、店が開いていて商売やサービスをしていること" },
-            { text: "今日は店が休みで中に入れないこと" },
-            { text: "これから店員が食事に行くこと" },
-            { text: "店が工事中で誰もいないこと" },
+            {
+              text: "今日は店が休みで中に入れないこと",
+              segments: [
+                { text: "今日", reading: "きょう" },
+                { text: "は" },
+                { text: "店", reading: "みせ" },
+                { text: "が" },
+                { text: "休", reading: "やす" },
+                { text: "み" },
+                { text: "で" },
+                { text: "中", reading: "なか" },
+                { text: "に" },
+                { text: "入", reading: "はい" },
+                { text: "れない" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "今、店が開いていて商売やサービスをしていること",
+              segments: [
+                { text: "今", reading: "いま" },
+                { text: "、" },
+                { text: "店", reading: "みせ" },
+                { text: "が" },
+                { text: "開", reading: "あ" },
+                { text: "いていて" },
+                { text: "商売", reading: "しょうばい" },
+                { text: "やサービスをしていること" },
+              ],
+            },
+            {
+              text: "これから店員が食事に行くこと",
+              segments: [
+                { text: "これから" },
+                { text: "店員", reading: "てんいん" },
+                { text: "が" },
+                { text: "食事", reading: "しょくじ" },
+                { text: "に" },
+                { text: "行", reading: "い" },
+                { text: "く" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "店が工事中で誰もいないこと",
+              segments: [
+                { text: "店", reading: "みせ" },
+                { text: "が" },
+                { text: "工事中", reading: "こうじちゅう" },
+                { text: "で" },
+                { text: "誰", reading: "だれ" },
+                { text: "もいないこと" },
+              ],
+            },
           ],
           answer: "今、店が開いていて商売やサービスをしていること",
           explanationId: "kuning-exp-s1-q1",
@@ -109,10 +159,58 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "毎週水曜日は店が必ず休みになること" },
-            { text: "水曜日だけ夜遅くまで営業すること" },
-            { text: "水曜日はすべての商品が半額になること" },
-            { text: "水曜日だけ店員が多く働くこと" },
+            {
+              text: "水曜日だけ夜遅くまで営業すること",
+              segments: [
+                { text: "水曜日", reading: "すいようび" },
+                { text: "だけ" },
+                { text: "夜遅", reading: "よるおそ" },
+                { text: "く" },
+                { text: "まで" },
+                { text: "営業", reading: "えいぎょう" },
+                { text: "すること" },
+              ],
+            },
+            {
+              text: "水曜日はすべての商品が半額になること",
+              segments: [
+                { text: "水曜日", reading: "すいようび" },
+                { text: "はすべての" },
+                { text: "商品", reading: "しょうひん" },
+                { text: "が" },
+                { text: "半額", reading: "はんがく" },
+                { text: "になること" },
+              ],
+            },
+            {
+              text: "毎週水曜日は店が必ず休みになること",
+              segments: [
+                { text: "毎週", reading: "まいしゅう" },
+                { text: "水曜日", reading: "すいようび" },
+                { text: "は" },
+                { text: "店", reading: "みせ" },
+                { text: "が" },
+                { text: "必", reading: "かなら" },
+                { text: "ず" },
+                { text: "休", reading: "やす" },
+                { text: "み" },
+                { text: "になること" },
+              ],
+            },
+            {
+              text: "水曜日だけ店員が多く働くこと",
+              segments: [
+                { text: "水曜日", reading: "すいようび" },
+                { text: "だけ" },
+                { text: "店員", reading: "てんいん" },
+                { text: "が" },
+                { text: "多", reading: "おお" },
+                { text: "く" },
+                { text: "働", reading: "はたら" },
+                { text: "く" },
+                { text: "こと" },
+              ],
+            },
           ],
           answer: "毎週水曜日は店が必ず休みになること",
           explanationId: "kuning-exp-s1-q2",
@@ -136,10 +234,58 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "決まった短い期間の間だけ注文できる特別なメニュー" },
-            { text: "一年中いつでも注文できる人気メニュー" },
-            { text: "お金を払わなくても無料でもらえるメニュー" },
-            { text: "学生だけが食べられる安いメニュー" },
+            {
+              text: "決まった短い期間の間だけ注文できる特別なメニュー",
+              segments: [
+                { text: "決", reading: "き" },
+                { text: "まった" },
+                { text: "短", reading: "みじか" },
+                { text: "い" },
+                { text: "期間", reading: "きかん" },
+                { text: "の間", reading: "のあいだ" },
+                { text: "だけ" },
+                { text: "注文", reading: "ちゅうもん" },
+                { text: "できる" },
+                { text: "特別", reading: "とくべつ" },
+                { text: "な" },
+                { text: "メニュー" },
+              ],
+            },
+            {
+              text: "一年中いつでも注文できる人気メニュー",
+              segments: [
+                { text: "一年中", reading: "いちねんじゅう" },
+                { text: "いつでも" },
+                { text: "注文", reading: "ちゅうもん" },
+                { text: "できる" },
+                { text: "人気", reading: "にんき" },
+                { text: "メニュー" },
+              ],
+            },
+            {
+              text: "お金を払わなくても無料でもらえるメニュー",
+              segments: [
+                { text: "お" },
+                { text: "金", reading: "かね" },
+                { text: "を" },
+                { text: "払", reading: "はら" },
+                { text: "わなくても" },
+                { text: "無料", reading: "むりょう" },
+                { text: "でもらえるメニュー" },
+              ],
+            },
+            {
+              text: "学生だけが食べられる安いメニュー",
+              segments: [
+                { text: "学生", reading: "がくせい" },
+                { text: "だけが" },
+                { text: "食", reading: "た" },
+                { text: "べられる" },
+                { text: "安", reading: "やす" },
+                { text: "い" },
+                { text: "メニュー" },
+              ],
+            },
           ],
           answer: "決まった短い期間の間だけ注文できる特別なメニュー",
           explanationId: "kuning-exp-s1-q3",
@@ -167,10 +313,49 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "留学生はお金を払わなくても利用できること" },
-            { text: "留学生はお金をたくさん払うこと" },
-            { text: "留学生は入ってはいけないこと" },
-            { text: "留学生だけが働けること" },
+            {
+              text: "留学生はお金をたくさん払うこと",
+              segments: [
+                { text: "留学生", reading: "りゅうがくせい" },
+                { text: "はお" },
+                { text: "金", reading: "かね" },
+                { text: "をたくさん" },
+                { text: "払", reading: "はら" },
+                { text: "うこと" },
+              ],
+            },
+            {
+              text: "留学生は入ってはいけないこと",
+              segments: [
+                { text: "留学生", reading: "りゅうがくせい" },
+                { text: "は" },
+                { text: "入", reading: "はい" },
+                { text: "って" },
+                { text: "はいけないこと" },
+              ],
+            },
+            {
+              text: "留学生だけが働けること",
+              segments: [
+                { text: "留学生", reading: "りゅうがくせい" },
+                { text: "だけが" },
+                { text: "働", reading: "はたら" },
+                { text: "けること" },
+              ],
+            },
+            {
+              text: "留学生はお金を払わなくても利用できること",
+              segments: [
+                { text: "留学生", reading: "りゅうがくせい" },
+                { text: "はお" },
+                { text: "金", reading: "かね" },
+                { text: "を" },
+                { text: "払", reading: "はら" },
+                { text: "わなくても" },
+                { text: "利用", reading: "りよう" },
+                { text: "できること" },
+              ],
+            },
           ],
           answer: "留学生はお金を払わなくても利用できること",
           explanationId: "kuning-exp-s1-q4",
@@ -201,10 +386,49 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "一万円札などを千円札や小銭にくずすこと" },
-            { text: "外国のお金を全部捨てること" },
-            { text: "切符を友達にあげること" },
-            { text: "新しいクレジットカードを作ること" },
+            {
+              text: "外国のお金を全部捨てること",
+              segments: [
+                { text: "外国", reading: "がいこく" },
+                { text: "のお" },
+                { text: "金", reading: "かね" },
+                { text: "を" },
+                { text: "全部捨", reading: "ぜんぶす" },
+                { text: "てる" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "一万円札などを千円札や小銭にくずすこと",
+              segments: [
+                { text: "一万円札", reading: "いちまんえんさつ" },
+                { text: "などを" },
+                { text: "千円札", reading: "せんえんさつ" },
+                { text: "や" },
+                { text: "小銭", reading: "こぜに" },
+                { text: "にくずすこと" },
+              ],
+            },
+            {
+              text: "切符を友達にあげること",
+              segments: [
+                { text: "切符", reading: "きっぷ" },
+                { text: "を" },
+                { text: "友達", reading: "ともだち" },
+                { text: "にあげること" },
+              ],
+            },
+            {
+              text: "新しいクレジットカードを作ること",
+              segments: [
+                { text: "新", reading: "あたら" },
+                { text: "しい" },
+                { text: "クレジットカードを" },
+                { text: "作", reading: "つく" },
+                { text: "る" },
+                { text: "こと" },
+              ],
+            },
           ],
           answer: "一万円札などを千円札や小銭にくずすこと",
           explanationId: "kuning-exp-s1-q5",
@@ -231,10 +455,51 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "機械が壊れていて、今は使えないこと" },
-            { text: "誰も乗っていないので自由に乗れること" },
-            { text: "スピードがいつもより速いこと" },
-            { text: "新しく作ったばかりでピカピカなこと" },
+            {
+              text: "機械が壊れていて、今は使えないこと",
+              segments: [
+                { text: "機械", reading: "きかい" },
+                { text: "が" },
+                { text: "壊", reading: "こわ" },
+                { text: "れて" },
+                { text: "いて、" },
+                { text: "今", reading: "いま" },
+                { text: "は" },
+                { text: "使", reading: "つか" },
+                { text: "えないこと" },
+              ],
+            },
+            {
+              text: "誰も乗っていないので自由に乗れること",
+              segments: [
+                { text: "誰", reading: "だれ" },
+                { text: "も" },
+                { text: "乗", reading: "の" },
+                { text: "っていないので" },
+                { text: "自由", reading: "じゆう" },
+                { text: "に" },
+                { text: "乗", reading: "の" },
+                { text: "れること" },
+              ],
+            },
+            {
+              text: "スピードがいつもより速いこと",
+              segments: [
+                { text: "スピードがいつもより" },
+                { text: "速", reading: "はや" },
+                { text: "い" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "新しく作ったばかりでピカピカなこと",
+              segments: [
+                { text: "新", reading: "あたら" },
+                { text: "しく" },
+                { text: "作", reading: "つく" },
+                { text: "ったばかりでピカピカなこと" },
+              ],
+            },
           ],
           answer: "機械が壊れていて、今は使えないこと",
           explanationId: "kuning-exp-s1-q6",
@@ -262,10 +527,58 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "店の中のすべての席でたばこを吸ってはいけないこと" },
-            { text: "窓の近くの席だけたばこを吸ってもいいこと" },
-            { text: "たばこを吸う人だけが入れること" },
-            { text: "どこの席でも自由にたばこが吸えること" },
+            {
+              text: "窓の近くの席だけたばこを吸ってもいいこと",
+              segments: [
+                { text: "窓", reading: "まど" },
+                { text: "の" },
+                { text: "近", reading: "ちか" },
+                { text: "く" },
+                { text: "の" },
+                { text: "席", reading: "せき" },
+                { text: "だけたばこを" },
+                { text: "吸", reading: "す" },
+                { text: "ってもいいこと" },
+              ],
+            },
+            {
+              text: "たばこを吸う人だけが入れること",
+              segments: [
+                { text: "たばこを" },
+                { text: "吸", reading: "す" },
+                { text: "う" },
+                { text: "人", reading: "ひと" },
+                { text: "だけが" },
+                { text: "入", reading: "はい" },
+                { text: "れる" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "どこの席でも自由にたばこが吸えること",
+              segments: [
+                { text: "どこの" },
+                { text: "席", reading: "せき" },
+                { text: "でも" },
+                { text: "自由", reading: "じゆう" },
+                { text: "にたばこが" },
+                { text: "吸", reading: "す" },
+                { text: "えること" },
+              ],
+            },
+            {
+              text: "店の中のすべての席でたばこを吸ってはいけないこと",
+              segments: [
+                { text: "店", reading: "みせ" },
+                { text: "の" },
+                { text: "中", reading: "なか" },
+                { text: "のすべての" },
+                { text: "席", reading: "せき" },
+                { text: "でたばこを" },
+                { text: "吸", reading: "す" },
+                { text: "ってはいけないこと" },
+              ],
+            },
           ],
           answer: "店の中のすべての席でたばこを吸ってはいけないこと",
           explanationId: "kuning-exp-s1-q7",
@@ -293,10 +606,61 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "ご飯をもう一杯食べたいとき、ただでもらえること" },
-            { text: "ご飯を食べない人はお金を払わなくていいこと" },
-            { text: "ご飯のお金を2倍払わなければならないこと" },
-            { text: "自分でご飯を家から持って来ること" },
+            {
+              text: "ご飯を食べない人はお金を払わなくていいこと",
+              segments: [
+                { text: "ご" },
+                { text: "飯", reading: "はん" },
+                { text: "を" },
+                { text: "食", reading: "た" },
+                { text: "べない" },
+                { text: "人", reading: "ひと" },
+                { text: "はお" },
+                { text: "金", reading: "かね" },
+                { text: "を" },
+                { text: "払", reading: "はら" },
+                { text: "わなくていいこと" },
+              ],
+            },
+            {
+              text: "ご飯のお金を2倍払わなければならないこと",
+              segments: [
+                { text: "ご" },
+                { text: "飯", reading: "はん" },
+                { text: "のお" },
+                { text: "金", reading: "かね" },
+                { text: "を2" },
+                { text: "倍払", reading: "ばいはら" },
+                { text: "わ" },
+                { text: "なければならないこと" },
+              ],
+            },
+            {
+              text: "ご飯をもう一杯食べたいとき、ただでもらえること",
+              segments: [
+                { text: "ご" },
+                { text: "飯", reading: "はん" },
+                { text: "をもう" },
+                { text: "一杯", reading: "いっぱい" },
+                { text: "食", reading: "た" },
+                { text: "べたいとき、ただでもらえること" },
+              ],
+            },
+            {
+              text: "自分でご飯を家から持って来ること",
+              segments: [
+                { text: "自分", reading: "じぶん" },
+                { text: "でご" },
+                { text: "飯", reading: "はん" },
+                { text: "を" },
+                { text: "家", reading: "いえ" },
+                { text: "から" },
+                { text: "持", reading: "も" },
+                { text: "って" },
+                { text: "来", reading: "き" },
+                { text: "ること" },
+              ],
+            },
           ],
           answer: "ご飯をもう一杯食べたいとき、ただでもらえること",
           explanationId: "kuning-exp-s1-q8",
@@ -324,10 +688,45 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "自転車やバイクをとめてはいけないこと" },
-            { text: "自転車を無料で借りられること" },
-            { text: "車だけ入ってはいけないこと" },
-            { text: "自転車を押して歩かなければならないこと" },
+            {
+              text: "自転車やバイクをとめてはいけないこと",
+              segments: [
+                { text: "自転車", reading: "じてんしゃ" },
+                { text: "やバイクをとめてはいけないこと" },
+              ],
+            },
+            {
+              text: "自転車を無料で借りられること",
+              segments: [
+                { text: "自転車", reading: "じてんしゃ" },
+                { text: "を" },
+                { text: "無料", reading: "むりょう" },
+                { text: "で" },
+                { text: "借", reading: "か" },
+                { text: "りられること" },
+              ],
+            },
+            {
+              text: "車だけ入ってはいけないこと",
+              segments: [
+                { text: "車", reading: "くるま" },
+                { text: "だけ" },
+                { text: "入", reading: "はい" },
+                { text: "って" },
+                { text: "はいけないこと" },
+              ],
+            },
+            {
+              text: "自転車を押して歩かなければならないこと",
+              segments: [
+                { text: "自転車", reading: "じてんしゃ" },
+                { text: "を" },
+                { text: "押", reading: "お" },
+                { text: "して" },
+                { text: "歩", reading: "ある" },
+                { text: "かなければならないこと" },
+              ],
+            },
           ],
           answer: "自転車やバイクをとめてはいけないこと",
           explanationId: "kuning-exp-s1-q9",
@@ -354,10 +753,53 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "すべての商品が20%安くなること" },
-            { text: "2番目の商品だけが無料になること" },
-            { text: "200円以上の商品だけ安くなること" },
-            { text: "2個買うと1個もらえること" },
+            {
+              text: "2番目の商品だけが無料になること",
+              segments: [
+                { text: "2" },
+                { text: "番目", reading: "ばんめ" },
+                { text: "の" },
+                { text: "商品", reading: "しょうひん" },
+                { text: "だけが" },
+                { text: "無料", reading: "むりょう" },
+                { text: "になること" },
+              ],
+            },
+            {
+              text: "すべての商品が20%安くなること",
+              segments: [
+                { text: "すべての" },
+                { text: "商品", reading: "しょうひん" },
+                { text: "が20%" },
+                { text: "安", reading: "やす" },
+                { text: "くなる" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "200円以上の商品だけ安くなること",
+              segments: [
+                { text: "200" },
+                { text: "円以上", reading: "えんいじょう" },
+                { text: "の" },
+                { text: "商品", reading: "しょうひん" },
+                { text: "だけ" },
+                { text: "安", reading: "やす" },
+                { text: "くなる" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "2個買うと1個もらえること",
+              segments: [
+                { text: "2" },
+                { text: "個", reading: "こ" },
+                { text: "買", reading: "か" },
+                { text: "うと1" },
+                { text: "個", reading: "こ" },
+                { text: "もらえること" },
+              ],
+            },
           ],
           answer: "すべての商品が20%安くなること",
           explanationId: "kuning-exp-s1-q10",
@@ -384,10 +826,55 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "仕事に通うための電車代やバス代を店や会社が払ってくれること" },
-            { text: "店まで自分の車で通わなければならないこと" },
-            { text: "毎月旅行のチケットが会社からもらえること" },
-            { text: "交通ルールをテストすること" },
+            {
+              text: "店まで自分の車で通わなければならないこと",
+              segments: [
+                { text: "店", reading: "みせ" },
+                { text: "まで" },
+                { text: "自分", reading: "じぶん" },
+                { text: "の" },
+                { text: "車", reading: "くるま" },
+                { text: "で" },
+                { text: "通", reading: "かよ" },
+                { text: "わなければならないこと" },
+              ],
+            },
+            {
+              text: "毎月旅行のチケットが会社からもらえること",
+              segments: [
+                { text: "毎月", reading: "まいつき" },
+                { text: "旅行", reading: "りょこう" },
+                { text: "のチケットが" },
+                { text: "会社", reading: "かいしゃ" },
+                { text: "からもらえること" },
+              ],
+            },
+            {
+              text: "交通ルールをテストすること",
+              segments: [
+                { text: "交通", reading: "こうつう" },
+                { text: "ルールをテストすること" },
+              ],
+            },
+            {
+              text: "仕事に通うための電車代やバス代を店や会社が払ってくれること",
+              segments: [
+                { text: "仕事", reading: "しごと" },
+                { text: "に" },
+                { text: "通", reading: "かよ" },
+                { text: "うための" },
+                { text: "電車代", reading: "でんしゃだい" },
+                { text: "やバス" },
+                { text: "代", reading: "だい" },
+                { text: "を" },
+                { text: "店", reading: "みせ" },
+                { text: "や" },
+                { text: "会社", reading: "かいしゃ" },
+                { text: "が" },
+                { text: "払", reading: "はら" },
+                { text: "ってくれること" },
+              ],
+            },
           ],
           answer: "仕事に通うための電車代やバス代を店や会社が払ってくれること",
           explanationId: "kuning-exp-s1-q11",
@@ -414,10 +901,65 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "仕事で着る服を店から無料で貸してもらえること" },
-            { text: "自分で高いスーツを買って来なければならないこと" },
-            { text: "どんな私服を着て働いても自由なこと" },
-            { text: "退職するときに服を買い取ること" },
+            {
+              text: "自分で高いスーツを買って来なければならないこと",
+              segments: [
+                { text: "自分", reading: "じぶん" },
+                { text: "で" },
+                { text: "高", reading: "たか" },
+                { text: "い" },
+                { text: "スーツを" },
+                { text: "買", reading: "か" },
+                { text: "って" },
+                { text: "来", reading: "き" },
+                { text: "なければならないこと" },
+              ],
+            },
+            {
+              text: "どんな私服を着て働いても自由なこと",
+              segments: [
+                { text: "どんな" },
+                { text: "私服", reading: "しふく" },
+                { text: "を" },
+                { text: "着", reading: "き" },
+                { text: "て" },
+                { text: "働", reading: "はたら" },
+                { text: "いて" },
+                { text: "も" },
+                { text: "自由", reading: "じゆう" },
+                { text: "なこと" },
+              ],
+            },
+            {
+              text: "仕事で着る服を店から無料で貸してもらえること",
+              segments: [
+                { text: "仕事", reading: "しごと" },
+                { text: "で" },
+                { text: "着", reading: "き" },
+                { text: "る" },
+                { text: "服", reading: "ふく" },
+                { text: "を" },
+                { text: "店", reading: "みせ" },
+                { text: "から" },
+                { text: "無料", reading: "むりょう" },
+                { text: "で" },
+                { text: "貸", reading: "か" },
+                { text: "してもらえる" },
+                { text: "こと" },
+              ],
+            },
+            {
+              text: "退職するときに服を買い取ること",
+              segments: [
+                { text: "退職", reading: "たいしょく" },
+                { text: "するときに" },
+                { text: "服", reading: "ふく" },
+                { text: "を" },
+                { text: "買い取", reading: "かいと" },
+                { text: "る" },
+                { text: "こと" },
+              ],
+            },
           ],
           answer: "仕事で着る服を店から無料で貸してもらえること",
           explanationId: "kuning-exp-s1-q12",
@@ -1549,10 +2091,34 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "始まる" },
-            { text: "始まった" },
-            { text: "始まって" },
-            { text: "始まり" },
+            {
+              text: "始まった",
+              segments: [
+                { text: "始", reading: "はじ" },
+                { text: "まった" },
+              ],
+            },
+            {
+              text: "始まる",
+              segments: [
+                { text: "始", reading: "はじ" },
+                { text: "まる" },
+              ],
+            },
+            {
+              text: "始まって",
+              segments: [
+                { text: "始", reading: "はじ" },
+                { text: "まって" },
+              ],
+            },
+            {
+              text: "始まり",
+              segments: [
+                { text: "始", reading: "はじ" },
+                { text: "まり" },
+              ],
+            },
           ],
           answer: "始まる",
           explanationId: "kuning-exp-s4-q1",
@@ -1578,10 +2144,34 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "予報なので" },
-            { text: "予報で" },
-            { text: "予報だから" },
-            { text: "予報に" },
+            {
+              text: "予報で",
+              segments: [
+                { text: "予報", reading: "よほう" },
+                { text: "で" },
+              ],
+            },
+            {
+              text: "予報だから",
+              segments: [
+                { text: "予報", reading: "よほう" },
+                { text: "だから" },
+              ],
+            },
+            {
+              text: "予報に",
+              segments: [
+                { text: "予報", reading: "よほう" },
+                { text: "に" },
+              ],
+            },
+            {
+              text: "予報なので",
+              segments: [
+                { text: "予報", reading: "よほう" },
+                { text: "なので" },
+              ],
+            },
           ],
           answer: "予報なので",
           explanationId: "kuning-exp-s4-q2",
@@ -1600,10 +2190,37 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "暖かそうな" },
-            { text: "暖かいの" },
-            { text: "暖かく" },
-            { text: "暖かそうに" },
+            {
+              text: "暖かそうな",
+              segments: [
+                { text: "暖", reading: "あたた" },
+                { text: "かそう" },
+                { text: "な" },
+              ],
+            },
+            {
+              text: "暖かいの",
+              segments: [
+                { text: "暖", reading: "あたた" },
+                { text: "かい" },
+                { text: "の" },
+              ],
+            },
+            {
+              text: "暖かく",
+              segments: [
+                { text: "暖", reading: "あたた" },
+                { text: "かく" },
+              ],
+            },
+            {
+              text: "暖かそうに",
+              segments: [
+                { text: "暖", reading: "あたた" },
+                { text: "かそう" },
+                { text: "に" },
+              ],
+            },
           ],
           answer: "暖かそうな",
           explanationId: "kuning-exp-s4-q3",
@@ -1627,10 +2244,34 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "食べにくい" },
-            { text: "食べやすい" },
-            { text: "食べたい" },
-            { text: "食べるそう" },
+            {
+              text: "食べやすい",
+              segments: [
+                { text: "食", reading: "た" },
+                { text: "べやすい" },
+              ],
+            },
+            {
+              text: "食べたい",
+              segments: [
+                { text: "食", reading: "た" },
+                { text: "べたい" },
+              ],
+            },
+            {
+              text: "食べにくい",
+              segments: [
+                { text: "食", reading: "た" },
+                { text: "べにくい" },
+              ],
+            },
+            {
+              text: "食べるそう",
+              segments: [
+                { text: "食", reading: "た" },
+                { text: "べるそう" },
+              ],
+            },
           ],
           answer: "食べにくい",
           explanationId: "kuning-exp-s4-q4",
@@ -1654,10 +2295,37 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "書いてあります" },
-            { text: "書いています" },
-            { text: "書きます" },
-            { text: "書いてみます" },
+            {
+              text: "書いています",
+              segments: [
+                { text: "書", reading: "か" },
+                { text: "いて" },
+                { text: "います" },
+              ],
+            },
+            {
+              text: "書いてあります",
+              segments: [
+                { text: "書", reading: "か" },
+                { text: "いて" },
+                { text: "あります" },
+              ],
+            },
+            {
+              text: "書きます",
+              segments: [
+                { text: "書", reading: "か" },
+                { text: "きます" },
+              ],
+            },
+            {
+              text: "書いてみます",
+              segments: [
+                { text: "書", reading: "か" },
+                { text: "いて" },
+                { text: "みます" },
+              ],
+            },
           ],
           answer: "書いてあります",
           explanationId: "kuning-exp-s4-q5",
@@ -1687,10 +2355,34 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "飲みすぎた" },
-            { text: "飲みすぎる" },
-            { text: "飲みすぎ" },
-            { text: "飲まなかった" },
+            {
+              text: "飲みすぎる",
+              segments: [
+                { text: "飲", reading: "の" },
+                { text: "みすぎる" },
+              ],
+            },
+            {
+              text: "飲みすぎ",
+              segments: [
+                { text: "飲", reading: "の" },
+                { text: "みすぎ" },
+              ],
+            },
+            {
+              text: "飲みすぎた",
+              segments: [
+                { text: "飲", reading: "の" },
+                { text: "みすぎた" },
+              ],
+            },
+            {
+              text: "飲まなかった",
+              segments: [
+                { text: "飲", reading: "の" },
+                { text: "まなかった" },
+              ],
+            },
           ],
           answer: "飲みすぎた",
           explanationId: "kuning-exp-s4-q6",
@@ -1716,10 +2408,38 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "受けないつもりです" },
-            { text: "受けるつもりです" },
-            { text: "受けたつもりです" },
-            { text: "受けてみるつもりです" },
+            {
+              text: "受けないつもりです",
+              segments: [
+                { text: "受", reading: "う" },
+                { text: "けない" },
+                { text: "つもりです" },
+              ],
+            },
+            {
+              text: "受けるつもりです",
+              segments: [
+                { text: "受", reading: "う" },
+                { text: "ける" },
+                { text: "つもりです" },
+              ],
+            },
+            {
+              text: "受けたつもりです",
+              segments: [
+                { text: "受", reading: "う" },
+                { text: "けた" },
+                { text: "つもりです" },
+              ],
+            },
+            {
+              text: "受けてみるつもりです",
+              segments: [
+                { text: "受", reading: "う" },
+                { text: "けて" },
+                { text: "みるつもりです" },
+              ],
+            },
           ],
           answer: "受けないつもりです",
           explanationId: "kuning-exp-s4-q7",
@@ -1750,10 +2470,34 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "出さなければならないんです" },
-            { text: "出すつもりなんです" },
-            { text: "出してもいいんです" },
-            { text: "出さないんです" },
+            {
+              text: "出すつもりなんです",
+              segments: [
+                { text: "出", reading: "だ" },
+                { text: "すつもりなんです" },
+              ],
+            },
+            {
+              text: "出してもいいんです",
+              segments: [
+                { text: "出", reading: "だ" },
+                { text: "してもいいんです" },
+              ],
+            },
+            {
+              text: "出さないんです",
+              segments: [
+                { text: "出", reading: "だ" },
+                { text: "さないんです" },
+              ],
+            },
+            {
+              text: "出さなければならないんです",
+              segments: [
+                { text: "出", reading: "だ" },
+                { text: "さなければならないんです" },
+              ],
+            },
           ],
           answer: "出さなければならないんです",
           explanationId: "kuning-exp-s4-q8",
@@ -1774,10 +2518,34 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "歩きやすい" },
-            { text: "歩きにくい" },
-            { text: "歩くそう" },
-            { text: "歩きすぎ" },
+            {
+              text: "歩きにくい",
+              segments: [
+                { text: "歩", reading: "ある" },
+                { text: "きにくい" },
+              ],
+            },
+            {
+              text: "歩きやすい",
+              segments: [
+                { text: "歩", reading: "ある" },
+                { text: "きやすい" },
+              ],
+            },
+            {
+              text: "歩くそう",
+              segments: [
+                { text: "歩", reading: "ある" },
+                { text: "くそう" },
+              ],
+            },
+            {
+              text: "歩きすぎ",
+              segments: [
+                { text: "歩", reading: "ある" },
+                { text: "きすぎ" },
+              ],
+            },
           ],
           answer: "歩きやすい",
           explanationId: "kuning-exp-s4-q9",
@@ -1806,10 +2574,37 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "辛くなさそう" },
-            { text: "辛くないそう" },
-            { text: "辛そう" },
-            { text: "辛くそう" },
+            {
+              text: "辛くなさそう",
+              segments: [
+                { text: "辛", reading: "から" },
+                { text: "く" },
+                { text: "なさそう" },
+              ],
+            },
+            {
+              text: "辛くないそう",
+              segments: [
+                { text: "辛", reading: "から" },
+                { text: "く" },
+                { text: "ないそう" },
+              ],
+            },
+            {
+              text: "辛そう",
+              segments: [
+                { text: "辛", reading: "から" },
+                { text: "そう" },
+              ],
+            },
+            {
+              text: "辛くそう",
+              segments: [
+                { text: "辛", reading: "から" },
+                { text: "く" },
+                { text: "そう" },
+              ],
+            },
           ],
           answer: "辛くなさそう",
           explanationId: "kuning-exp-s4-q10",
@@ -1833,10 +2628,34 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "着てみてもいいですか" },
-            { text: "着てありますか" },
-            { text: "着すぎてもいいですか" },
-            { text: "着やすいですか" },
+            {
+              text: "着てありますか",
+              segments: [
+                { text: "着", reading: "き" },
+                { text: "てありますか" },
+              ],
+            },
+            {
+              text: "着すぎてもいいですか",
+              segments: [
+                { text: "着", reading: "き" },
+                { text: "すぎてもいいですか" },
+              ],
+            },
+            {
+              text: "着てみてもいいですか",
+              segments: [
+                { text: "着", reading: "き" },
+                { text: "てみてもいいですか" },
+              ],
+            },
+            {
+              text: "着やすいですか",
+              segments: [
+                { text: "着", reading: "き" },
+                { text: "やすいですか" },
+              ],
+            },
           ],
           answer: "着てみてもいいですか",
           explanationId: "kuning-exp-s4-q11",
@@ -1866,10 +2685,38 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "引っ越しだったので" },
-            { text: "引っ越しなので" },
-            { text: "引っ越しで" },
-            { text: "引っ越したなので" },
+            {
+              text: "引っ越しなので",
+              segments: [
+                { text: "引っ越", reading: "ひっこ" },
+                { text: "し" },
+                { text: "なので" },
+              ],
+            },
+            {
+              text: "引っ越しで",
+              segments: [
+                { text: "引っ越", reading: "ひっこ" },
+                { text: "し" },
+                { text: "で" },
+              ],
+            },
+            {
+              text: "引っ越したなので",
+              segments: [
+                { text: "引っ越", reading: "ひっこ" },
+                { text: "し" },
+                { text: "たなので" },
+              ],
+            },
+            {
+              text: "引っ越しだったので",
+              segments: [
+                { text: "引っ越", reading: "ひっこ" },
+                { text: "し" },
+                { text: "だったので" },
+              ],
+            },
           ],
           answer: "引っ越しだったので",
           explanationId: "kuning-exp-s4-q12",
@@ -1894,7 +2741,13 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "良さそう" },
+            {
+              text: "良さそう",
+              segments: [
+                { text: "良", reading: "よ" },
+                { text: "さそう" },
+              ],
+            },
             { text: "いいそう" },
             { text: "よいそう" },
             { text: "よくそう" },
@@ -1922,8 +2775,8 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "おもしろくなさそう" },
             { text: "おもしろくないそう" },
+            { text: "おもしろくなさそう" },
             { text: "おもしろいそう" },
             { text: "おもしろそう" },
           ],
@@ -1956,10 +2809,35 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "熱すぎます" },
-            { text: "熱いすぎます" },
-            { text: "熱くすぎます" },
-            { text: "熱いそう" },
+            {
+              text: "熱いすぎます",
+              segments: [
+                { text: "熱", reading: "あつ" },
+                { text: "い" },
+                { text: "すぎます" },
+              ],
+            },
+            {
+              text: "熱くすぎます",
+              segments: [
+                { text: "熱", reading: "あつ" },
+                { text: "くすぎます" },
+              ],
+            },
+            {
+              text: "熱すぎます",
+              segments: [
+                { text: "熱", reading: "あつ" },
+                { text: "すぎます" },
+              ],
+            },
+            {
+              text: "熱いそう",
+              segments: [
+                { text: "熱", reading: "あつ" },
+                { text: "いそう" },
+              ],
+            },
           ],
           answer: "熱すぎます",
           explanationId: "kuning-exp-s4-q15",
@@ -1985,10 +2863,38 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "短すぎます" },
-            { text: "短いすぎます" },
-            { text: "短くすぎます" },
-            { text: "短そうすぎます" },
+            {
+              text: "短いすぎます",
+              segments: [
+                { text: "短", reading: "みじか" },
+                { text: "い" },
+                { text: "すぎます" },
+              ],
+            },
+            {
+              text: "短くすぎます",
+              segments: [
+                { text: "短", reading: "みじか" },
+                { text: "く" },
+                { text: "すぎます" },
+              ],
+            },
+            {
+              text: "短そうすぎます",
+              segments: [
+                { text: "短", reading: "みじか" },
+                { text: "そう" },
+                { text: "すぎます" },
+              ],
+            },
+            {
+              text: "短すぎます",
+              segments: [
+                { text: "短", reading: "みじか" },
+                { text: "すぎ" },
+                { text: "ます" },
+              ],
+            },
           ],
           answer: "短すぎます",
           explanationId: "kuning-exp-s4-q16",
@@ -2041,10 +2947,42 @@ export const dekiruExamYellow1Data: DekiruExamData = {
             ],
           },
           choices: [
-            { text: "会社の面接があるんです" },
-            { text: "会社の面接があります" },
-            { text: "会社の面接があるからです" },
-            { text: "会社の面接があるならです" },
+            {
+              text: "会社の面接があります",
+              segments: [
+                { text: "会社", reading: "かいしゃ" },
+                { text: "の" },
+                { text: "面接", reading: "めんせつ" },
+                { text: "があります" },
+              ],
+            },
+            {
+              text: "会社の面接があるんです",
+              segments: [
+                { text: "会社", reading: "かいしゃ" },
+                { text: "の" },
+                { text: "面接", reading: "めんせつ" },
+                { text: "があるんです" },
+              ],
+            },
+            {
+              text: "会社の面接があるからです",
+              segments: [
+                { text: "会社", reading: "かいしゃ" },
+                { text: "の" },
+                { text: "面接", reading: "めんせつ" },
+                { text: "があるからです" },
+              ],
+            },
+            {
+              text: "会社の面接があるならです",
+              segments: [
+                { text: "会社", reading: "かいしゃ" },
+                { text: "の" },
+                { text: "面接", reading: "めんせつ" },
+                { text: "があるならです" },
+              ],
+            },
           ],
           answer: "会社の面接があるんです",
           explanationId: "kuning-exp-s4-q18",

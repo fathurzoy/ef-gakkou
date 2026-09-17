@@ -1,6 +1,8 @@
 import React from 'react';
 import { Explanation, QuestionOption } from '../types/quiz';
 import { CheckCircle2, XCircle, Lightbulb, BookOpen, Globe } from 'lucide-react';
+import { FuriganaText } from './FuriganaText';
+import { toRomaji } from '../utils/dekiruFurigana';
 
 interface ExplanationBoxProps {
   explanation: Explanation;
@@ -36,6 +38,8 @@ export const ExplanationBox: React.FC<ExplanationBoxProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.95rem' }}>
@@ -45,13 +49,13 @@ export const ExplanationBox: React.FC<ExplanationBoxProps> = ({
         <div
           style={{
             background: 'rgba(255,255,255,0.2)',
-            padding: '0.2rem 0.65rem',
+            padding: '0.25rem 0.75rem',
             borderRadius: '9999px',
-            fontSize: '0.82rem',
+            fontSize: '0.86rem',
             fontWeight: 600,
           }}
         >
-          Kunci: {correctAnswerDisplay}
+          Kunci: <FuriganaText text={correctAnswerDisplay} />
         </div>
       </div>
 
@@ -86,9 +90,14 @@ export const ExplanationBox: React.FC<ExplanationBoxProps> = ({
             <CheckCircle2 size={16} color="#10b981" />
             <span>KENAPA JAWABAN INI BENAR:</span>
           </div>
-          <p style={{ margin: 0, fontSize: '0.92rem', color: '#047857', lineHeight: 1.6 }}>
-            {explanation.whyCorrect}
-          </p>
+          <div style={{ fontSize: '0.92rem', color: '#047857', lineHeight: 1.6 }}>
+            <p style={{ margin: '0 0 0.4rem 0' }}>{explanation.whyCorrect}</p>
+            {correctAnswerDisplay && (
+              <div style={{ fontSize: '0.82rem', color: '#065f46', fontWeight: 600, fontStyle: 'italic' }}>
+                🔤 {toRomaji(correctAnswerDisplay)}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Why Incorrect (Options breakdown) */}
@@ -99,9 +108,9 @@ export const ExplanationBox: React.FC<ExplanationBoxProps> = ({
               <span>KENAPA OPSI LAIN SALAH:</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {explanation.whyIncorrect.map((item) => (
+              {explanation.whyIncorrect.map((wItem) => (
                 <div
-                  key={item.optionId}
+                  key={wItem.optionId}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -125,11 +134,16 @@ export const ExplanationBox: React.FC<ExplanationBoxProps> = ({
                       flexShrink: 0,
                     }}
                   >
-                    Opsi {item.optionId}
+                    Opsi {wItem.optionId}
                   </span>
                   <div style={{ flex: 1, color: '#4c0519', lineHeight: 1.5 }}>
-                    <strong style={{ color: '#881337', marginRight: '0.4rem' }}>{item.text}:</strong>
-                    {item.reason}
+                    <div style={{ fontWeight: 700, color: '#881337', marginBottom: '0.15rem' }}>
+                      <FuriganaText text={wItem.text} />
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#9f1239', fontWeight: 600, fontStyle: 'italic', marginBottom: '0.2rem' }}>
+                      🔤 {toRomaji(wItem.text)}
+                    </div>
+                    <div>{wItem.reason}</div>
                   </div>
                 </div>
               ))}

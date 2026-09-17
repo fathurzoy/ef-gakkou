@@ -1,9 +1,10 @@
-import { DEKIRU_KANJI_DICT } from '../utils/dekiruFurigana';
+import { DEKIRU_KANJI_DICT, toRomaji } from '../utils/dekiruFurigana';
 import { DEKIRU_SENTENCE_TRANSLATIONS, SAMPLE_ANSWER_TRANSLATIONS, DEKIRU_CHOICE_TRANSLATIONS } from './dekiruTranslations';
 
 export interface OptionDetail {
   optionId?: string | number;
   text: string;
+  romaji?: string;
   translation: string;
   isCorrect: boolean;
   reason?: string;
@@ -11,8 +12,11 @@ export interface OptionDetail {
 
 export interface RichExplanationData {
   questionTranslation: string;
+  questionRomaji?: string;
+  answerRomaji?: string;
+  answerTranslation?: string;
   whyCorrect: string;
-  whyIncorrect?: Array<{ optionId?: string | number; text: string; translation?: string; reason: string }>;
+  whyIncorrect?: Array<{ optionId?: string | number; text: string; romaji?: string; translation?: string; reason: string }>;
   grammarPointDetail?: string;
   tips?: string[];
   optionsBreakdown?: OptionDetail[];
@@ -995,8 +999,21 @@ export function getRichExplanation(
   item: any,
   section?: any
 ): RichExplanationData {
-  // 1. Get authentic Indonesian question translation
+  // 1. Get authentic Indonesian question translation & Romaji
   const qTranslation = DEKIRU_SENTENCE_TRANSLATIONS[questionId] || inferSentenceTranslation(item?.question?.text || item?.statement?.text || '', item);
+  const qText = item?.question?.text || item?.statement?.text || '';
+  const qSegments = item?.question?.segments || item?.statement?.segments;
+  const questionRomaji = toRomaji(qSegments && qSegments.length > 0 ? qSegments : qText);
+
+  // Derive answer Romaji & Translation
+  const ansText = typeof item.answer === 'string'
+    ? item.answer
+    : typeof item.answer === 'object' && item.answer !== null
+    ? (item.answer.text || item.answer.value || '')
+    : '';
+  const ansSegments = typeof item.answer === 'object' && item.answer?.segments ? item.answer.segments : undefined;
+  const answerRomaji = toRomaji(ansSegments || ansText);
+  const answerTranslation = DEKIRU_CHOICE_TRANSLATIONS[ansText] || inferWordMeaning(ansText);
 
   // 2. Check if we have an explicit curated entry
   if (DEKIRU_RICH_REGISTRY[questionId]) {
@@ -1010,6 +1027,7 @@ export function getRichExplanation(
           return {
             optionId: idx + 1,
             text: chText,
+            romaji: toRomaji(typeof rawCh === 'object' && rawCh.segments ? rawCh.segments : chText),
             translation: inferWordMeaning(chText),
             isCorrect: chText === correctText,
           };
@@ -1017,21 +1035,45 @@ export function getRichExplanation(
       } else if (section && section.type === 'reading-true-false') {
         const isAnsTrue = item.answer === '○';
         breakdown = [
-          { optionId: '1', text: '○ (Benar)', translation: 'Pernyataan sesuai fakta di dalam teks bacaan', isCorrect: isAnsTrue },
-          { optionId: '2', text: '× (Salah)', translation: 'Pernyataan bertentangan atau tidak ada di dalam teks bacaan', isCorrect: !isAnsTrue },
+          { optionId: '1', text: '○ (Benar)', romaji: 'maru (Benar)', translation: 'Pernyataan sesuai fakta di dalam teks bacaan', isCorrect: isAnsTrue },
+          { optionId: '2', text: '× (Salah)', romaji: 'batsu (Salah)', translation: 'Pernyataan bertentangan atau tidak ada di dalam teks bacaan', isCorrect: !isAnsTrue },
         ];
       }
+    } else {
+      breakdown = breakdown.map(b => ({
+        ...b,
+        romaji: b.romaji || toRomaji(b.text),
+      }));
     }
+    const whyInc = (curated.whyIncorrect || []).map(w => ({
+      ...w,
+      romaji: w.romaji || toRomaji(w.text),
+    }));
     return {
       ...curated,
       questionTranslation: qTranslation || curated.questionTranslation,
+      questionRomaji,
+      answerRomaji,
+      answerTranslation,
+      whyIncorrect: whyInc.length > 0 ? whyInc : undefined,
       optionsBreakdown: breakdown && breakdown.length > 0 ? breakdown : undefined,
     };
   }
 
   // 3. Build dynamic rich explanation from existing item metadata and dictionaries
-  let whyCorrect = item.explanationId || 'Jawaban ini sesuai dengan konteks percakapan dan tata bahasa bahasa Jepang standar.';
-  const whyIncorrect: Array<{ optionId?: string | number; text: string; translation?: string; reason: string }> = [];
+  let whyCorrect = '';
+  if (item.explanation && typeof item.explanation === 'string') {
+    whyCorrect = item.explanation;
+  } else if (item.solvingSteps && Array.isArray(item.solvingSteps) && item.solvingSteps.length > 0) {
+    whyCorrect = item.solvingSteps.join(' ');
+  } else if (item.grammarPoint && typeof item.grammarPoint === 'string') {
+    whyCorrect = `Jawaban ini tepat berdasarkan poin tata bahasa: ${item.grammarPoint}.`;
+  } else if (item.explanationId && !/^[a-z0-9_-]+$/i.test(item.explanationId)) {
+    whyCorrect = item.explanationId;
+  } else {
+    whyCorrect = 'Jawaban ini sesuai dengan konteks percakapan dan tata bahasa bahasa Jepang standar.';
+  }
+  const whyIncorrect: Array<{ optionId?: string | number; text: string; romaji?: string; translation?: string; reason: string }> = [];
   const optionsBreakdown: OptionDetail[] = [];
   const tips: string[] = item.solvingSteps ? [...item.solvingSteps] : [];
 
@@ -1185,10 +1227,12 @@ export function getRichExplanation(
       const chText = typeof rawCh === 'string' ? rawCh : rawCh.text;
       const isCorr = chText === correctText;
       const meaning = inferWordMeaning(chText);
+      const chRomaji = toRomaji(typeof rawCh === 'object' && rawCh.segments ? rawCh.segments : chText);
 
       optionsBreakdown.push({
         optionId: idx + 1,
         text: chText,
+        romaji: chRomaji,
         translation: meaning,
         isCorrect: isCorr,
         reason: isCorr
@@ -1201,6 +1245,7 @@ export function getRichExplanation(
         whyIncorrect.push({
           optionId: idx + 1,
           text: chText,
+          romaji: chRomaji,
           translation: exp.translation,
           reason: exp.reason,
         });
@@ -1403,13 +1448,26 @@ export function getRichExplanation(
 
   const grammarPoint = item.grammarPoint || item.vocabularyPoint || (section ? `Pola Bagian ${section.section}: ${section.title}` : 'Pola Tata Bahasa Dasar');
 
+  const finalOptionsBreakdown = optionsBreakdown.map(opt => ({
+    ...opt,
+    romaji: opt.romaji || toRomaji(opt.text),
+  }));
+
+  const finalWhyIncorrect = whyIncorrect.map(inc => ({
+    ...inc,
+    romaji: inc.romaji || toRomaji(inc.text),
+  }));
+
   return {
     questionTranslation: qTranslation || 'Terjemahan kalimat latihan Dekiru Nihongo.',
+    questionRomaji,
+    answerRomaji,
+    answerTranslation,
     whyCorrect,
-    whyIncorrect: whyIncorrect.length > 0 ? whyIncorrect : undefined,
+    whyIncorrect: finalWhyIncorrect.length > 0 ? finalWhyIncorrect : undefined,
     grammarPointDetail: grammarPoint,
     tips: tips.length > 0 ? tips : ['Perhatikan kata kerja, partikel, serta kata benda penanda waktu/tempat di dalam kalimat untuk menentukan jawaban yang tepat.'],
-    optionsBreakdown: optionsBreakdown.length > 0 ? optionsBreakdown : undefined,
+    optionsBreakdown: finalOptionsBreakdown.length > 0 ? finalOptionsBreakdown : undefined,
   };
 }
 
