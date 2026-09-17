@@ -1990,12 +1990,12 @@ export const dekiruExamYellow1Data: DekiruExamData = {
         {
           id: "kuning-s3-q11",
           question: {
-            text: "ポスターに「毎週水曜日はレディースデー（　）」書いてありますよ。",
+            text: "ポスターに「毎週水曜日はレディースデー」（　）書いてありますよ。",
             segments: [
               { text: "ポスターに「" },
               { text: "毎週", reading: "まいしゅう" },
               { text: "水曜日", reading: "すいようび" },
-              { text: "はレディースデー（　）」" },
+              { text: "はレディースデー」（　）" },
               { text: "書", reading: "か" },
               { text: "いてありますよ。" },
             ],
