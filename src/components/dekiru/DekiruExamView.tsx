@@ -3473,7 +3473,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
             {currentQ.section.type === "dialogue-matching" && "choices" in currentQ.section && (
               <div style={{ padding: "0.85rem 1rem", background: "#f8faff", borderRadius: "12px", border: "1px solid #c7d2fe" }}>
                 <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#4338ca", marginBottom: "0.4rem" }}>
-                  Pilihan Ekspresi Percakapan (a〜e):
+                  Pilihan Ekspresi Percakapan (a〜{String.fromCharCode(96 + currentQ.section.choices.length)}):
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                   {currentQ.section.choices.map((ch) => (
@@ -3492,7 +3492,9 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                     >
                       <span style={{ fontWeight: 800, color: "#4f46e5" }}>{ch.id}.</span>
                       <SegmentFurigana segments={ch.content.segments} />
-                      <span style={{ fontSize: "0.72rem", color: "#64748b" }}>({ch.meaningId})</span>
+                      {revealedQuestions[currentQ.item.id] && ch.meaningId && (
+                        <span style={{ fontSize: "0.72rem", color: "#64748b" }}>({ch.meaningId})</span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -4081,7 +4083,7 @@ export const DekiruExamView: React.FC<DekiruExamViewProps> = ({ onBackToSourceSe
                   {sec.type === "dialogue-matching" && "choices" in sec && (
                     <div style={{ padding: "1rem 1.25rem", background: "#f8faff", borderBottom: "1px solid #e2e8f0" }}>
                       <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#4338ca", marginBottom: "0.5rem" }}>
-                        Pilihan Ekspresi Percakapan (a〜e):
+                        Pilihan Ekspresi Percakapan (a〜{String.fromCharCode(96 + sec.choices.length)}):
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                         {sec.choices.map((ch) => (

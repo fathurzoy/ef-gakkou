@@ -2776,9 +2776,9 @@ export const dekiruExamYellow1Data: DekiruExamData = {
           },
           choices: [
             { text: "おもしろくないそう" },
-            { text: "おもしろくなさそう" },
             { text: "おもしろいそう" },
             { text: "おもしろそう" },
+            { text: "おもしろくなさそう" },
           ],
           answer: "おもしろくなさそう",
           explanationId: "kuning-exp-s4-q14",
@@ -2818,17 +2818,17 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               ],
             },
             {
-              text: "熱くすぎます",
-              segments: [
-                { text: "熱", reading: "あつ" },
-                { text: "くすぎます" },
-              ],
-            },
-            {
               text: "熱すぎます",
               segments: [
                 { text: "熱", reading: "あつ" },
                 { text: "すぎます" },
+              ],
+            },
+            {
+              text: "熱くすぎます",
+              segments: [
+                { text: "熱", reading: "あつ" },
+                { text: "くすぎます" },
               ],
             },
             {
@@ -2864,6 +2864,14 @@ export const dekiruExamYellow1Data: DekiruExamData = {
           },
           choices: [
             {
+              text: "短すぎます",
+              segments: [
+                { text: "短", reading: "みじか" },
+                { text: "すぎ" },
+                { text: "ます" },
+              ],
+            },
+            {
               text: "短いすぎます",
               segments: [
                 { text: "短", reading: "みじか" },
@@ -2885,14 +2893,6 @@ export const dekiruExamYellow1Data: DekiruExamData = {
                 { text: "短", reading: "みじか" },
                 { text: "そう" },
                 { text: "すぎます" },
-              ],
-            },
-            {
-              text: "短すぎます",
-              segments: [
-                { text: "短", reading: "みじか" },
-                { text: "すぎ" },
-                { text: "ます" },
               ],
             },
           ],
@@ -3028,56 +3028,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
       choices: [
         {
           id: "a",
-          meaningId: "kuning-m-a",
-          content: {
-            text: "と申します",
-            segments: [{ text: "と" }, { text: "申", reading: "もう" }, { text: "します" }],
-          },
-        },
-        {
-          id: "b",
-          meaningId: "kuning-m-b",
-          content: {
-            text: "参りました",
-            segments: [{ text: "参", reading: "まい" }, { text: "りました" }],
-          },
-        },
-        {
-          id: "c",
-          meaningId: "kuning-m-c",
-          content: {
-            text: "見せてもらえませんか",
-            segments: [{ text: "見", reading: "み" }, { text: "せてもらえませんか" }],
-          },
-        },
-        {
-          id: "d",
-          meaningId: "kuning-m-d",
-          content: {
-            text: "にします",
-            segments: [{ text: "にします" }],
-          },
-        },
-        {
-          id: "e",
-          meaningId: "kuning-m-e",
-          content: {
-            text: "学校が1時に始まるので午後は……",
-            segments: [
-              { text: "学校", reading: "がっこう" },
-              { text: "が1" },
-              { text: "時", reading: "じ" },
-              { text: "に" },
-              { text: "始", reading: "はじ" },
-              { text: "まるので" },
-              { text: "午後", reading: "ごご" },
-              { text: "は……" },
-            ],
-          },
-        },
-        {
-          id: "f",
-          meaningId: "kuning-m-f",
+          meaningId: "Artinya menu edisi spesial yang terbatas hanya untuk waktu saat ini saja",
           content: {
             text: "今だけの限定メニューという意味ですよ",
             segments: [
@@ -3091,8 +3042,39 @@ export const dekiruExamYellow1Data: DekiruExamData = {
           },
         },
         {
-          id: "g",
-          meaningId: "kuning-m-g",
+          id: "b",
+          meaningId: "Saya pilih / saya putuskan (menentukan pilihan menu: Noun + にします)",
+          content: {
+            text: "にします",
+            segments: [{ text: "にします" }],
+          },
+        },
+        {
+          id: "c",
+          meaningId: "Bisakah tolong ajarkan cara membuatnya? (meminta diajarkan resep/tata cara)",
+          content: {
+            text: "作り方を教えてもらえませんか",
+            segments: [
+              { text: "作", reading: "つく" },
+              { text: "り" },
+              { text: "方", reading: "かた" },
+              { text: "を" },
+              { text: "教", reading: "おし" },
+              { text: "えてもらえませんか" },
+            ],
+          },
+        },
+        {
+          id: "d",
+          meaningId: "Datang / telah datang (ragam merendah kenjougo untuk kedatangan diri sendiri)",
+          content: {
+            text: "参りました",
+            segments: [{ text: "参", reading: "まい" }, { text: "りました" }],
+          },
+        },
+        {
+          id: "e",
+          meaningId: "Saya yang menelepon setelah melihat selebaran, apakah manajer toko ada?",
           content: {
             text: "チラシを見てお電話した者ですが、店長はいらっしゃいますか",
             segments: [
@@ -3109,8 +3091,50 @@ export const dekiruExamYellow1Data: DekiruExamData = {
           },
         },
         {
+          id: "f",
+          meaningId: "Sejak kemarin saya demam dan kepala sakit (penjelasan alasan sakit mendadak)",
+          content: {
+            text: "昨日から熱があって頭が痛いんです",
+            segments: [
+              { text: "昨日", reading: "きのう" },
+              { text: "から" },
+              { text: "熱", reading: "ねつ" },
+              { text: "があって" },
+              { text: "頭", reading: "あたま" },
+              { text: "が" },
+              { text: "痛", reading: "いた" },
+              { text: "いんです" },
+            ],
+          },
+        },
+        {
+          id: "g",
+          meaningId: "Nama saya ... (ragam sopan merendah kenjougo untuk menyebut nama diri sendiri)",
+          content: {
+            text: "と申します",
+            segments: [{ text: "と" }, { text: "申", reading: "もう" }, { text: "します" }],
+          },
+        },
+        {
           id: "h",
-          meaningId: "kuning-m-h",
+          meaningId: "Karena sekolah dimulai jam 1 siang, kalau sore agak berhalangan... (penolakan halus jadwal)",
+          content: {
+            text: "学校が1時に始まるので午後は……",
+            segments: [
+              { text: "学校", reading: "がっこう" },
+              { text: "が1" },
+              { text: "時", reading: "じ" },
+              { text: "に" },
+              { text: "始", reading: "はじ" },
+              { text: "まるので" },
+              { text: "午後", reading: "ごご" },
+              { text: "は……" },
+            ],
+          },
+        },
+        {
+          id: "i",
+          meaningId: "Permisi, bisakah tolong ambilkan topi yang ada di rak atas?",
           content: {
             text: "すみません、上の棚にある帽子を取ってもらえませんか",
             segments: [
@@ -3127,35 +3151,11 @@ export const dekiruExamYellow1Data: DekiruExamData = {
           },
         },
         {
-          id: "i",
-          meaningId: "kuning-m-i",
-          content: {
-            text: "作り方を教えてもらえませんか",
-            segments: [
-              { text: "作", reading: "つく" },
-              { text: "り" },
-              { text: "方", reading: "かた" },
-              { text: "を" },
-              { text: "教", reading: "おし" },
-              { text: "えてもらえませんか" },
-            ],
-          },
-        },
-        {
           id: "j",
-          meaningId: "kuning-m-j",
+          meaningId: "Bisakah tolong perlihatkan kepada saya? (permohonan sopan di toko)",
           content: {
-            text: "昨日から熱があって頭が痛いんです",
-            segments: [
-              { text: "昨日", reading: "きのう" },
-              { text: "から" },
-              { text: "熱", reading: "ねつ" },
-              { text: "があって" },
-              { text: "頭", reading: "あたま" },
-              { text: "が" },
-              { text: "痛", reading: "いた" },
-              { text: "いんです" },
-            ],
+            text: "見せてもらえませんか",
+            segments: [{ text: "見", reading: "み" }, { text: "せてもらえませんか" }],
           },
         },
       ],
@@ -3182,7 +3182,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "いいたします。" },
             ],
           },
-          answer: ["a"],
+          answer: ["g"],
           explanationId: "kuning-exp-s5-q1",
           solvingSteps: [
             "Menyebutkan nama diri sendiri secara sopan dan merendah (kenjougo) saat wawancara kerja adalah 〜と申します.",
@@ -3211,7 +3211,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "に（　）。" },
             ],
           },
-          answer: ["b"],
+          answer: ["d"],
           explanationId: "kuning-exp-s5-q2",
           solvingSteps: [
             "Pewawancara bertanya dengan bentuk hormat (sonkeigo: いらっしゃいましたか).",
@@ -3250,7 +3250,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "ししますね。" },
             ],
           },
-          answer: ["c"],
+          answer: ["j"],
           explanationId: "kuning-exp-s5-q3",
           solvingSteps: [
             "Meminta bantuan kepada staf toko dengan halus untuk memperlihatkan barang menggunakan 〜てもらえませんか (見せてもらえませんか).",
@@ -3260,7 +3260,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
         {
           id: "kuning-s5-q4",
           question: {
-            text: "【レストランでの注文】\n店員：ご注文はお決まりでしょうか。\n客：ええと、私はこの「とんかつセット」（　）。",
+            text: "【レストランでのご注文】\n店員：ご注文はお決まりでしょうか。\n客：ええと、私はこの「とんかつセット」（　）。",
             segments: [
               { text: "【レストランでのご" },
               { text: "注文", reading: "ちゅうもん" },
@@ -3277,7 +3277,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "はこの「とんかつセット」（　）。" },
             ],
           },
-          answer: ["d"],
+          answer: ["b"],
           explanationId: "kuning-exp-s5-q4",
           solvingSteps: [
             "Menentukan pilihan menu dari beberapa pilihan memakai pola Noun ＋ にします.",
@@ -3312,7 +3312,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "なのですが。" },
             ],
           },
-          answer: ["e"],
+          answer: ["h"],
           explanationId: "kuning-exp-s5-q5",
           solvingSteps: [
             "Pelamar menolak tawaran sore secara halus karena ada jam pelajaran sekolah: 学校が1時に始まるので午後は…….",
@@ -3343,7 +3343,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "：あ、それは（　）。" },
             ],
           },
-          answer: ["f"],
+          answer: ["a"],
           explanationId: "kuning-exp-s5-q6",
           solvingSteps: [
             "Pelayan menjelaskan makna rambu/istilah: 今だけの限定メニューという意味ですよ (pola 〜という意味です).",
@@ -3378,7 +3378,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "におつなぎします。" },
             ],
           },
-          answer: ["g"],
+          answer: ["e"],
           explanationId: "kuning-exp-s5-q7",
           solvingSteps: [
             "Kalimat pembuka saat menelepon lowongan kerja paruh waktu: チラシを見てお電話した者ですが、店長はいらっしゃいますか.",
@@ -3412,7 +3412,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "りいたします。" },
             ],
           },
-          answer: ["h"],
+          answer: ["i"],
           explanationId: "kuning-exp-s5-q8",
           solvingSteps: [
             "Permintaan tolong mengambilkan barang yang ada di rak tinggi: すみません、上の棚にある帽子を取ってもらえませんか.",
@@ -3439,7 +3439,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "えてあげるね。" },
             ],
           },
-          answer: ["i"],
+          answer: ["c"],
           explanationId: "kuning-exp-s5-q9",
           solvingSteps: [
             "Meminta diajarkan resep / cara membuat sesuatu: 作り方を教えてもらえませんか.",
@@ -3486,7 +3486,7 @@ export const dekiruExamYellow1Data: DekiruExamData = {
               { text: "んでください。" },
             ],
           },
-          answer: ["j"],
+          answer: ["f"],
           explanationId: "kuning-exp-s5-q10",
           solvingSteps: [
             "Menjelaskan alasan mendadak sakit demam dan kepala sakit: 昨日から熱があって頭が痛いんです.",
